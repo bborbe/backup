@@ -1,6 +1,10 @@
 package service
 
-import "github.com/bborbe/backup/dto"
+import (
+	"fmt"
+	"github.com/bborbe/backup/dto"
+	"os"
+)
 
 type BackupService interface {
 	ListHosts() ([]dto.Host, error)
@@ -19,7 +23,36 @@ func NewBackupService(rootdir string) *backupService {
 }
 
 func (s *backupService) ListHosts() ([]dto.Host, error) {
-	return nil, nil
+	file, err := os.Open(s.rootdir)
+	if err != nil {
+		return nil, err
+	}
+	fileinfo, err := file.Stat()
+	if err != nil {
+		return nil, err
+	}
+	if !fileinfo.IsDir() {
+		return nil, fmt.Errorf("rootdir %s is not a directory", s.rootdir)
+	}
+	names, err := file.Readdirnames(0)
+	if err != nil {
+		return nil, err
+	}
+	return createHosts(names), nil
+}
+
+func createHosts(hosts []string) []dto.Host {
+	result := make([]dto.Host, len(hosts))
+	for i, host := range hosts {
+		result[i] = createHost(host)
+	}
+	return result
+}
+
+func createHost(host string) dto.Host {
+	h := dto.NewHost()
+	h.SetName(host)
+	return h
 }
 
 func (s *backupService) ListBackups(host dto.Host) ([]dto.Backup, error) {
