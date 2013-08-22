@@ -1,9 +1,9 @@
 package main
 
 import (
-	"github.com/bborbe/log"
 	"fmt"
 	"github.com/bborbe/backup/service"
+	"github.com/bborbe/log"
 )
 
 var logger = log.DefaultLogger
@@ -20,9 +20,13 @@ func main() {
 	}
 
 	for _, host := range hosts {
-		fmt.Printf("%s => %s", host.GetName(), "2013-06-01 12:23:45")
+		backup, err := backupService.GetLatestBackup(host)
+		if err != nil {
+			logger.Fatal(err)
+			return
+		}
+		fmt.Printf("%s => %s", host.GetName(), backup.GetName())
 	}
-
 
 	logger.Debug("done")
 }

@@ -1,19 +1,23 @@
-package object
+package dto
 
 type Host interface {
 	GetName() string
+	SetName(name string)
 }
 
 type host struct {
 	name string
 }
 
-func NewHost(name string) *host {
+func NewHost() *host {
 	h := new(host)
-	h.name = name
 	return h
 }
 
 func (h *host) GetName() string {
 	return h.name
+}
+
+func (h *host) SetName(name string) {
+	h.name = name
 }

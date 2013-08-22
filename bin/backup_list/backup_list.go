@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"os"
+	"github.com/bborbe/backup/service"
 	"github.com/bborbe/log"
 )
 
@@ -11,22 +11,24 @@ var logger = log.DefaultLogger
 func main() {
 	logger.Debug("start")
 
-	backups, err := getBackups("/rsync")
+	backupRootDir := "/rsync"
+	backupService := service.NewBackupService(backupRootDir)
+	hosts, err := backupService.ListHosts()
 	if err != nil {
-		logger.Errorf("read backups in /rsync failed, %v", err)
+		logger.Fatal(err)
 		return
 	}
-	for _, backup := range backups {
-		fmt.Println(backup)
+
+	for _, host := range hosts {
+		backups, err := backupService.ListBackups(host)
+		if err != nil {
+			logger.Fatal(err)
+			return
+		}
+		for _, backup := range backups {
+			fmt.Printf("%s => %s", host.GetName(), backup.GetName())
+		}
 	}
+
 	logger.Debug("done")
 }
-
-func getBackups(backupRootDir string) ([]string, error) {
-	file, err := os.Open(backupRootDir)
-	if err != nil {
-		return nil, err
-	}
-	return file.Readdirnames(0)
-}
-

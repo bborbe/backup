@@ -1,9 +1,11 @@
 package service
 
-import "github.com/bborbe/backup/object"
+import "github.com/bborbe/backup/dto"
 
 type BackupService interface {
-	ListHosts() ([]object.Host, error)
+	ListHosts() ([]dto.Host, error)
+	ListBackups(host dto.Host) ([]dto.Backup, error)
+	GetLatestBackup(host dto.Host) (dto.Backup, error)
 }
 
 type backupService struct {
@@ -16,6 +18,14 @@ func NewBackupService(rootdir string) *backupService {
 	return s
 }
 
-func (s *backupService) ListHosts() ([]object.Host, error) {
+func (s *backupService) ListHosts() ([]dto.Host, error) {
+	return nil, nil
+}
+
+func (s *backupService) ListBackups(host dto.Host) ([]dto.Backup, error) {
+	return nil, nil
+}
+
+func (s *backupService) GetLatestBackup(host dto.Host) (dto.Backup, error) {
 	return nil, nil
 }
