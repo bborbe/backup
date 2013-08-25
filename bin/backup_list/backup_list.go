@@ -18,7 +18,7 @@ const (
 
 func main() {
 	logLevelPtr := flag.Int("loglevel", DEFAULT_LOG_LEVEL, "int")
-	rootdirPtr := flag.String("loglevel", DEFAULT_ROOT_DIR, "string")
+	rootdirPtr := flag.String("rootdir", DEFAULT_ROOT_DIR, "string")
 	flag.Parse()
 	logger.SetLevelThreshold(*logLevelPtr)
 	logger.Debugf("set log level to %s", log.LogLevelToString(*logLevelPtr))
