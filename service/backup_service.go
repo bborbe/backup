@@ -11,7 +11,9 @@ type BackupService interface {
 	GetHost(host string) (dto.Host, error)
 	ListHosts() ([]dto.Host, error)
 	ListBackups(host dto.Host) ([]dto.Backup, error)
+	ListOldBackups(host dto.Host) ([]dto.Backup, error)
 	GetLatestBackup(host dto.Host) (dto.Backup, error)
+	Cleanup() error
 }
 
 type backupService struct {
@@ -114,4 +116,12 @@ func (s *backupService) GetHost(host string) (dto.Host, error) {
 	h := dto.NewHost()
 	h.SetName(host)
 	return h, nil
+}
+
+func (s *backupService) ListOldBackups(host dto.Host) ([]dto.Backup, error) {
+	return nil, nil
+}
+
+func (s *backupService) Cleanup() error {
+	return nil
 }

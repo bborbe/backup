@@ -36,7 +36,7 @@ func do(writer io.Writer, backupService service.BackupService) error {
 		return err
 	}
 	for _, host := range hosts {
-		backups, err := backupService.ListBackups(host)
+		backups, err := backupService.ListOldBackups(host)
 		if err != nil {
 			return err
 		}

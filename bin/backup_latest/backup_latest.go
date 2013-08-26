@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"github.com/bborbe/backup/config"
 	"github.com/bborbe/backup/service"
 	"github.com/bborbe/log"
 	"io"
@@ -11,14 +12,9 @@ import (
 
 var logger = log.DefaultLogger
 
-const (
-	DEFAULT_LOG_LEVEL = log.OFF
-	DEFAULT_ROOT_DIR  = "/rsync"
-)
-
 func main() {
-	logLevelPtr := flag.Int("loglevel", DEFAULT_LOG_LEVEL, "int")
-	rootdirPtr := flag.String("rootdir", DEFAULT_ROOT_DIR, "string")
+	logLevelPtr := flag.Int("loglevel", config.DEFAULT_LOG_LEVEL, "int")
+	rootdirPtr := flag.String("rootdir", config.DEFAULT_ROOT_DIR, "string")
 	flag.Parse()
 	logger.SetLevelThreshold(*logLevelPtr)
 	logger.Debugf("set log level to %s", log.LogLevelToString(*logLevelPtr))
