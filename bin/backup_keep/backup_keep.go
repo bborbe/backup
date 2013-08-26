@@ -36,11 +36,13 @@ func do(writer io.Writer, backupService service.BackupService) error {
 		return err
 	}
 	for _, host := range hosts {
-		backup, err := backupService.GetLatestBackup(host)
+		backups, err := backupService.ListKeepBackups(host)
 		if err != nil {
 			return err
 		}
-		fmt.Fprintf(writer, "%s/%s\n", host.GetName(), backup.GetName())
+		for _, backup := range backups {
+			fmt.Fprintf(writer, "%s/%s\n", host.GetName(), backup.GetName())
+		}
 	}
 	logger.Debug("done")
 	return nil

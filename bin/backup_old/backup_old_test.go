@@ -51,7 +51,7 @@ func TestDoNotEmpty(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	err = AssertThat(string(writer.Content()), Is("hostA => 2013-12-25T20:15:59\nhostA => 2013-12-24T20:15:59\n"))
+	err = AssertThat(string(writer.Content()), Is("hostA/2013-12-25T20:15:59\nhostA/2013-12-24T20:15:59\n"))
 	if err != nil {
 		t.Fatal(err)
 	}

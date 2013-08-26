@@ -41,7 +41,7 @@ func do(writer io.Writer, backupService service.BackupService) error {
 			return err
 		}
 		for _, backup := range backups {
-			fmt.Fprintf(writer, "%s => %s\n", host.GetName(), backup.GetName())
+			fmt.Fprintf(writer, "%s/%s\n", host.GetName(), backup.GetName())
 		}
 	}
 	logger.Debug("done")

@@ -16,6 +16,7 @@ type BackupService interface {
 	ListHosts() ([]dto.Host, error)
 	ListBackups(host dto.Host) ([]dto.Backup, error)
 	ListOldBackups(host dto.Host) ([]dto.Backup, error)
+	ListKeepBackups(host dto.Host) ([]dto.Backup, error)
 	GetLatestBackup(host dto.Host) (dto.Backup, error)
 	Cleanup(host dto.Host) error
 }
@@ -149,9 +150,6 @@ func (s *backupService) GetLatestBackup(host dto.Host) (dto.Backup, error) {
 }
 
 func (s *backupService) ListOldBackups(host dto.Host) ([]dto.Backup, error) {
-	if host == nil {
-		return nil, errors.New("parameter host missing")
-	}
 	backups, err := s.ListBackups(host)
 	if err != nil {
 		return nil, err
@@ -241,4 +239,12 @@ func (s *backupService) Cleanup(host dto.Host) error {
 		return errors.New("parameter host missing")
 	}
 	return nil
+}
+
+func (s *backupService) ListKeepBackups(host dto.Host) ([]dto.Backup, error) {
+	backups, err := s.ListBackups(host)
+	if err != nil {
+		return nil, err
+	}
+	return getKeepBackups(backups)
 }

@@ -49,7 +49,7 @@ func TestDoNotEmpty(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	err = AssertThat(string(writer.Content()), Is("hostA => backupA\nhostB => backupA\n"))
+	err = AssertThat(string(writer.Content()), Is("hostA/backupA\nhostB/backupA\n"))
 	if err != nil {
 		t.Fatal(err)
 	}

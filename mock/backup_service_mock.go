@@ -3,15 +3,17 @@ package mock
 import "github.com/bborbe/backup/dto"
 
 type backupServiceMock struct {
-	listBackupsDtos     []dto.Backup
-	listBackupsError    error
-	listOldBackupsDtos  []dto.Backup
-	listOldBackupsError error
-	listHostsDtos       []dto.Host
-	listHostsError      error
-	latestBackup        dto.Backup
-	latestBackupError   error
-	cleanupErr          error
+	listBackupsDtos      []dto.Backup
+	listBackupsError     error
+	listOldBackupsDtos   []dto.Backup
+	listOldBackupsError  error
+	listKeepBackupsDtos  []dto.Backup
+	listKeepBackupsError error
+	listHostsDtos        []dto.Host
+	listHostsError       error
+	latestBackup         dto.Backup
+	latestBackupError    error
+	cleanupErr           error
 }
 
 func NewBackupServiceMock() *backupServiceMock {
@@ -76,4 +78,13 @@ func (s *backupServiceMock) Cleanup(host dto.Host) error {
 
 func (s *backupServiceMock) SetCleanup(err error) {
 	s.cleanupErr = err
+}
+
+func (s *backupServiceMock) ListKeepBackups(host dto.Host) ([]dto.Backup, error) {
+	return s.listKeepBackupsDtos, s.listKeepBackupsError
+}
+
+func (s *backupServiceMock) SetListKeepBackups(backups []dto.Backup, err error) {
+	s.listKeepBackupsDtos = backups
+	s.listKeepBackupsError = err
 }
