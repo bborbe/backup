@@ -3,6 +3,7 @@ package service
 import (
 	"fmt"
 	. "github.com/bborbe/assert"
+	"github.com/bborbe/backup/dto"
 	"github.com/bborbe/log"
 	"os"
 	"testing"
@@ -325,5 +326,95 @@ func TestValidBackupName(t *testing.T) {
 	err = AssertThat(validBackupName("2013-12-12T24:15:59"), Is(true))
 	if err != nil {
 		t.Fatal(err)
+	}
+}
+
+func TestGetKeepMonth(t *testing.T) {
+	var err error
+	var result []dto.Backup
+	{
+		backups := []dto.Backup{}
+		result, err = getKeepMonth(backups)
+		if err != nil {
+			t.Fatal(err)
+		}
+		err = AssertThat(result, NotNilValue())
+		if err != nil {
+			t.Fatal(err)
+		}
+		err = AssertThat(len(result), Is(len(backups)))
+		if err != nil {
+			t.Fatal(err)
+		}
+	}
+	{
+		backups := []dto.Backup{
+			createBackup("2013-12-12T24:15:59"),
+		}
+		result, err = getKeepMonth(backups)
+		if err != nil {
+			t.Fatal(err)
+		}
+		err = AssertThat(result, NotNilValue())
+		if err != nil {
+			t.Fatal(err)
+		}
+		err = AssertThat(len(result), Is(len(backups)))
+		if err != nil {
+			t.Fatal(err)
+		}
+	}
+	{
+		backups := []dto.Backup{
+			createBackup("2013-12-12T24:15:59"),
+			createBackup("2013-12-01T24:15:59"),
+		}
+		result, err = getKeepMonth(backups)
+		if err != nil {
+			t.Fatal(err)
+		}
+		err = AssertThat(result, NotNilValue())
+		if err != nil {
+			t.Fatal(err)
+		}
+		err = AssertThat(len(result), Is(1))
+		if err != nil {
+			t.Fatal(err)
+		}
+		err = AssertThat("2013-12-01T24:15:59", Is(result[0].GetName()))
+	}
+}
+
+func TestGetKeepWeek(t *testing.T) {
+	var err error
+	var result []dto.Backup
+	{
+		backups := []dto.Backup{}
+		result = getKeepWeek(backups)
+		err = AssertThat(result, NotNilValue())
+		if err != nil {
+			t.Fatal(err)
+		}
+		err = AssertThat(len(result), Is(len(backups)))
+		if err != nil {
+			t.Fatal(err)
+		}
+	}
+}
+
+func TestGetKeepDay(t *testing.T) {
+	var err error
+	var result []dto.Backup
+	{
+		backups := []dto.Backup{}
+		result = getKeepDay(backups)
+		err = AssertThat(result, NotNilValue())
+		if err != nil {
+			t.Fatal(err)
+		}
+		err = AssertThat(len(result), Is(len(backups)))
+		if err != nil {
+			t.Fatal(err)
+		}
 	}
 }

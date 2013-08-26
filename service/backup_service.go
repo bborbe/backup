@@ -4,9 +4,11 @@ import (
 	"errors"
 	"fmt"
 	"github.com/bborbe/backup/dto"
+	"github.com/bborbe/backup/util"
 	"os"
 	"regexp"
 	"sort"
+	"strconv"
 )
 
 type BackupService interface {
@@ -150,7 +152,88 @@ func (s *backupService) ListOldBackups(host dto.Host) ([]dto.Backup, error) {
 	if host == nil {
 		return nil, errors.New("parameter host missing")
 	}
-	return nil, nil
+	backups, err := s.ListBackups(host)
+	if err != nil {
+		return nil, err
+	}
+
+	keep, err := getKeepBackups(backups)
+	if err != nil {
+		return nil, err
+	}
+	keepMap := make(map[string]bool)
+	for _, b := range keep {
+		keepMap[b.GetName()] = true
+	}
+	var result []dto.Backup
+	for _, backup := range backups {
+		if !keepMap[backup.GetName()] {
+			result = append(result, backup)
+		}
+	}
+	return result, nil
+}
+
+func getKeepBackups(backups []dto.Backup) ([]dto.Backup, error) {
+	var result []dto.Backup
+	// keep first backup per day if age <= 7 days
+	{
+		for _, backup := range getKeepDay(backups) {
+			result = append(result, backup)
+		}
+	}
+	// keep first backup per week if age <= 28 days
+	{
+		for _, backup := range getKeepWeek(backups) {
+			result = append(result, backup)
+		}
+	}
+	// keep first backup per month
+	{
+		b, err := getKeepMonth(backups)
+		if err != nil {
+			return nil, err
+		}
+		for _, backup := range b {
+			result = append(result, backup)
+		}
+	}
+	return result, nil
+}
+
+func getKeepDay(backups []dto.Backup) []dto.Backup {
+	sort.Sort(util.BackupByDate(backups))
+	return []dto.Backup{}
+}
+
+func getKeepWeek(backups []dto.Backup) []dto.Backup {
+	sort.Sort(util.BackupByDate(backups))
+	return []dto.Backup{}
+}
+
+func getKeepMonth(backups []dto.Backup) ([]dto.Backup, error) {
+	sort.Sort(util.BackupByDate(backups))
+	var lastYear int64 = -1
+	var lastMonth int64 = -1
+	var result []dto.Backup
+	for _, backup := range backups {
+		name := backup.GetName()
+		year, err := strconv.ParseInt(name[0:4], 10, 64)
+		if err != nil {
+			return nil, err
+		}
+		month, err := strconv.ParseInt(name[5:6], 10, 64)
+		if err != nil {
+			return nil, err
+		}
+
+		if year != lastYear && month != lastMonth {
+			result = append(result, backup)
+		}
+		lastYear = year
+		lastMonth = month
+	}
+	return result, nil
 }
 
 func (s *backupService) Cleanup(host dto.Host) error {
