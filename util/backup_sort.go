@@ -13,7 +13,6 @@ func (v BackupByDate) Less(i, j int) bool { return StringLess(v[i].GetName(), v[
 
 func StringLess(a, b string) bool {
 	for i := 0; i < len(a) && i < len(b); i++ {
-		fmt.Printf("%d < %d\n", int(a[i]), int(b[i]))
 		if a[i] < b[i] {
 			return true
 		}
