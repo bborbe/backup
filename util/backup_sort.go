@@ -1,7 +1,6 @@
 package util
 
 import (
-	"fmt"
 	"github.com/bborbe/backup/dto"
 )
 
