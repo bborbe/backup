@@ -4,12 +4,9 @@ import (
 	"fmt"
 	. "github.com/bborbe/assert"
 	"github.com/bborbe/backup/dto"
-	"github.com/bborbe/log"
 	"os"
 	"testing"
 )
-
-var logger = log.DefaultLogger
 
 const BACKUP_ROOT_DIR = "/tmp/backuproot"
 
@@ -382,6 +379,24 @@ func TestGetKeepMonth(t *testing.T) {
 			t.Fatal(err)
 		}
 		err = AssertThat("2013-12-01T24:15:59", Is(result[0].GetName()))
+	}
+	{
+		backups := []dto.Backup{
+			createBackup("2013-11-12T24:15:59"),
+			createBackup("2013-12-01T24:15:59"),
+		}
+		result, err = getKeepMonth(backups)
+		if err != nil {
+			t.Fatal(err)
+		}
+		err = AssertThat(result, NotNilValue())
+		if err != nil {
+			t.Fatal(err)
+		}
+		err = AssertThat(len(result), Is(2))
+		if err != nil {
+			t.Fatal(err)
+		}
 	}
 }
 

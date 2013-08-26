@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/bborbe/backup/dto"
 	"github.com/bborbe/backup/util"
+	"github.com/bborbe/log"
 	"os"
 	"regexp"
 	"sort"
@@ -24,6 +25,8 @@ type BackupService interface {
 type backupService struct {
 	rootdir string
 }
+
+var logger = log.DefaultLogger
 
 func NewBackupService(rootdir string) *backupService {
 	s := new(backupService)
@@ -220,12 +223,13 @@ func getKeepMonth(backups []dto.Backup) ([]dto.Backup, error) {
 		if err != nil {
 			return nil, err
 		}
-		month, err := strconv.ParseInt(name[5:6], 10, 64)
+		month, err := strconv.ParseInt(name[5:7], 10, 64)
 		if err != nil {
 			return nil, err
 		}
+		logger.Debugf("year %d month %d", year, month)
 
-		if year != lastYear && month != lastMonth {
+		if year != lastYear || month != lastMonth {
 			result = append(result, backup)
 		}
 		lastYear = year
