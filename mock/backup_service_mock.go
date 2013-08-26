@@ -69,6 +69,6 @@ func (s *backupServiceMock) SetListOldBackups(backups []dto.Backup, err error) {
 	s.listOldBackupsError = err
 }
 
-func (s *backupServiceMock) Cleanup() error {
+func (s *backupServiceMock) Cleanup(host dto.Host) error {
 	return nil
 }
