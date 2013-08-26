@@ -382,8 +382,10 @@ func TestGetKeepMonth(t *testing.T) {
 	}
 	{
 		backups := []dto.Backup{
-			createBackup("2013-11-12T24:15:59"),
-			createBackup("2013-12-01T24:15:59"),
+			createBackup("2012-11-12T24:15:59"),
+			createBackup("2013-11-01T24:15:59"),
+			createBackup("2013-05-28T24:15:59"),
+			createBackup("2013-05-29T24:15:59"),
 		}
 		result, err = getKeepMonth(backups)
 		if err != nil {
@@ -393,7 +395,7 @@ func TestGetKeepMonth(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		err = AssertThat(len(result), Is(2))
+		err = AssertThat(len(result), Is(3))
 		if err != nil {
 			t.Fatal(err)
 		}
