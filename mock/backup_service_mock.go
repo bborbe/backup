@@ -3,10 +3,12 @@ package mock
 import "github.com/bborbe/backup/dto"
 
 type backupServiceMock struct {
-	listBackupsDtos  []dto.Backup
-	listBackupsError error
-	listHostsDtos    []dto.Host
-	listHostsError   error
+	listBackupsDtos   []dto.Backup
+	listBackupsError  error
+	listHostsDtos     []dto.Host
+	listHostsError    error
+	latestBackup      dto.Backup
+	latestBackupError error
 }
 
 func NewBackupServiceMock() *backupServiceMock {
@@ -36,5 +38,22 @@ func (s *backupServiceMock) SetListBackups(backups []dto.Backup, err error) {
 }
 
 func (s *backupServiceMock) GetLatestBackup(host dto.Host) (dto.Backup, error) {
-	return nil, nil
+	return s.latestBackup, s.latestBackupError
+}
+
+func (s *backupServiceMock) SetLatestBackup(backup dto.Backup, err error) {
+	s.latestBackup = backup
+	s.latestBackupError = err
+}
+
+func CreateBackup(name string) dto.Backup {
+	b := dto.NewBackup()
+	b.SetName(name)
+	return b
+}
+
+func CreateHost(name string) dto.Host {
+	b := dto.NewHost()
+	b.SetName(name)
+	return b
 }
