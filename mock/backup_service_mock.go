@@ -11,6 +11,7 @@ type backupServiceMock struct {
 	listHostsError      error
 	latestBackup        dto.Backup
 	latestBackupError   error
+	cleanupErr          error
 }
 
 func NewBackupServiceMock() *backupServiceMock {
@@ -70,5 +71,9 @@ func (s *backupServiceMock) SetListOldBackups(backups []dto.Backup, err error) {
 }
 
 func (s *backupServiceMock) Cleanup(host dto.Host) error {
-	return nil
+	return s.cleanupErr
+}
+
+func (s *backupServiceMock) SetCleanup(err error) {
+	s.cleanupErr = err
 }

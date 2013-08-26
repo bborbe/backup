@@ -35,8 +35,8 @@ func TestDoNotEmpty(t *testing.T) {
 	}
 	backupService.SetListHosts(hosts, nil)
 	backups := []dto.Backup{
-		backup_mock.CreateBackup("backupA"),
-		backup_mock.CreateBackup("backupB"),
+		backup_mock.CreateBackup("2013-12-24T20:15:59"),
+		backup_mock.CreateBackup("2013-12-25T20:15:59"),
 	}
 	backupService.SetListBackups(backups, nil)
 	err := do(writer, backupService)
@@ -51,7 +51,7 @@ func TestDoNotEmpty(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	err = AssertThat(string(writer.Content()), Is("hostA => backupA\nhostA => backupB\n"))
+	err = AssertThat(string(writer.Content()), Is("hostA => 2013-12-24T20:15:59\nhostA => 2013-12-25T20:15:59\n"))
 	if err != nil {
 		t.Fatal(err)
 	}

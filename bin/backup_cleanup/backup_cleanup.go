@@ -40,7 +40,7 @@ func do(writer io.Writer, backupService service.BackupService) error {
 		if err != nil {
 			return err
 		}
-		fmt.Fprintf(writer, "%s deleted\n", host.GetName())
+		fmt.Fprintf(writer, "%s cleaned\n", host.GetName())
 	}
 	logger.Debug("done")
 	return nil
