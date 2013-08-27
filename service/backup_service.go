@@ -94,9 +94,7 @@ func (s *backupService) ListBackups(host dto.Host) ([]dto.Backup, error) {
 			names = append(names, name)
 		}
 	}
-
-	backups:=createBackups(names)
-	sort.Sort(util.BackupByDate(backups))
+	backups := createBackups(names)
 	return backups, nil
 }
 
@@ -160,7 +158,6 @@ func (s *backupService) ListOldBackups(host dto.Host) ([]dto.Backup, error) {
 	if err != nil {
 		return nil, err
 	}
-
 	keep, err := getKeepBackups(backups)
 	if err != nil {
 		return nil, err
@@ -179,10 +176,8 @@ func (s *backupService) ListOldBackups(host dto.Host) ([]dto.Backup, error) {
 }
 
 func getKeepBackups(backups []dto.Backup) ([]dto.Backup, error) {
-	var result []dto.Backup
-
+	keep := make(map[string]dto.Backup, 0)
 	now := time.Now()
-
 	// keep all backups from today
 	{
 		b, err := getKeepToday(backups, now)
@@ -190,7 +185,7 @@ func getKeepBackups(backups []dto.Backup) ([]dto.Backup, error) {
 			return nil, err
 		}
 		for _, backup := range b {
-			result = append(result, backup)
+			keep[backup.GetName()] = backup
 		}
 	}
 	// keep first backup per day if age <= 7 days
@@ -200,7 +195,7 @@ func getKeepBackups(backups []dto.Backup) ([]dto.Backup, error) {
 			return nil, err
 		}
 		for _, backup := range b {
-			result = append(result, backup)
+			keep[backup.GetName()] = backup
 		}
 	}
 	// keep first backup per week if age <= 28 days
@@ -210,7 +205,7 @@ func getKeepBackups(backups []dto.Backup) ([]dto.Backup, error) {
 			return nil, err
 		}
 		for _, backup := range b {
-			result = append(result, backup)
+			keep[backup.GetName()] = backup
 		}
 	}
 	// keep first backup per month
@@ -220,8 +215,13 @@ func getKeepBackups(backups []dto.Backup) ([]dto.Backup, error) {
 			return nil, err
 		}
 		for _, backup := range b {
-			result = append(result, backup)
+			keep[backup.GetName()] = backup
 		}
+	}
+
+	var result []dto.Backup
+	for _, backup := range keep {
+		result = append(result, backup)
 	}
 	return result, nil
 }

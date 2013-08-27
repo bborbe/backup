@@ -5,9 +5,11 @@ import (
 	"fmt"
 	"github.com/bborbe/backup/config"
 	"github.com/bborbe/backup/service"
+	"github.com/bborbe/backup/util"
 	"github.com/bborbe/log"
 	"io"
 	"os"
+	"sort"
 )
 
 var logger = log.DefaultLogger
@@ -35,11 +37,13 @@ func do(writer io.Writer, backupService service.BackupService) error {
 	if err != nil {
 		return err
 	}
+	sort.Sort(util.HostByDate(hosts))
 	for _, host := range hosts {
 		backups, err := backupService.ListOldBackups(host)
 		if err != nil {
 			return err
 		}
+		sort.Sort(util.BackupByDate(backups))
 		for _, backup := range backups {
 			fmt.Fprintf(writer, "%s/%s\n", host.GetName(), backup.GetName())
 		}

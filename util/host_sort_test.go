@@ -8,9 +8,9 @@ import (
 	"testing"
 )
 
-func TestBackupSortEmpty(t *testing.T) {
-	backups := make([]dto.Backup, 0)
-	sort.Sort(BackupByDate(backups))
+func TestHostSortEmpty(t *testing.T) {
+	backups := make([]dto.Host, 0)
+	sort.Sort(HostByDate(backups))
 	err := AssertThat(backups, NotNilValue())
 	if err != nil {
 		t.Fatal(err)
@@ -21,9 +21,9 @@ func TestBackupSortEmpty(t *testing.T) {
 	}
 }
 
-func TestBackupSortOne(t *testing.T) {
-	backups := []dto.Backup{mock.CreateBackup("test")}
-	sort.Sort(BackupByDate(backups))
+func TestHostSortOne(t *testing.T) {
+	backups := []dto.Host{mock.CreateHost("test")}
+	sort.Sort(HostByDate(backups))
 	err := AssertThat(backups, NotNilValue())
 	if err != nil {
 		t.Fatal(err)
@@ -34,9 +34,9 @@ func TestBackupSortOne(t *testing.T) {
 	}
 }
 
-func TestBackupSort(t *testing.T) {
-	backups := []dto.Backup{mock.CreateBackup("c"), mock.CreateBackup("a"), mock.CreateBackup("b")}
-	sort.Sort(BackupByDate(backups))
+func TestHostSort(t *testing.T) {
+	backups := []dto.Host{mock.CreateHost("c"), mock.CreateHost("a"), mock.CreateHost("b")}
+	sort.Sort(HostByDate(backups))
 	err := AssertThat(backups, NotNilValue())
 	if err != nil {
 		t.Fatal(err)
@@ -59,9 +59,9 @@ func TestBackupSort(t *testing.T) {
 	}
 }
 
-func TestBackupSortReal(t *testing.T) {
-	backups := []dto.Backup{mock.CreateBackup("2013-08-25T16:33:26"), mock.CreateBackup("2013-07-29T10:20:15"), mock.CreateBackup("2013-08-23T07:45:48")}
-	sort.Sort(BackupByDate(backups))
+func TestHostSortReal(t *testing.T) {
+	backups := []dto.Host{mock.CreateHost("2013-08-25T16:33:26"), mock.CreateHost("2013-07-29T10:20:15"), mock.CreateHost("2013-08-23T07:45:48")}
+	sort.Sort(HostByDate(backups))
 	err := AssertThat(backups, NotNilValue())
 	if err != nil {
 		t.Fatal(err)
@@ -84,9 +84,9 @@ func TestBackupSortReal(t *testing.T) {
 	}
 }
 
-func TestBackupSortSameLetter(t *testing.T) {
-	backups := []dto.Backup{mock.CreateBackup("aaa"), mock.CreateBackup("a"), mock.CreateBackup("aa")}
-	sort.Sort(BackupByDate(backups))
+func TestHostSortSameLetter(t *testing.T) {
+	backups := []dto.Host{mock.CreateHost("aaa"), mock.CreateHost("a"), mock.CreateHost("aa")}
+	sort.Sort(HostByDate(backups))
 	err := AssertThat(backups, NotNilValue())
 	if err != nil {
 		t.Fatal(err)
