@@ -40,6 +40,7 @@ func (s *backupService) ListHosts() ([]dto.Host, error) {
 	if err != nil {
 		return nil, err
 	}
+	defer file.Close()
 	fileinfo, err := file.Stat()
 	if err != nil {
 		return nil, err
@@ -51,15 +52,37 @@ func (s *backupService) ListHosts() ([]dto.Host, error) {
 	if err != nil {
 		return nil, err
 	}
-	return createHosts(names), nil
+	return s.createHosts(names)
 }
 
-func createHosts(hosts []string) []dto.Host {
-	result := make([]dto.Host, len(hosts))
-	for i, host := range hosts {
-		result[i] = createHost(host)
+func (s *backupService) createHosts(hosts []string) ([]dto.Host, error) {
+	var result []dto.Host
+	for _, host := range hosts {
+		dir := fmt.Sprintf("%s%c%s", s.rootdir, os.PathSeparator, host)
+		isDir, err := isDir(dir)
+		if err != nil {
+			return nil, err
+		}
+		if isDir {
+			result = append(result, createHost(host))
+		} else {
+			logger.Warnf("is a directory")
+		}
 	}
-	return result
+	return result, nil
+}
+
+func isDir(dir string) (bool, error) {
+	file, err := os.Open(dir)
+	if err != nil {
+		return false, err
+	}
+	defer file.Close()
+	fileinfo, err := file.Stat()
+	if err != nil {
+		return false, err
+	}
+	return fileinfo.IsDir(), nil
 }
 
 func createHost(host string) dto.Host {
@@ -77,6 +100,7 @@ func (s *backupService) ListBackups(host dto.Host) ([]dto.Backup, error) {
 	if err != nil {
 		return nil, err
 	}
+	defer file.Close()
 	fileinfo, err := file.Stat()
 	if err != nil {
 		return nil, err
@@ -123,6 +147,7 @@ func (s *backupService) GetHost(host string) (dto.Host, error) {
 	if err != nil {
 		return nil, err
 	}
+	defer file.Close()
 	fileinfo, err := file.Stat()
 	if err != nil {
 		return nil, err
@@ -310,7 +335,7 @@ func (s *backupService) Cleanup(host dto.Host) error {
 	for _, backup := range backups {
 		dir := fmt.Sprintf("%s%c%s%c%s", s.rootdir, os.PathSeparator, host.GetName(), os.PathSeparator, backup.GetName())
 		logger.Debugf("delete %s started", dir)
-		os.RemoveAll(dir)
+		//os.RemoveAll(dir)
 		logger.Debugf("delete %s finished", dir)
 	}
 	return nil
