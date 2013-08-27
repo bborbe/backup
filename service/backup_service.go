@@ -95,7 +95,9 @@ func (s *backupService) ListBackups(host dto.Host) ([]dto.Backup, error) {
 		}
 	}
 
-	return createBackups(names), nil
+	backups:=createBackups(names)
+	sort.Sort(util.BackupByDate(backups))
+	return backups, nil
 }
 
 func validBackupName(name string) bool {
