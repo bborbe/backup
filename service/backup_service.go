@@ -10,6 +10,7 @@ import (
 	"regexp"
 	"sort"
 	"strconv"
+	"time"
 )
 
 type BackupService interface {
@@ -177,15 +178,36 @@ func (s *backupService) ListOldBackups(host dto.Host) ([]dto.Backup, error) {
 
 func getKeepBackups(backups []dto.Backup) ([]dto.Backup, error) {
 	var result []dto.Backup
+
+	now := time.Now()
+
+	// keep all backups from today
+	{
+		b, err := getKeepToday(backups, now)
+		if err != nil {
+			return nil, err
+		}
+		for _, backup := range b {
+			result = append(result, backup)
+		}
+	}
 	// keep first backup per day if age <= 7 days
 	{
-		for _, backup := range getKeepDay(backups) {
+		b, err := getKeepDay(backups, now)
+		if err != nil {
+			return nil, err
+		}
+		for _, backup := range b {
 			result = append(result, backup)
 		}
 	}
 	// keep first backup per week if age <= 28 days
 	{
-		for _, backup := range getKeepWeek(backups) {
+		b, err := getKeepWeek(backups, now)
+		if err != nil {
+			return nil, err
+		}
+		for _, backup := range b {
 			result = append(result, backup)
 		}
 	}
@@ -202,14 +224,50 @@ func getKeepBackups(backups []dto.Backup) ([]dto.Backup, error) {
 	return result, nil
 }
 
-func getKeepDay(backups []dto.Backup) []dto.Backup {
-	sort.Sort(util.BackupByDate(backups))
-	return []dto.Backup{}
+func getKeepToday(backups []dto.Backup, now time.Time) ([]dto.Backup, error) {
+	var result []dto.Backup
+	for _, backup := range backups {
+		t, err := getTimeByName(backup.GetName())
+		if err != nil {
+			return nil, err
+		}
+		if isToday(t, now) {
+			result = append(result, backup)
+		}
+	}
+	return result, nil
 }
 
-func getKeepWeek(backups []dto.Backup) []dto.Backup {
+func isToday(t time.Time, now time.Time) bool {
+	return t.Year() == now.Year() && t.Month() == now.Month() && t.Day() == now.Day()
+}
+
+func getKeepDay(backups []dto.Backup, now time.Time) ([]dto.Backup, error) {
 	sort.Sort(util.BackupByDate(backups))
-	return []dto.Backup{}
+	var result []dto.Backup
+
+	var lastYear int = -1
+	var lastMonth time.Month = -1
+	var lastDay int = -1
+
+	for _, backup := range backups {
+		t, err := getTimeByName(backup.GetName())
+		if err != nil {
+			return nil, err
+		}
+		if ageLessThanDays(t, now, 7) && (t.Year() != lastYear || t.Month() != lastMonth || t.Day() != lastDay) {
+			result = append(result, backup)
+			lastYear = t.Year()
+			lastMonth = t.Month()
+			lastDay = t.Day()
+		}
+	}
+	return result, nil
+}
+
+func ageLessThanDays(t time.Time, now time.Time, days int64) bool {
+	diff := now.Unix() - t.Unix()
+	return diff <= 24*60*60*days
 }
 
 func getKeepMonth(backups []dto.Backup) ([]dto.Backup, error) {
@@ -251,4 +309,27 @@ func (s *backupService) ListKeepBackups(host dto.Host) ([]dto.Backup, error) {
 		return nil, err
 	}
 	return getKeepBackups(backups)
+}
+
+func getTimeByName(backupName string) (time.Time, error) {
+	return time.Parse("2006-01-02T15:04:05", backupName)
+}
+
+func getKeepWeek(backups []dto.Backup, now time.Time) ([]dto.Backup, error) {
+	sort.Sort(util.BackupByDate(backups))
+	var result []dto.Backup
+	var lastWeek int = -1
+	for _, backup := range backups {
+		t, err := getTimeByName(backup.GetName())
+		if err != nil {
+			return nil, err
+		}
+		_, week := t.ISOWeek()
+		fmt.Printf("%d %d\n", week, lastWeek)
+		if ageLessThanDays(t, now, 40) && week != lastWeek {
+			result = append(result, backup)
+			lastWeek = week
+		}
+	}
+	return result, nil
 }
