@@ -325,7 +325,6 @@ func getKeepWeek(backups []dto.Backup, now time.Time) ([]dto.Backup, error) {
 			return nil, err
 		}
 		_, week := t.ISOWeek()
-		fmt.Printf("%d %d\n", week, lastWeek)
 		if ageLessThanDays(t, now, 40) && week != lastWeek {
 			result = append(result, backup)
 			lastWeek = week
