@@ -2,6 +2,7 @@ package main
 
 import (
 	. "github.com/bborbe/assert"
+	"github.com/bborbe/backup/config"
 	"github.com/bborbe/backup/dto"
 	backup_mock "github.com/bborbe/backup/mock"
 	server_mock "github.com/bborbe/server/mock"
@@ -13,7 +14,7 @@ func TestDoEmpty(t *testing.T) {
 	backupService := backup_mock.NewBackupServiceMock()
 	backupService.SetListHosts(make([]dto.Host, 0), nil)
 	//backupService.SetListBackups(make([]dto.Backup, 0), nil)
-	err := do(writer, backupService)
+	err := do(writer, backupService, config.DEFAULT_HOST)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -37,7 +38,7 @@ func TestDoNotEmpty(t *testing.T) {
 	backupService.SetListHosts(hosts, nil)
 	backup := backup_mock.CreateBackup("backupA")
 	backupService.SetLatestBackup(backup, nil)
-	err := do(writer, backupService)
+	err := do(writer, backupService, config.DEFAULT_HOST)
 	if err != nil {
 		t.Fatal(err)
 	}

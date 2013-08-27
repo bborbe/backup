@@ -175,7 +175,7 @@ func (s *backupService) GetLatestBackup(host dto.Host) (dto.Backup, error) {
 		names = append(names, backup.GetName())
 	}
 	sort.Strings(names)
-	return backups[names[len(names) - 1]], nil
+	return backups[names[len(names)-1]], nil
 }
 
 func (s *backupService) ListOldBackups(host dto.Host) ([]dto.Backup, error) {
@@ -334,9 +334,9 @@ func (s *backupService) Cleanup(host dto.Host) error {
 	logger.Debugf("found %d backup to delete for host %s", len(backups), host.GetName())
 	for _, backup := range backups {
 		dir := fmt.Sprintf("%s%c%s%c%s", s.rootdir, os.PathSeparator, host.GetName(), os.PathSeparator, backup.GetName())
-		logger.Debugf("delete %s started", dir)
+		logger.Infof("delete %s started", dir)
 		//os.RemoveAll(dir)
-		logger.Debugf("delete %s finished", dir)
+		logger.Infof("delete %s finished", dir)
 	}
 	return nil
 }
