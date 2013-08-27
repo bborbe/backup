@@ -302,6 +302,18 @@ func (s *backupService) Cleanup(host dto.Host) error {
 	if host == nil {
 		return errors.New("parameter host missing")
 	}
+	backups, err := s.ListOldBackups(host)
+	if err != nil {
+		return err
+	}
+	logger.Debugf("found %d backup to delete for host %s", len(backups), host.GetName())
+	for _, backup := range backups {
+		dir := fmt.Sprintf("%s%c%s%c%s", s.rootdir, os.PathSeparator, host.GetName(), os.PathSeparator, backup.GetName())
+		fmt.Println(dir)
+		logger.Debugf("delete %s started", dir)
+		//os.RemoveAll(dir)
+		logger.Debugf("delete %s finished", dir)
+	}
 	return nil
 }
 
