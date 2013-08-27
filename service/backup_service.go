@@ -66,7 +66,7 @@ func (s *backupService) createHosts(hosts []string) ([]dto.Host, error) {
 		if isDir {
 			result = append(result, createHost(host))
 		} else {
-			logger.Warnf("is a directory")
+			logger.Warnf("createHost for %s failed, is not a directory", host)
 		}
 	}
 	return result, nil
@@ -175,7 +175,7 @@ func (s *backupService) GetLatestBackup(host dto.Host) (dto.Backup, error) {
 		names = append(names, backup.GetName())
 	}
 	sort.Strings(names)
-	return backups[names[len(names)-1]], nil
+	return backups[names[len(names) - 1]], nil
 }
 
 func (s *backupService) ListOldBackups(host dto.Host) ([]dto.Backup, error) {
