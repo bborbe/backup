@@ -335,7 +335,7 @@ func (s *backupService) Cleanup(host dto.Host) error {
 	for _, backup := range backups {
 		dir := fmt.Sprintf("%s%c%s%c%s", s.rootdir, os.PathSeparator, host.GetName(), os.PathSeparator, backup.GetName())
 		logger.Infof("delete %s started", dir)
-		//os.RemoveAll(dir)
+		os.RemoveAll(dir)
 		logger.Infof("delete %s finished", dir)
 	}
 	return nil
