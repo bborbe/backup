@@ -1,7 +1,0 @@
-Package: backup
-Priority: optional
-Section: misc
-Version: 1.0
-Architecture: amd64
-Maintainer: bborbe
-Description: Backup tools
