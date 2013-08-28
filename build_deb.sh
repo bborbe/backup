@@ -26,6 +26,9 @@ echo foo | DEBFULLNAME="Benjamin Borbe" dh_make --single --indep --createorig --
 grep -v makefile debian/rules > debian/rules.new
 mv debian/rules.new debian/rules
 
+# Set distrubtion
+sed -i.bak 's/unstable/bborbe-unstable/g' debian/changelog
+
 # Add copyright
 cp ../src/github.com/bborbe/backup/LICENSE debian/copyright
 
