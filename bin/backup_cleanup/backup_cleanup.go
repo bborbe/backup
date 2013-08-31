@@ -73,13 +73,12 @@ func lock(name string) error {
 	logger.Debugf("try lock %s", name)
 	var err error
 	var file *os.File
-	file, err = os.Create(name)
-	if err != nil {
-		return err
-	}
-	file, err = os.OpenFile(name, os.O_APPEND, 0666)
-	if err != nil {
-		return err
+	file, _ = os.Open(name)
+	if file == nil {
+		file, err = os.Create(name)
+		if err != nil {
+			return err
+		}
 	}
 	err = syscall.Flock(int(file.Fd()), syscall.LOCK_EX)
 	if err != nil {
@@ -93,7 +92,7 @@ func unlock(name string) error {
 	logger.Debugf("try unlock %s", name)
 	var err error
 	var file *os.File
-	file, err = os.OpenFile(name, os.O_APPEND, 0666)
+	file, err = os.Open(name)
 	if err != nil {
 		return err
 	}
