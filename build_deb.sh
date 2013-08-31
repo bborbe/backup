@@ -1,14 +1,12 @@
 #!/bin/sh
 
-NAME=backup
-VERSION=0.1
 BINS="backup_cleanup backup_keep backup_latest backup_list backup_old"
-
 
 #########################################################################
 
 # Create scripts source dir
 DIR=$NAME-$VERSION
+echo $DIR
 rm -rf $DIR
 mkdir $DIR
 
