@@ -7,11 +7,11 @@ import (
 	"github.com/bborbe/backup/dto"
 	"github.com/bborbe/backup/service"
 	"github.com/bborbe/backup/util"
+	"github.com/bborbe/go/lock"
 	"github.com/bborbe/log"
 	"io"
 	"os"
 	"sort"
-	"syscall"
 )
 
 const LOCK_NAME = "/var/run/backup_clean.lock"
@@ -40,21 +40,12 @@ func do(writer io.Writer, backupService service.BackupService, hostname string, 
 	var err error
 	var hosts []dto.Host
 
-	var file *os.File
-	file, _ = os.Open(lockName)
-	if file == nil {
-		file, err = os.Create(lockName)
-		if err != nil {
-			return err
-		}
-	}
-
-	err = lock(file)
+	l := lock.NewLock(lockName)
+	err = l.Lock()
 	if err != nil {
 		return err
 	}
-
-	defer unlock(file)
+	defer l.Unlock()
 	logger.Debug("start")
 	if hostname == config.DEFAULT_HOST {
 		hosts, err = backupService.ListHosts()
@@ -78,26 +69,4 @@ func do(writer io.Writer, backupService service.BackupService, hostname string, 
 	}
 	logger.Debug("done")
 	return nil
-}
-
-func lock(file *os.File) error {
-	logger.Debug("try lock")
-	var err error
-	err = syscall.Flock(int(file.Fd()), syscall.LOCK_EX)
-	if err != nil {
-		return err
-	}
-	logger.Debug("locked")
-	return nil
-}
-
-func unlock(file *os.File) error {
-	logger.Debug("try unlock")
-	var err error
-	err = syscall.Flock(int(file.Fd()), syscall.LOCK_UN)
-	if err != nil {
-		return err
-	}
-	logger.Debug("unlocked")
-	return file.Close()
 }
