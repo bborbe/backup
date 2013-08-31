@@ -7,6 +7,8 @@ BUILD=${BUILD_NUMBER}
 NAME=backup
 VERSION=$MAJOR.$MINOR.$BUGFIX.$BUILD
 
+export VERSION
+export NAME
 export GOPATH=${WORKSPACE}
 export REPORT_DIR=${WORKSPACE}/test-reports
 
