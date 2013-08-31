@@ -312,7 +312,7 @@ func getKeepMonth(backups []dto.Backup) ([]dto.Backup, error) {
 		if err != nil {
 			return nil, err
 		}
-		logger.Debugf("year %d month %d", year, month)
+		logger.Tracef("year %d month %d", year, month)
 
 		if year != lastYear || month != lastMonth {
 			result = append(result, backup)
