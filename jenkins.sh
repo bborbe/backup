@@ -4,12 +4,12 @@ MAJOR=0
 MINOR=1
 BUGFIX=0
 BUILD=${BUILD_NUMBER}
-
-export NAME=backup
-export VERSION=$MAJOR.$MINOR.$BUGFIX.$BUILD
+NAME=backup
+VERSION=$MAJOR.$MINOR.$BUGFIX.$BUILD
 
 export GOPATH=${WORKSPACE}
 export REPORT_DIR=${WORKSPACE}/test-reports
+
 rm -rf $REPORT_DIR bin pkg package *.deb backup*
 mkdir -p $REPORT_DIR
 PACKAGES=`cd src && find github.com/bborbe/backup -name "*_test.go" | /usr/lib/go/bin/dirof | /usr/lib/go/bin/unique`
