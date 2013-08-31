@@ -39,11 +39,22 @@ func main() {
 func do(writer io.Writer, backupService service.BackupService, hostname string, lockName string) error {
 	var err error
 	var hosts []dto.Host
-	err = lock(lockName)
+
+	var file *os.File
+	file, _ = os.Open(lockName)
+	if file == nil {
+		file, err = os.Create(lockName)
+		if err != nil {
+			return err
+		}
+	}
+
+	err = lock(file)
 	if err != nil {
 		return err
 	}
-	defer unlock(lockName)
+
+	defer unlock(file)
 	logger.Debug("start")
 	if hostname == config.DEFAULT_HOST {
 		hosts, err = backupService.ListHosts()
@@ -69,37 +80,24 @@ func do(writer io.Writer, backupService service.BackupService, hostname string, 
 	return nil
 }
 
-func lock(name string) error {
-	logger.Debugf("try lock %s", name)
+func lock(file *os.File) error {
+	logger.Debug("try lock")
 	var err error
-	var file *os.File
-	file, _ = os.Open(name)
-	if file == nil {
-		file, err = os.Create(name)
-		if err != nil {
-			return err
-		}
-	}
 	err = syscall.Flock(int(file.Fd()), syscall.LOCK_EX)
 	if err != nil {
 		return err
 	}
-	logger.Debugf("locked %s", name)
-	return file.Close()
+	logger.Debug("locked")
+	return nil
 }
 
-func unlock(name string) error {
-	logger.Debugf("try unlock %s", name)
+func unlock(file *os.File) error {
+	logger.Debug("try unlock")
 	var err error
-	var file *os.File
-	file, err = os.Open(name)
-	if err != nil {
-		return err
-	}
 	err = syscall.Flock(int(file.Fd()), syscall.LOCK_UN)
 	if err != nil {
 		return err
 	}
-	logger.Debugf("unlocked %s", name)
+	logger.Debug("unlocked")
 	return file.Close()
 }

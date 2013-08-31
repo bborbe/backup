@@ -63,19 +63,37 @@ func TestDoNotEmpty(t *testing.T) {
 
 func TestLocking(t *testing.T) {
 	var err error
-	name := os.TempDir() + "/bla.lock"
+	lockName := os.TempDir() + "/bla.lock"
+	var file *os.File
+	file, _ = os.Open(lockName)
+	if file == nil {
+		file, err = os.Create(lockName)
+		if err != nil {
+			t.Fatal(err)
+		}
+	}
+
 	result := true
-	err = lock(name)
+	err = lock(file)
 	if err != nil {
 		t.Fatal(err)
 	}
 	go func() {
-		erro := lock(name)
+		var file2 *os.File
+		file2, _ = os.Open(lockName)
+		if file2 == nil {
+			file2, err = os.Create(lockName)
+			if err != nil {
+				t.Fatal(err)
+			}
+		}
+
+		erro := lock(file2)
 		if erro != nil {
 			t.Fatal(erro)
 		}
 		result = false
-		erro = unlock(name)
+		erro = unlock(file2)
 		if erro != nil {
 			t.Fatal(erro)
 		}
@@ -84,7 +102,7 @@ func TestLocking(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	err = unlock(name)
+	err = unlock(file)
 	if err != nil {
 		t.Fatal(err)
 	}
