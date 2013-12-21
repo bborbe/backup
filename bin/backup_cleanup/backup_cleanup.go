@@ -7,7 +7,7 @@ import (
 	"github.com/bborbe/backup/dto"
 	"github.com/bborbe/backup/service"
 	"github.com/bborbe/backup/util"
-	"github.com/bborbe/go/lock"
+	"github.com/bborbe/lock"
 	"github.com/bborbe/log"
 	"io"
 	"os"
