@@ -16,6 +16,7 @@ import (
 var logger = log.DefaultLogger
 
 func main() {
+	defer logger.Close()
 	logLevelPtr := flag.Int("loglevel", config.DEFAULT_LOG_LEVEL, "int")
 	rootdirPtr := flag.String("rootdir", config.DEFAULT_ROOT_DIR, "string")
 	hostPtr := flag.String("host", config.DEFAULT_HOST, "string")
