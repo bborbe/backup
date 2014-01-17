@@ -3,8 +3,8 @@ package main
 import (
 	"flag"
 	"github.com/bborbe/backup/config"
-	"github.com/bborbe/log"
 	"github.com/bborbe/backup/status_server"
+	"github.com/bborbe/log"
 )
 
 var logger = log.DefaultLogger
@@ -40,4 +40,3 @@ func main() {
 	}
 	logger.Debug("backup status server finished")
 }
-
