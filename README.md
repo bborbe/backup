@@ -12,7 +12,7 @@ http://godoc.org/github.com/bborbe/backup
 Copyright and license
 ---------------------
 
-    Copyright (c) 2013, Benjamin Borbe <bborbe@rocketnews.de>
+    Copyright (c) 2014, Benjamin Borbe <bborbe@rocketnews.de>
     All rights reserved.
 
     Redistribution and use in source and binary forms, with or without
