@@ -1,4 +1,4 @@
-package mock
+package service
 
 import "github.com/bborbe/backup/dto"
 

@@ -38,35 +38,41 @@ func NewBackupService(rootdir string) *backupService {
 func (s *backupService) ListHosts() ([]dto.Host, error) {
 	file, err := os.Open(s.rootdir)
 	if err != nil {
+		logger.Debugf("open rootdir %s failed: %v", s.rootdir, err)
 		return nil, err
 	}
 	defer file.Close()
 	fileinfo, err := file.Stat()
 	if err != nil {
+		logger.Debugf("file stat failed: %v", err)
 		return nil, err
 	}
 	if !fileinfo.IsDir() {
-		return nil, fmt.Errorf("rootdir %s is not a directory", s.rootdir)
+		msg := fmt.Sprintf("rootdir %s is not a directory", s.rootdir)
+		logger.Debug(msg)
+		return nil, errors.New(msg)
 	}
 	names, err := file.Readdirnames(0)
 	if err != nil {
+		logger.Debugf("read dir names failed: %v", err)
 		return nil, err
 	}
 	return s.createHosts(names)
 }
 
 func (s *backupService) createHosts(hosts []string) ([]dto.Host, error) {
-	var result []dto.Host
+	result := []dto.Host{}
 	for _, host := range hosts {
 		dir := fmt.Sprintf("%s%c%s", s.rootdir, os.PathSeparator, host)
 		isDir, err := isDir(dir)
 		if err != nil {
+			logger.Debugf("is dir failed: %v", err)
 			return nil, err
 		}
 		if isDir {
 			result = append(result, createHost(host))
 		} else {
-			logger.Warnf("createHost for %s failed, is not a directory", host)
+			logger.Debugf("createHost for %s failed, is not a directory", host)
 		}
 	}
 	return result, nil
@@ -75,7 +81,8 @@ func (s *backupService) createHosts(hosts []string) ([]dto.Host, error) {
 func isDir(dir string) (bool, error) {
 	file, err := os.Open(dir)
 	if err != nil {
-		return false, err
+		logger.Debugf("open dir %s failed: %v", dir, err)
+		return false, nil
 	}
 	defer file.Close()
 	fileinfo, err := file.Stat()
@@ -98,11 +105,13 @@ func (s *backupService) ListBackups(host dto.Host) ([]dto.Backup, error) {
 	dir := fmt.Sprintf("%s%c%s", s.rootdir, os.PathSeparator, host.GetName())
 	file, err := os.Open(dir)
 	if err != nil {
+		logger.Debugf("open dir failed: %v", err)
 		return nil, err
 	}
 	defer file.Close()
 	fileinfo, err := file.Stat()
 	if err != nil {
+		logger.Debugf("file stat failed: %v", err)
 		return nil, err
 	}
 	if !fileinfo.IsDir() {
@@ -110,6 +119,7 @@ func (s *backupService) ListBackups(host dto.Host) ([]dto.Backup, error) {
 	}
 	dirnames, err := file.Readdirnames(0)
 	if err != nil {
+		logger.Debugf("read dir names failed: %v", err)
 		return nil, err
 	}
 	var names []string
@@ -163,6 +173,7 @@ func (s *backupService) GetHost(host string) (dto.Host, error) {
 func (s *backupService) GetLatestBackup(host dto.Host) (dto.Backup, error) {
 	list, err := s.ListBackups(host)
 	if err != nil {
+		logger.Debugf("list backups failed: %v", err)
 		return nil, err
 	}
 	if len(list) == 0 {

@@ -13,12 +13,12 @@ const DEFAULT_PORT int = 8002
 
 func main() {
 	defer logger.Close()
-	logLevelPtr := flag.Int("loglevel", config.DEFAULT_LOG_LEVEL, "int")
-	rootdirPtr := flag.String("rootdir", config.DEFAULT_ROOT_DIR, "string")
-	portnumberPtr := flag.Int("port", DEFAULT_PORT, "int")
+	logLevelPtr := flag.String("loglevel", log.LogLevelToString(config.DEFAULT_LOG_LEVEL), "one of OFF,TRACE,DEBUG,INFO,WARN,ERROR")
+	rootdirPtr := flag.String("rootdir", config.DEFAULT_ROOT_DIR, "root directory for backups")
+	portnumberPtr := flag.Int("port", DEFAULT_PORT, "server port")
 	flag.Parse()
-	logger.SetLevelThreshold(*logLevelPtr)
-	logger.Tracef("set log level to %s", log.LogLevelToString(*logLevelPtr))
+	logger.SetLevelThreshold(log.LogStringToLevel(*logLevelPtr))
+	logger.Tracef("set log level to %s", *logLevelPtr)
 	logger.Tracef("rootdir %s", *rootdirPtr)
 	logger.Tracef("portnumberPtr %d", *portnumberPtr)
 	logger.Debugf("backup status server started at port %d", *portnumberPtr)

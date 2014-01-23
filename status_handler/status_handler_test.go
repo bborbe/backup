@@ -5,13 +5,10 @@ import (
 	. "github.com/bborbe/assert"
 	"github.com/bborbe/backup/dto"
 	"github.com/bborbe/backup/status_checker"
-	"github.com/bborbe/log"
 	"github.com/bborbe/server/mock"
 	"net/http"
 	"testing"
 )
-
-var logger = log.DefaultLogger
 
 func TestImplementsStatusHandler(t *testing.T) {
 	var statusChecker status_checker.StatusChecker

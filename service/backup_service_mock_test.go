@@ -1,14 +1,13 @@
-package mock
+package service
 
 import (
 	. "github.com/bborbe/assert"
-	"github.com/bborbe/backup/service"
 	"testing"
 )
 
-func TestImplementsBackupService(t *testing.T) {
+func TestImplementsBackupServiceMock(t *testing.T) {
 	s := NewBackupServiceMock()
-	var expected *service.BackupService
+	var expected *BackupService
 	err := AssertThat(s, Implements(expected))
 	if err != nil {
 		t.Fatal(err)

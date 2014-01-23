@@ -4,7 +4,7 @@ import (
 	. "github.com/bborbe/assert"
 	"github.com/bborbe/backup/config"
 	"github.com/bborbe/backup/dto"
-	backup_mock "github.com/bborbe/backup/mock"
+	backup_mock "github.com/bborbe/backup/service"
 	server_mock "github.com/bborbe/server/mock"
 	"testing"
 )

@@ -3,7 +3,6 @@ package util
 import (
 	. "github.com/bborbe/assert"
 	"github.com/bborbe/backup/dto"
-	"github.com/bborbe/backup/mock"
 	"sort"
 	"testing"
 )
@@ -22,7 +21,7 @@ func TestBackupSortEmpty(t *testing.T) {
 }
 
 func TestBackupSortOne(t *testing.T) {
-	backups := []dto.Backup{mock.CreateBackup("test")}
+	backups := []dto.Backup{createBackup("test")}
 	sort.Sort(BackupByDate(backups))
 	err := AssertThat(backups, NotNilValue())
 	if err != nil {
@@ -35,7 +34,7 @@ func TestBackupSortOne(t *testing.T) {
 }
 
 func TestBackupSort(t *testing.T) {
-	backups := []dto.Backup{mock.CreateBackup("c"), mock.CreateBackup("a"), mock.CreateBackup("b")}
+	backups := []dto.Backup{createBackup("c"), createBackup("a"), createBackup("b")}
 	sort.Sort(BackupByDate(backups))
 	err := AssertThat(backups, NotNilValue())
 	if err != nil {
@@ -60,7 +59,7 @@ func TestBackupSort(t *testing.T) {
 }
 
 func TestBackupSortReal(t *testing.T) {
-	backups := []dto.Backup{mock.CreateBackup("2013-08-25T16:33:26"), mock.CreateBackup("2013-07-29T10:20:15"), mock.CreateBackup("2013-08-23T07:45:48")}
+	backups := []dto.Backup{createBackup("2013-08-25T16:33:26"), createBackup("2013-07-29T10:20:15"), createBackup("2013-08-23T07:45:48")}
 	sort.Sort(BackupByDate(backups))
 	err := AssertThat(backups, NotNilValue())
 	if err != nil {
@@ -85,7 +84,7 @@ func TestBackupSortReal(t *testing.T) {
 }
 
 func TestBackupSortSameLetter(t *testing.T) {
-	backups := []dto.Backup{mock.CreateBackup("aaa"), mock.CreateBackup("a"), mock.CreateBackup("aa")}
+	backups := []dto.Backup{createBackup("aaa"), createBackup("a"), createBackup("aa")}
 	sort.Sort(BackupByDate(backups))
 	err := AssertThat(backups, NotNilValue())
 	if err != nil {
@@ -107,4 +106,10 @@ func TestBackupSortSameLetter(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+}
+
+func createBackup(name string) dto.Backup {
+	backup := dto.NewBackup()
+	backup.SetName(name)
+	return backup
 }
