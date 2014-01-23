@@ -8,8 +8,8 @@ type Status interface {
 }
 
 type status struct {
-	host   string
-	status bool
+	Host   string `json:"host"`
+	Status bool   `json:"status"`
 }
 
 func NewStatus() *status {
@@ -18,17 +18,17 @@ func NewStatus() *status {
 }
 
 func (h *status) GetHost() string {
-	return h.host
+	return h.Host
 }
 
 func (h *status) SetHost(host string) {
-	h.host = host
+	h.Host = host
 }
 
 func (h *status) GetStatus() bool {
-	return h.status
+	return h.Status
 }
 
 func (h *status) SetStatus(status bool) {
-	h.status = status
+	h.Status = status
 }

@@ -6,7 +6,7 @@ type Host interface {
 }
 
 type host struct {
-	name string
+	Name string `json:"name"`
 }
 
 func NewHost() *host {
@@ -15,9 +15,9 @@ func NewHost() *host {
 }
 
 func (h *host) GetName() string {
-	return h.name
+	return h.Name
 }
 
 func (h *host) SetName(name string) {
-	h.name = name
+	h.Name = name
 }

@@ -6,7 +6,7 @@ type Backup interface {
 }
 
 type backup struct {
-	name string
+	Name string `json:"name"`
 }
 
 func NewBackup() *backup {
@@ -15,9 +15,9 @@ func NewBackup() *backup {
 }
 
 func (h *backup) GetName() string {
-	return h.name
+	return h.Name
 }
 
 func (h *backup) SetName(name string) {
-	h.name = name
+	h.Name = name
 }
