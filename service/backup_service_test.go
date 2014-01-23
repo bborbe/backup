@@ -446,7 +446,6 @@ func TestGetTimeByName(t *testing.T) {
 }
 
 func TestGetKeepToday(t *testing.T) {
-	var err error
 	var result []dto.Backup
 	now, err := getTimeByName("2013-12-24T20:15:59")
 	if err != nil {
@@ -489,7 +488,6 @@ func TestGetKeepToday(t *testing.T) {
 }
 
 func TestGetKeepDay(t *testing.T) {
-	var err error
 	var result []dto.Backup
 	now, err := getTimeByName("2013-12-24T20:15:59")
 	if err != nil {
@@ -567,7 +565,6 @@ func TestAgeLessThan7Days(t *testing.T) {
 }
 
 func TestGetKeepWeek(t *testing.T) {
-	var err error
 	var result []dto.Backup
 	now, err := getTimeByName("2013-12-24T20:15:59")
 	if err != nil {
@@ -619,6 +616,88 @@ func TestGetKeepWeek(t *testing.T) {
 			t.Fatal(err)
 		}
 		err = AssertThat(len(result), Is(4))
+		if err != nil {
+			t.Fatal(err)
+		}
+	}
+}
+
+func TestListKeepBackups(t *testing.T) {
+	var (
+		service  BackupService
+		backups  []dto.Backup
+		err      error
+		host     dto.Host
+		hostName string
+	)
+	hostName = "firewall.example.com"
+	clearBackupRootDir(BACKUP_ROOT_DIR)
+	createBackupRootDir(BACKUP_ROOT_DIR)
+	createHostDir(BACKUP_ROOT_DIR, hostName)
+	service = NewBackupService(BACKUP_ROOT_DIR)
+	host, err = service.GetHost(hostName)
+	if err != nil {
+		t.Fatal(err)
+	}
+	{
+		backups, err = service.ListKeepBackups(host)
+		err = AssertThat(err, NilValue())
+		if err != nil {
+			t.Fatal(err)
+		}
+		err = AssertThat(backups, NotNilValue())
+		if err != nil {
+			t.Fatal(err)
+		}
+		err = AssertThat(len(backups), Is(0))
+		if err != nil {
+			t.Fatal(err)
+		}
+	}
+}
+
+func TestLatestBackup(t *testing.T) {
+	var (
+		err     error
+		backups []dto.Backup
+		backup  dto.Backup
+	)
+	{
+		backups = []dto.Backup{}
+		backup = latestBackup(backups)
+		err = AssertThat(backup, NilValue())
+		if err != nil {
+			t.Fatal(err)
+		}
+	}
+	{
+		backups := []dto.Backup{
+			createBackup("2013-12-06T20:15:59"),
+		}
+		backup = latestBackup(backups)
+		err = AssertThat(backup, NotNilValue())
+		if err != nil {
+			t.Fatal(err)
+		}
+		err = AssertThat(backup.GetName(), Is("2013-12-06T20:15:59"))
+		if err != nil {
+			t.Fatal(err)
+		}
+	}
+	{
+		backups := []dto.Backup{
+			createBackup("2013-12-06T20:15:55"),
+			createBackup("2013-12-06T20:15:54"),
+			createBackup("2013-12-06T20:15:53"),
+			createBackup("2013-12-06T20:15:56"),
+			createBackup("2013-12-06T20:15:52"),
+		}
+		backup = latestBackup(backups)
+		err = AssertThat(backup, NotNilValue())
+		if err != nil {
+			t.Fatal(err)
+		}
+		err = AssertThat(backup.GetName(), Is("2013-12-06T20:15:56"))
 		if err != nil {
 			t.Fatal(err)
 		}

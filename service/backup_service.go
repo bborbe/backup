@@ -243,6 +243,13 @@ func getKeepBackups(backups []dto.Backup) ([]dto.Backup, error) {
 			keep[backup.GetName()] = backup
 		}
 	}
+	// keep latest backup / current
+	{
+		backup := latestBackup(backups)
+		if backup != nil {
+			keep[backup.GetName()] = backup
+		}
+	}
 
 	var result []dto.Backup
 	for _, backup := range keep {
@@ -369,4 +376,12 @@ func getKeepWeek(backups []dto.Backup, now time.Time) ([]dto.Backup, error) {
 		}
 	}
 	return result, nil
+}
+
+func latestBackup(backups []dto.Backup) dto.Backup {
+	if backups != nil && len(backups) > 0 {
+		sort.Sort(util.BackupByDate(backups))
+		return backups[len(backups)-1]
+	}
+	return nil
 }
