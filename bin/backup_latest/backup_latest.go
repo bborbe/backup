@@ -56,7 +56,9 @@ func do(writer io.Writer, backupService service.BackupService, hostname string) 
 		if err != nil {
 			return err
 		}
-		fmt.Fprintf(writer, "%s/%s\n", host.GetName(), backup.GetName())
+		if backup != nil {
+			fmt.Fprintf(writer, "%s/%s\n", host.GetName(), backup.GetName())
+		}
 	}
 	logger.Debug("done")
 	return nil
