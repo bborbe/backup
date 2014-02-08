@@ -26,9 +26,6 @@ do
 done
 
 go install github.com/bborbe/backup/bin/backup_cleanup github.com/bborbe/backup/bin/backup_latest github.com/bborbe/backup/bin/backup_list github.com/bborbe/backup/bin/backup_old github.com/bborbe/backup/bin/backup_keep
-sh src/github.com/bborbe/backup/build_deb.sh
-
-
 
 
 #########################################################################
