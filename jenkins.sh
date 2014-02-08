@@ -83,4 +83,6 @@ rm debian/README*
 # Build package
 debuild -us -uc
 
+cd ..
+
 dput -u $DEB_SERVER ${NAME}_${VERSION}-1_amd64.changes
