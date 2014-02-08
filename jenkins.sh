@@ -6,6 +6,9 @@ BUGFIX=0
 BUILD=${BUILD_NUMBER}
 NAME=backup
 VERSION=$MAJOR.$MINOR.$BUGFIX.$BUILD
+BINS="backup_cleanup backup_keep backup_latest backup_list backup_old"
+
+#########################################################################
 
 export VERSION
 export NAME
@@ -27,9 +30,6 @@ done
 
 go install github.com/bborbe/backup/bin/backup_cleanup github.com/bborbe/backup/bin/backup_latest github.com/bborbe/backup/bin/backup_list github.com/bborbe/backup/bin/backup_old github.com/bborbe/backup/bin/backup_keep
 
-#########################################################################
-
-BINS="backup_cleanup backup_keep backup_latest backup_list backup_old"
 
 # Create scripts source dir
 DIR=$NAME-$VERSION
@@ -73,6 +73,6 @@ rm debian/README*
 # Build package
 debuild -us -uc
 
-#########################################################################
+cd ..
 
 dput -u misc.rn.benjamin-borbe.de ${NAME}_${VERSION}-1_amd64.changes
