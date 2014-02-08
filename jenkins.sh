@@ -1,14 +1,25 @@
 #!/bin/sh
 
+
+DEBFULLNAME="Benjamin Borbe"
+EMAIL=bborbe@rocketnews.de
+
+DEB_SERVER=misc.rn.benjamin-borbe.de
+TARGET_DIR=opt/backup/bin
+
+NAME=backup
+BINS="backup_cleanup backup_keep backup_latest backup_list backup_old"
+INSTALLS="github.com/bborbe/backup/bin/backup_cleanup github.com/bborbe/backup/bin/backup_latest github.com/bborbe/backup/bin/backup_list github.com/bborbe/backup/bin/backup_old github.com/bborbe/backup/bin/backup_keep"
+SOURCEDIRECTORY="github.com/bborbe/backup"
+
 MAJOR=0
 MINOR=1
 BUGFIX=0
-BUILD=${BUILD_NUMBER}
-NAME=backup
-VERSION=$MAJOR.$MINOR.$BUGFIX.$BUILD
-BINS="backup_cleanup backup_keep backup_latest backup_list backup_old"
 
 #########################################################################
+
+BUILD=${BUILD_NUMBER}
+VERSION=$MAJOR.$MINOR.$BUGFIX.$BUILD
 
 export VERSION
 export NAME
@@ -17,7 +28,7 @@ export REPORT_DIR=${WORKSPACE}/test-reports
 
 rm -rf $REPORT_DIR bin pkg package *.deb backup*
 mkdir -p $REPORT_DIR
-PACKAGES=`cd src && find github.com/bborbe/backup -name "*_test.go" | /usr/lib/go/bin/dirof | /usr/lib/go/bin/unique`
+PACKAGES=`cd src && find $SOURCEDIRECTORY -name "*_test.go" | /usr/lib/go/bin/dirof | /usr/lib/go/bin/unique`
 for PACKAGE in $PACKAGES
 do
         XML=$REPORT_DIR/`/usr/lib/go/bin/pkg2xmlname $PACKAGE`
@@ -28,8 +39,7 @@ do
         /usr/lib/go/bin/go2xunit -fail -input $OUT -output $XML
 done
 
-go install github.com/bborbe/backup/bin/backup_cleanup github.com/bborbe/backup/bin/backup_latest github.com/bborbe/backup/bin/backup_list github.com/bborbe/backup/bin/backup_old github.com/bborbe/backup/bin/backup_keep
-
+go install $INSTALLS
 
 # Create scripts source dir
 DIR=$NAME-$VERSION
@@ -45,7 +55,7 @@ done
 cd $DIR
 
 # Create skeleton
-echo foo | DEBFULLNAME="Benjamin Borbe" dh_make --single --indep --createorig --copyright bsd --email bborbe@rocketnews.de
+echo foo | dh_make --single --indep --createorig --copyright bsd --email $EMAIL
 
 # Remove make calls
 grep -v makefile debian/rules > debian/rules.new
@@ -55,12 +65,12 @@ mv debian/rules.new debian/rules
 sed -i.bak 's/unstable/bborbe-unstable/g' debian/changelog
 
 # Add copyright
-cp ../src/github.com/bborbe/backup/LICENSE debian/copyright
+cp ../src/${SOURCEDIRECTORY}/LICENSE debian/copyright
 
 # Add to install
 for BIN in $BINS
 do
-echo $BIN opt/backup/bin | tee -a debian/install
+echo $BIN $TARGET_DIR | tee -a debian/install
 done
 
 # We don't want a quilt based package
@@ -73,6 +83,4 @@ rm debian/README*
 # Build package
 debuild -us -uc
 
-cd ..
-
-dput -u misc.rn.benjamin-borbe.de ${NAME}_${VERSION}-1_amd64.changes
+dput -u $DEB_SERVER ${NAME}_${VERSION}-1_amd64.changes
