@@ -1,13 +1,13 @@
 package main
 
 import (
+	"os"
+	"testing"
 	. "github.com/bborbe/assert"
 	"github.com/bborbe/backup/config"
 	"github.com/bborbe/backup/dto"
 	backup_mock "github.com/bborbe/backup/service"
 	server_mock "github.com/bborbe/server/mock"
-	"os"
-	"testing"
 )
 
 func TestDoEmpty(t *testing.T) {

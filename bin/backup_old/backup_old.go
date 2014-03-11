@@ -3,14 +3,15 @@ package main
 import (
 	"flag"
 	"fmt"
+	"io"
+	"os"
+	"sort"
+
 	"github.com/bborbe/backup/config"
 	"github.com/bborbe/backup/dto"
 	"github.com/bborbe/backup/service"
 	"github.com/bborbe/backup/util"
 	"github.com/bborbe/log"
-	"io"
-	"os"
-	"sort"
 )
 
 var logger = log.DefaultLogger

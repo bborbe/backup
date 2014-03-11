@@ -3,14 +3,15 @@ package service
 import (
 	"errors"
 	"fmt"
-	"github.com/bborbe/backup/dto"
-	"github.com/bborbe/backup/util"
-	"github.com/bborbe/log"
 	"os"
 	"regexp"
 	"sort"
 	"strconv"
 	"time"
+
+	"github.com/bborbe/backup/dto"
+	"github.com/bborbe/backup/util"
+	"github.com/bborbe/log"
 )
 
 type BackupService interface {

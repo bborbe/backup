@@ -3,15 +3,16 @@ package main
 import (
 	"flag"
 	"fmt"
+	"io"
+	"os"
+	"sort"
+
 	"github.com/bborbe/backup/config"
 	"github.com/bborbe/backup/dto"
 	"github.com/bborbe/backup/service"
 	"github.com/bborbe/backup/util"
 	"github.com/bborbe/lock"
 	"github.com/bborbe/log"
-	"io"
-	"os"
-	"sort"
 )
 
 const LOCK_NAME = "/var/run/backup_clean.lock"

@@ -1,9 +1,9 @@
 package util
 
 import (
-	. "github.com/bborbe/assert"
 	"sort"
 	"testing"
+	. "github.com/bborbe/assert"
 )
 
 func TestStringSort(t *testing.T) {

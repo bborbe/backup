@@ -1,10 +1,10 @@
 package util
 
 import (
-	. "github.com/bborbe/assert"
-	"github.com/bborbe/backup/dto"
 	"sort"
 	"testing"
+	. "github.com/bborbe/assert"
+	"github.com/bborbe/backup/dto"
 )
 
 func TestBackupSortEmpty(t *testing.T) {

@@ -2,11 +2,11 @@ package service
 
 import (
 	"fmt"
-	. "github.com/bborbe/assert"
-	"github.com/bborbe/backup/dto"
 	"os"
 	"testing"
 	"time"
+	. "github.com/bborbe/assert"
+	"github.com/bborbe/backup/dto"
 )
 
 const BACKUP_ROOT_DIR = "/tmp/backuproot"

@@ -1,11 +1,12 @@
 package status_handler
 
 import (
+	"net/http"
+
 	"github.com/bborbe/backup/status_checker"
 	"github.com/bborbe/log"
 	"github.com/bborbe/server/handler/error"
 	"github.com/bborbe/server/handler/json"
-	"net/http"
 )
 
 var logger = log.DefaultLogger

@@ -1,8 +1,8 @@
 package service
 
 import (
-	. "github.com/bborbe/assert"
 	"testing"
+	. "github.com/bborbe/assert"
 )
 
 func TestImplementsBackupServiceMock(t *testing.T) {

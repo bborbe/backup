@@ -2,12 +2,12 @@ package status_handler
 
 import (
 	"errors"
+	"net/http"
+	"testing"
 	. "github.com/bborbe/assert"
 	"github.com/bborbe/backup/dto"
 	"github.com/bborbe/backup/status_checker"
 	"github.com/bborbe/server/mock"
-	"net/http"
-	"testing"
 )
 
 func TestImplementsStatusHandler(t *testing.T) {

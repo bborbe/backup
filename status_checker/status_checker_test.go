@@ -1,10 +1,10 @@
 package status_checker
 
 import (
+	"testing"
 	. "github.com/bborbe/assert"
 	"github.com/bborbe/backup/dto"
 	"github.com/bborbe/backup/service"
-	"testing"
 )
 
 func TestImplementsStatusChecker(t *testing.T) {
