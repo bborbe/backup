@@ -26,14 +26,16 @@ type BackupService interface {
 }
 
 type backupService struct {
-	rootdir string
+	rootdir rootdir
 }
+
+type rootdir string
 
 var logger = log.DefaultLogger
 
-func NewBackupService(rootdir string) *backupService {
+func NewBackupService(rootdirectory string) *backupService {
 	s := new(backupService)
-	s.rootdir = rootdir
+	s.rootdir = rootdir(rootdirectory)
 	return s
 }
 
@@ -41,10 +43,10 @@ func (s *backupService) Resume(host dto.Host) error {
 	return nil
 }
 
-func (s *backupService) ListHosts() ([]dto.Host, error) {
-	file, err := os.Open(s.rootdir)
+func (r *rootdir) names() ([]string, error ) {
+	file, err := os.Open(string(*r))
 	if err != nil {
-		logger.Debugf("open rootdir %s failed: %v", s.rootdir, err)
+		logger.Debugf("open rootdir %s failed: %v", r, err)
 		return nil, err
 	}
 	defer file.Close()
@@ -54,7 +56,7 @@ func (s *backupService) ListHosts() ([]dto.Host, error) {
 		return nil, err
 	}
 	if !fileinfo.IsDir() {
-		msg := fmt.Sprintf("rootdir %s is not a directory", s.rootdir)
+		msg := fmt.Sprintf("rootdir %s is not a directory", r)
 		logger.Debug(msg)
 		return nil, errors.New(msg)
 	}
@@ -62,6 +64,14 @@ func (s *backupService) ListHosts() ([]dto.Host, error) {
 	if err != nil {
 		logger.Debugf("read dir names failed: %v", err)
 		return nil, err
+	}
+	return names, nil
+}
+
+func (s *backupService) ListHosts() ([]dto.Host, error) {
+	names, err := s.rootdir.names()
+	if err != nil{
+		return nil,err
 	}
 	return s.createHosts(names)
 }
@@ -192,7 +202,7 @@ func (s *backupService) GetLatestBackup(host dto.Host) (dto.Backup, error) {
 		names = append(names, backup.GetName())
 	}
 	sort.Strings(names)
-	return backups[names[len(names)-1]], nil
+	return backups[names[len(names) - 1]], nil
 }
 
 func (s *backupService) ListOldBackups(host dto.Host) ([]dto.Backup, error) {
@@ -398,7 +408,7 @@ func getKeepWeek(backups []dto.Backup, now time.Time) ([]dto.Backup, error) {
 func latestBackup(backups []dto.Backup) dto.Backup {
 	if backups != nil && len(backups) > 0 {
 		sort.Sort(util.BackupByDate(backups))
-		return backups[len(backups)-1]
+		return backups[len(backups) - 1]
 	}
 	return nil
 }
