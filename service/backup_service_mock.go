@@ -20,6 +20,10 @@ func NewBackupServiceMock() *backupServiceMock {
 	return new(backupServiceMock)
 }
 
+func (s *backupServiceMock) Resume(host dto.Host) error {
+	return nil
+}
+
 func (s *backupServiceMock) GetHost(host string) (dto.Host, error) {
 	return nil, nil
 }

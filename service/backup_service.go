@@ -22,6 +22,7 @@ type BackupService interface {
 	ListKeepBackups(host dto.Host) ([]dto.Backup, error)
 	GetLatestBackup(host dto.Host) (dto.Backup, error)
 	Cleanup(host dto.Host) error
+	Resume(host dto.Host) error
 }
 
 type backupService struct {
@@ -34,6 +35,10 @@ func NewBackupService(rootdir string) *backupService {
 	s := new(backupService)
 	s.rootdir = rootdir
 	return s
+}
+
+func (s *backupService) Resume(host dto.Host) error {
+	return nil
 }
 
 func (s *backupService) ListHosts() ([]dto.Host, error) {
