@@ -53,17 +53,17 @@ func (s *backupService) ListHosts() ([]dto.Host, error) {
 
 func (s *backupService) createHosts(hosts []host.Host) ([]dto.Host, error) {
 	result := []dto.Host{}
-	for _, host := range hosts {
-		dir := host.Path()
+	for _, h := range hosts {
+		dir := h.Path()
 		isDir, err := isDir(dir)
 		if err != nil {
 			logger.Debugf("is dir failed: %v", err)
 			return nil, err
 		}
 		if isDir {
-			result = append(result, createHost(host.Name()))
+			result = append(result, createHost(h.Name()))
 		} else {
-			logger.Debugf("createHost for %s failed, is not a directory", host)
+			logger.Debugf("createHost for %s failed, is not a directory", h)
 		}
 	}
 	return result, nil
@@ -89,11 +89,11 @@ func createHost(host string) dto.Host {
 	return h
 }
 
-func (s *backupService) ListBackups(host dto.Host) ([]dto.Backup, error) {
-	if host == nil {
+func (s *backupService) ListBackups(h dto.Host) ([]dto.Backup, error) {
+	if h == nil {
 		return nil, errors.New("parameter host missing")
 	}
-	dir := fmt.Sprintf("%s%c%s", s.rootdir.Path(), os.PathSeparator, host.GetName())
+	dir := fmt.Sprintf("%s%c%s", s.rootdir.Path(), os.PathSeparator, h.GetName())
 	file, err := os.Open(dir)
 	if err != nil {
 		logger.Debugf("open dir failed: %v", err)
