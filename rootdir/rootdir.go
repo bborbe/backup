@@ -7,15 +7,25 @@ import (
 	"github.com/bborbe/log"
 )
 
-type Rootdir string
+type Rootdir interface {
+	Names() ([]string, error )
+	Path() string
+}
+
+type rootdir string
 
 var logger = log.DefaultLogger
 
 func New(dir string) Rootdir {
-	return Rootdir(dir)
+	d := rootdir(dir)
+	return &d
 }
 
-func (r *Rootdir) Names() ([]string, error ) {
+func (r *rootdir) Path() string {
+	return string(*r)
+}
+
+func (r *rootdir) Names() ([]string, error ) {
 	file, err := os.Open(string(*r))
 	if err != nil {
 		logger.Debugf("open rootdir %s failed: %v", r, err)

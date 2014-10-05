@@ -56,7 +56,7 @@ func (s *backupService) ListHosts() ([]dto.Host, error) {
 func (s *backupService) createHosts(hosts []string) ([]dto.Host, error) {
 	result := []dto.Host{}
 	for _, host := range hosts {
-		dir := fmt.Sprintf("%s%c%s", s.rootdir, os.PathSeparator, host)
+		dir := fmt.Sprintf("%s%c%s", s.rootdir.Path(), os.PathSeparator, host)
 		isDir, err := isDir(dir)
 		if err != nil {
 			logger.Debugf("is dir failed: %v", err)
@@ -95,7 +95,7 @@ func (s *backupService) ListBackups(host dto.Host) ([]dto.Backup, error) {
 	if host == nil {
 		return nil, errors.New("parameter host missing")
 	}
-	dir := fmt.Sprintf("%s%c%s", s.rootdir, os.PathSeparator, host.GetName())
+	dir := fmt.Sprintf("%s%c%s", s.rootdir.Path(), os.PathSeparator, host.GetName())
 	file, err := os.Open(dir)
 	if err != nil {
 		logger.Debugf("open dir failed: %v", err)
@@ -145,7 +145,7 @@ func createBackup(backup string) dto.Backup {
 }
 
 func (s *backupService) GetHost(host string) (dto.Host, error) {
-	dir := fmt.Sprintf("%s%c%s", s.rootdir, os.PathSeparator, host)
+	dir := fmt.Sprintf("%s%c%s", s.rootdir.Path(), os.PathSeparator, host)
 	file, err := os.Open(dir)
 	if err != nil {
 		return nil, err
@@ -344,7 +344,7 @@ func (s *backupService) Cleanup(host dto.Host) error {
 	}
 	logger.Debugf("found %d backup to delete for host %s", len(backups), host.GetName())
 	for _, backup := range backups {
-		dir := fmt.Sprintf("%s%c%s%c%s", s.rootdir, os.PathSeparator, host.GetName(), os.PathSeparator, backup.GetName())
+		dir := fmt.Sprintf("%s%c%s%c%s", s.rootdir.Path(), os.PathSeparator, host.GetName(), os.PathSeparator, backup.GetName())
 		logger.Infof("delete %s started", dir)
 		os.RemoveAll(dir)
 		logger.Infof("delete %s finished", dir)
