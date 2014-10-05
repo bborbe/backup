@@ -21,11 +21,11 @@ type Host interface {
 
 var logger = log.DefaultLogger
 
-func ByName(rootdir rootdir.Rootdir, name string) (Host, error) {
+func ByName(rootdir rootdir.Rootdir, name string) Host {
 	h := new(host)
 	h.rootdir = rootdir
 	h.name = name
-	return h, nil
+	return h
 }
 
 func All(root rootdir.Rootdir) ([]Host, error) {
@@ -52,11 +52,7 @@ func All(root rootdir.Rootdir) ([]Host, error) {
 	}
 	hosts := make([]Host, 0)
 	for _, name := range names {
-		host, err := ByName(root, name)
-		if err != nil {
-			return nil, err
-		}
-		hosts = append(hosts, host)
+		hosts = append(hosts, ByName(root, name))
 	}
 	return hosts, nil
 }
