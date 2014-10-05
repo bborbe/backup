@@ -13,6 +13,7 @@ import (
 	"github.com/bborbe/backup/dto"
 	"github.com/bborbe/backup/util"
 	"github.com/bborbe/log"
+	"github.com/bborbe/backup/host"
 )
 
 type BackupService interface {
@@ -30,8 +31,6 @@ type backupService struct {
 	rootdir rootdir.Rootdir
 }
 
-type host string
-
 var logger = log.DefaultLogger
 
 func NewBackupService(rootdirectory string) *backupService {
@@ -46,24 +45,24 @@ func (s *backupService) Resume(host dto.Host) error {
 
 
 func (s *backupService) ListHosts() ([]dto.Host, error) {
-	names, err := s.rootdir.Names()
-	if err != nil{
-		return nil,err
+	hosts, err := host.All(s.rootdir)
+	if err != nil {
+		return nil, err
 	}
-	return s.createHosts(names)
+	return s.createHosts(hosts)
 }
 
-func (s *backupService) createHosts(hosts []string) ([]dto.Host, error) {
+func (s *backupService) createHosts(hosts []host.Host) ([]dto.Host, error) {
 	result := []dto.Host{}
 	for _, host := range hosts {
-		dir := fmt.Sprintf("%s%c%s", s.rootdir.Path(), os.PathSeparator, host)
+		dir := host.Path()
 		isDir, err := isDir(dir)
 		if err != nil {
 			logger.Debugf("is dir failed: %v", err)
 			return nil, err
 		}
 		if isDir {
-			result = append(result, createHost(host))
+			result = append(result, createHost(host.Name()))
 		} else {
 			logger.Debugf("createHost for %s failed, is not a directory", host)
 		}
