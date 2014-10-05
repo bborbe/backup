@@ -15,3 +15,19 @@ func TestImplementsBackup(t *testing.T) {
 		t.Fatal(err)
 	}
 }
+
+func TestName(t *testing.T) {
+	backup := ByName(host.ByName(rootdir.New("/rootdir"), "hostname"), "backupname")
+	err := AssertThat(backup.Name(), Is("backupname"))
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestPath(t *testing.T) {
+	backup := ByName(host.ByName(rootdir.New("/rootdir"), "hostname"), "backupname")
+	err := AssertThat(backup.Path(), Is("/rootdir/hostname/backupname"))
+	if err != nil {
+		t.Fatal(err)
+	}
+}
