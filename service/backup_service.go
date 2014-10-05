@@ -9,6 +9,7 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/bborbe/backup/rootdir"
 	"github.com/bborbe/backup/dto"
 	"github.com/bborbe/backup/util"
 	"github.com/bborbe/log"
@@ -26,16 +27,16 @@ type BackupService interface {
 }
 
 type backupService struct {
-	rootdir rootdir
+	rootdir rootdir.Rootdir
 }
 
-type rootdir string
+type host string
 
 var logger = log.DefaultLogger
 
 func NewBackupService(rootdirectory string) *backupService {
 	s := new(backupService)
-	s.rootdir = rootdir(rootdirectory)
+	s.rootdir = rootdir.New(rootdirectory)
 	return s
 }
 
@@ -43,33 +44,9 @@ func (s *backupService) Resume(host dto.Host) error {
 	return nil
 }
 
-func (r *rootdir) names() ([]string, error ) {
-	file, err := os.Open(string(*r))
-	if err != nil {
-		logger.Debugf("open rootdir %s failed: %v", r, err)
-		return nil, err
-	}
-	defer file.Close()
-	fileinfo, err := file.Stat()
-	if err != nil {
-		logger.Debugf("file stat failed: %v", err)
-		return nil, err
-	}
-	if !fileinfo.IsDir() {
-		msg := fmt.Sprintf("rootdir %s is not a directory", r)
-		logger.Debug(msg)
-		return nil, errors.New(msg)
-	}
-	names, err := file.Readdirnames(0)
-	if err != nil {
-		logger.Debugf("read dir names failed: %v", err)
-		return nil, err
-	}
-	return names, nil
-}
 
 func (s *backupService) ListHosts() ([]dto.Host, error) {
-	names, err := s.rootdir.names()
+	names, err := s.rootdir.Names()
 	if err != nil{
 		return nil,err
 	}
