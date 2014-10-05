@@ -9,11 +9,11 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/bborbe/backup/rootdir"
 	"github.com/bborbe/backup/dto"
+	"github.com/bborbe/backup/host"
+	"github.com/bborbe/backup/rootdir"
 	"github.com/bborbe/backup/util"
 	"github.com/bborbe/log"
-	"github.com/bborbe/backup/host"
 )
 
 type BackupService interface {
@@ -42,7 +42,6 @@ func NewBackupService(rootdirectory string) *backupService {
 func (s *backupService) Resume(host dto.Host) error {
 	return nil
 }
-
 
 func (s *backupService) ListHosts() ([]dto.Host, error) {
 	hosts, err := host.All(s.rootdir)
@@ -178,7 +177,7 @@ func (s *backupService) GetLatestBackup(host dto.Host) (dto.Backup, error) {
 		names = append(names, backup.GetName())
 	}
 	sort.Strings(names)
-	return backups[names[len(names) - 1]], nil
+	return backups[names[len(names)-1]], nil
 }
 
 func (s *backupService) ListOldBackups(host dto.Host) ([]dto.Backup, error) {
@@ -384,7 +383,7 @@ func getKeepWeek(backups []dto.Backup, now time.Time) ([]dto.Backup, error) {
 func latestBackup(backups []dto.Backup) dto.Backup {
 	if backups != nil && len(backups) > 0 {
 		sort.Sort(util.BackupByDate(backups))
-		return backups[len(backups) - 1]
+		return backups[len(backups)-1]
 	}
 	return nil
 }

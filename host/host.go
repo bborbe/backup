@@ -1,10 +1,11 @@
 package host
 
 import (
-	"github.com/bborbe/backup/rootdir"
-	"os"
-	"fmt"
 	"errors"
+	"fmt"
+	"os"
+
+	"github.com/bborbe/backup/rootdir"
 	"github.com/bborbe/log"
 )
 
@@ -53,7 +54,7 @@ func All(root rootdir.Rootdir) ([]Host, error) {
 	for _, name := range names {
 		host, err := ByName(root, name)
 		if err != nil {
-			return nil,err
+			return nil, err
 		}
 		hosts = append(hosts, host)
 	}
@@ -64,8 +65,6 @@ func (h *host) Path() string {
 	return fmt.Sprintf("%s%c%s", h.rootdir.Path(), os.PathSeparator, h.name)
 }
 
-
 func (h *host) Name() string {
 	return h.name
 }
-

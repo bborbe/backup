@@ -14,5 +14,3 @@ func New(dir string) Rootdir {
 func (r *rootdir) Path() string {
 	return string(*r)
 }
-
-
