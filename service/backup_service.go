@@ -332,17 +332,17 @@ func getKeepMonth(backups []dto.Backup) ([]dto.Backup, error) {
 	return result, nil
 }
 
-func (s *backupService) Cleanup(host dto.Host) error {
-	if host == nil {
+func (s *backupService) Cleanup(hostDto dto.Host) error {
+	if hostDto == nil {
 		return errors.New("parameter host missing")
 	}
-	backups, err := s.ListOldBackups(host)
+	backups, err := s.ListOldBackups(hostDto)
 	if err != nil {
 		return err
 	}
-	logger.Debugf("found %d backup to delete for host %s", len(backups), host.GetName())
+	logger.Debugf("found %d backup to delete for host %s", len(backups), hostDto.GetName())
 	for _, backup := range backups {
-		dir := fmt.Sprintf("%s%c%s%c%s", s.rootdir.Path(), os.PathSeparator, host.GetName(), os.PathSeparator, backup.GetName())
+		dir := fmt.Sprintf("%s%c%s%c%s", s.rootdir.Path(), os.PathSeparator, hostDto.GetName(), os.PathSeparator, backup.GetName())
 		logger.Infof("delete %s started", dir)
 		os.RemoveAll(dir)
 		logger.Infof("delete %s finished", dir)
