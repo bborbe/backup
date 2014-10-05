@@ -17,6 +17,7 @@ import (
 )
 
 type BackupService interface {
+	GetRootdir(rootdir string) (rootdir.Rootdir, error)
 	GetHost(host string) (dto.Host, error)
 	ListHosts() ([]dto.Host, error)
 	ListBackups(host dto.Host) ([]dto.Backup, error)
@@ -37,6 +38,17 @@ func NewBackupService(rootdirectory string) *backupService {
 	s := new(backupService)
 	s.rootdir = rootdir.New(rootdirectory)
 	return s
+}
+
+func (s *backupService) GetRootdir(dir string) (rootdir.Rootdir, error) {
+	isDir, err := isDir(dir)
+	if err != nil {
+		return nil, err
+	}
+	if !isDir {
+		return nil, fmt.Errorf("dir %s is not a directory", dir)
+	}
+	return rootdir.New(dir), nil
 }
 
 func (s *backupService) Resume(host dto.Host) error {
