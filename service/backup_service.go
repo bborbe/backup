@@ -18,7 +18,7 @@ import (
 
 type BackupService interface {
 	GetRootdir(rootdir string) (rootdir.Rootdir, error)
-	GetHost(host string) (dto.Host, error)
+	GetHost(rootdir rootdir.Rootdir, host string) (dto.Host, error)
 	ListHosts() ([]dto.Host, error)
 	ListBackups(host dto.Host) ([]dto.Backup, error)
 	ListOldBackups(host dto.Host) ([]dto.Backup, error)
@@ -154,7 +154,7 @@ func createBackup(backup string) dto.Backup {
 	return h
 }
 
-func (s *backupService) GetHost(host string) (dto.Host, error) {
+func (s *backupService) GetHost(rootdir rootdir.Rootdir, host string) (dto.Host, error) {
 	dir := fmt.Sprintf("%s%c%s", s.rootdir.Path(), os.PathSeparator, host)
 	file, err := os.Open(dir)
 	if err != nil {

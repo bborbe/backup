@@ -15,7 +15,7 @@ func clearBackupRootDir(root string) error {
 	return os.RemoveAll(root)
 }
 
-func createBackupRootDir(root string) error {
+func createRootDir(root string) error {
 	var fileMode os.FileMode
 	fileMode = 0777
 	return os.Mkdir(root, fileMode)
@@ -56,7 +56,7 @@ func TestListHosts(t *testing.T) {
 			t.Fatal(err)
 		}
 	}
-	createBackupRootDir(BACKUP_ROOT_DIR)
+	createRootDir(BACKUP_ROOT_DIR)
 	{
 		hosts, err := service.ListHosts()
 		err = AssertThat(err, NilValue().Message("expect no error, backup dir existing"))
@@ -91,17 +91,21 @@ func TestGetHost(t *testing.T) {
 	clearBackupRootDir(BACKUP_ROOT_DIR)
 	service := NewBackupService(BACKUP_ROOT_DIR)
 	hostName := "firewall.example.com"
+	createRootDir(BACKUP_ROOT_DIR)
+	rootdir, err := service.GetRootdir(BACKUP_ROOT_DIR)
+	if err != nil {
+		t.Fatal(err)
+	}
 	{
-		_, err := service.GetHost(hostName)
+		_, err := service.GetHost(rootdir, hostName)
 		err = AssertThat(err, NotNilValue().Message("expect error, backup dir not existing"))
 		if err != nil {
 			t.Fatal(err)
 		}
 	}
-	createBackupRootDir(BACKUP_ROOT_DIR)
 	createHostDir(BACKUP_ROOT_DIR, hostName)
 	{
-		host, err := service.GetHost(hostName)
+		host, err := service.GetHost(rootdir, hostName)
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -123,10 +127,14 @@ func TestListBackups(t *testing.T) {
 		}
 	}
 	hostName := "firewall.example.com"
-	createBackupRootDir(BACKUP_ROOT_DIR)
+	createRootDir(BACKUP_ROOT_DIR)
 	createHostDir(BACKUP_ROOT_DIR, hostName)
+	rootDir, err := service.GetRootdir(BACKUP_ROOT_DIR)
+	if err != nil {
+		t.Fatal(err)
+	}
 	{
-		host, err := service.GetHost(hostName)
+		host, err := service.GetHost(rootDir, hostName)
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -146,7 +154,7 @@ func TestListBackups(t *testing.T) {
 	backupName := "2013-07-28T00:24:52"
 	createBackupDir(BACKUP_ROOT_DIR, hostName, backupName)
 	{
-		host, err := service.GetHost(hostName)
+		host, err := service.GetHost(rootDir, hostName)
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -169,7 +177,7 @@ func TestListBackups(t *testing.T) {
 	}
 	createBackupDir(BACKUP_ROOT_DIR, hostName, "incomplete")
 	{
-		host, err := service.GetHost(hostName)
+		host, err := service.GetHost(rootDir, hostName)
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -204,7 +212,7 @@ func TestGetLatestBackup(t *testing.T) {
 			t.Fatal(err)
 		}
 	}
-	createBackupRootDir(BACKUP_ROOT_DIR)
+	createRootDir(BACKUP_ROOT_DIR)
 	{
 		_, err := service.GetLatestBackup(nil)
 		err = AssertThat(err, NotNilValue())
@@ -212,10 +220,14 @@ func TestGetLatestBackup(t *testing.T) {
 			t.Fatal(err)
 		}
 	}
+	rootDir, err := service.GetRootdir(BACKUP_ROOT_DIR)
+	if err != nil {
+		t.Fatal(err)
+	}
 	hostName := "firewall.example.com"
 	createHostDir(BACKUP_ROOT_DIR, hostName)
 	{
-		host, err := service.GetHost(hostName)
+		host, err := service.GetHost(rootDir, hostName)
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -232,7 +244,7 @@ func TestGetLatestBackup(t *testing.T) {
 	backupName = "2013-07-01T00:24:52"
 	createBackupDir(BACKUP_ROOT_DIR, hostName, backupName)
 	{
-		host, err := service.GetHost(hostName)
+		host, err := service.GetHost(rootDir, hostName)
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -253,7 +265,7 @@ func TestGetLatestBackup(t *testing.T) {
 	backupName = "2013-07-02T00:24:52"
 	createBackupDir(BACKUP_ROOT_DIR, hostName, backupName)
 	{
-		host, err := service.GetHost(hostName)
+		host, err := service.GetHost(rootDir, hostName)
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -284,7 +296,7 @@ func TestListOldBackups(t *testing.T) {
 			t.Fatal(err)
 		}
 	}
-	createBackupRootDir(BACKUP_ROOT_DIR)
+	createRootDir(BACKUP_ROOT_DIR)
 	{
 		_, err := service.ListOldBackups(nil)
 		err = AssertThat(err, NotNilValue())
@@ -305,7 +317,7 @@ func TestCleanup(t *testing.T) {
 			t.Fatal(err)
 		}
 	}
-	createBackupRootDir(BACKUP_ROOT_DIR)
+	createRootDir(BACKUP_ROOT_DIR)
 	{
 		err := service.Cleanup(nil)
 		err = AssertThat(err, NotNilValue())
@@ -626,16 +638,20 @@ func TestListKeepBackups(t *testing.T) {
 	var (
 		service  BackupService
 		backups  []dto.Backup
-		err      error
 		host     dto.Host
 		hostName string
 	)
 	hostName = "firewall.example.com"
 	clearBackupRootDir(BACKUP_ROOT_DIR)
-	createBackupRootDir(BACKUP_ROOT_DIR)
+	createRootDir(BACKUP_ROOT_DIR)
 	createHostDir(BACKUP_ROOT_DIR, hostName)
 	service = NewBackupService(BACKUP_ROOT_DIR)
-	host, err = service.GetHost(hostName)
+
+	rootDir, err := service.GetRootdir(BACKUP_ROOT_DIR)
+	if err != nil {
+		t.Fatal(err)
+	}
+	host, err = service.GetHost(rootDir, hostName)
 	if err != nil {
 		t.Fatal(err)
 	}

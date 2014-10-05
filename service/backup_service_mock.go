@@ -31,7 +31,7 @@ func (s *backupServiceMock) Resume(host dto.Host) error {
 	return nil
 }
 
-func (s *backupServiceMock) GetHost(host string) (dto.Host, error) {
+func (s *backupServiceMock) GetHost(rootdir rootdir.Rootdir, host string) (dto.Host, error) {
 	return nil, nil
 }
 

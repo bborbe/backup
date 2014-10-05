@@ -14,7 +14,7 @@ func TestDoEmpty(t *testing.T) {
 	backupService := backup_mock.NewBackupServiceMock()
 	backupService.SetListHosts(make([]dto.Host, 0), nil)
 	backupService.SetListBackups(make([]dto.Backup, 0), nil)
-	err := do(writer, backupService, config.DEFAULT_HOST)
+	err := do(writer, backupService, config.DEFAULT_ROOT_DIR, config.DEFAULT_HOST)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -40,7 +40,7 @@ func TestDoNotEmpty(t *testing.T) {
 		backup_mock.CreateBackup("2013-12-25T20:15:59"),
 	}
 	backupService.SetListBackups(backups, nil)
-	err := do(writer, backupService, config.DEFAULT_HOST)
+	err := do(writer, backupService, config.DEFAULT_ROOT_DIR, config.DEFAULT_HOST)
 	if err != nil {
 		t.Fatal(err)
 	}

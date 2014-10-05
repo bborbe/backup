@@ -31,14 +31,14 @@ func main() {
 	writer := os.Stdout
 	logger.Debugf("use backup dir %s", *rootdirPtr)
 	backupService := service.NewBackupService(*rootdirPtr)
-	err := do(writer, backupService, *hostPtr, LOCK_NAME)
+	err := do(writer, backupService, *rootdirPtr, *hostPtr, LOCK_NAME)
 	if err != nil {
 		logger.Fatal(err)
 		os.Exit(1)
 	}
 }
 
-func do(writer io.Writer, backupService service.BackupService, hostname string, lockName string) error {
+func do(writer io.Writer, backupService service.BackupService, rootdirName string, hostName string, lockName string) error {
 	var err error
 	var hosts []dto.Host
 
@@ -49,13 +49,19 @@ func do(writer io.Writer, backupService service.BackupService, hostname string, 
 	}
 	defer l.Unlock()
 	logger.Debug("start")
-	if hostname == config.DEFAULT_HOST {
+
+	rootdir, err := backupService.GetRootdir(rootdirName)
+	if err != nil {
+		return err
+	}
+
+	if hostName == config.DEFAULT_HOST {
 		hosts, err = backupService.ListHosts()
 		if err != nil {
 			return err
 		}
 	} else {
-		host, err := backupService.GetHost(hostname)
+		host, err := backupService.GetHost(rootdir, hostName)
 		if err != nil {
 			return err
 		}
