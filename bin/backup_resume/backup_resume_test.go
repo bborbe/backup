@@ -1,19 +1,20 @@
 package main
 
 import (
+	"fmt"
 	"testing"
 	. "github.com/bborbe/assert"
 	"github.com/bborbe/backup/config"
-	"github.com/bborbe/backup/dto"
 	backup_mock "github.com/bborbe/backup/service"
 	server_mock "github.com/bborbe/server/mock"
 )
 
-func TestDoEmpty(t *testing.T) {
+func TestResumeFail(t *testing.T) {
 	writer := server_mock.NewWriter()
 	backupService := backup_mock.NewBackupServiceMock()
-	backupService.SetListHosts(make([]dto.Host, 0), nil)
-	err := do(writer, backupService, config.DEFAULT_ROOT_DIR, config.DEFAULT_HOST)
+	backupService.SetResume(fmt.Errorf("error"))
+
+	err := do(writer, backupService, config.DEFAULT_HOST)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -21,7 +22,26 @@ func TestDoEmpty(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	err = AssertThat(len(writer.Content()), Is(0))
+	err = AssertThat(string(writer.Content()), Is("resume backup for host all failed\n"))
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestResumeSuccess(t *testing.T) {
+	writer := server_mock.NewWriter()
+	backupService := backup_mock.NewBackupServiceMock()
+	backupService.SetResume(nil)
+
+	err := do(writer, backupService, config.DEFAULT_HOST)
+	if err != nil {
+		t.Fatal(err)
+	}
+	err = AssertThat(writer.Content(), NotNilValue())
+	if err != nil {
+		t.Fatal(err)
+	}
+	err = AssertThat(string(writer.Content()), Is("resume backup for host all success\n"))
 	if err != nil {
 		t.Fatal(err)
 	}

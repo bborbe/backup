@@ -16,6 +16,8 @@ type backupServiceMock struct {
 	latestBackup         dto.Backup
 	latestBackupError    error
 	cleanupErr           error
+	resumeErr            error
+	getHostErr           error
 }
 
 func NewBackupServiceMock() *backupServiceMock {
@@ -23,11 +25,19 @@ func NewBackupServiceMock() *backupServiceMock {
 }
 
 func (s *backupServiceMock) Resume(host dto.Host) error {
-	return nil
+	return s.resumeErr
+}
+
+func (s *backupServiceMock) SetResume(err error) {
+	s.resumeErr = err
 }
 
 func (s *backupServiceMock) GetHost(host string) (dto.Host, error) {
 	return nil, nil
+}
+
+func (s *backupServiceMock) SetGetHost(err error) {
+	s.getHostErr = err
 }
 
 func (s *backupServiceMock) ListHosts() ([]dto.Host, error) {

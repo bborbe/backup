@@ -28,14 +28,14 @@ func main() {
 	writer := os.Stdout
 	logger.Debugf("use backup dir %s", *rootdirPtr)
 	backupService := service.NewBackupService(*rootdirPtr)
-	err := do(writer, backupService, *rootdirPtr, *hostPtr)
+	err := do(writer, backupService, *hostPtr)
 	if err != nil {
 		logger.Fatal(err)
 		os.Exit(1)
 	}
 }
 
-func do(writer io.Writer, backupService service.BackupService, rootdirName string, hostname string) error {
+func do(writer io.Writer, backupService service.BackupService, hostname string) error {
 	logger.Debug("start")
 	var hosts []dto.Host
 	var err error
