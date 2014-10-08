@@ -9,25 +9,25 @@ import (
 )
 
 func TestImplementsHost(t *testing.T) {
-	object := ByName(rootdir.ByName(testutil.BACKUP_ROOT_DIR), "hostname")
+	h := ByName(rootdir.ByName(testutil.BACKUP_ROOT_DIR), "hostname")
 	var expected *Host
-	err := AssertThat(object, Implements(expected))
+	err := AssertThat(h, Implements(expected))
 	if err != nil {
 		t.Fatal(err)
 	}
 }
 
 func TestName(t *testing.T) {
-	host := ByName(rootdir.ByName(testutil.BACKUP_ROOT_DIR), "hostname")
-	err := AssertThat(host.Name(), Is("hostname"))
+	h := ByName(rootdir.ByName(testutil.BACKUP_ROOT_DIR), "hostname")
+	err := AssertThat(h.Name(), Is("hostname"))
 	if err != nil {
 		t.Fatal(err)
 	}
 }
 
 func TestPath(t *testing.T) {
-	host := ByName(rootdir.ByName(testutil.BACKUP_ROOT_DIR), "hostname")
-	err := AssertThat(host.Path(), Is("/tmp/backuproot/hostname"))
+	h := ByName(rootdir.ByName(testutil.BACKUP_ROOT_DIR), "hostname")
+	err := AssertThat(h.Path(), Is("/tmp/backuproot/hostname"))
 	if err != nil {
 		t.Fatal(err)
 	}

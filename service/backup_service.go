@@ -36,8 +36,9 @@ func NewBackupService(rootdirectory string) *backupService {
 	return s
 }
 
-func (s *backupService) Resume(host dto.Host) error {
-	return nil
+func (s *backupService) Resume(hostDto dto.Host) error {
+	h := host.ByName(s.rootdir, hostDto.GetName())
+	return backup.Resume(h)
 }
 
 func (s *backupService) ListHosts() ([]dto.Host, error) {

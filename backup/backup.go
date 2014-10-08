@@ -92,3 +92,7 @@ func (b *backup) Name() string {
 func (b *backup) Delete() error {
 	return os.RemoveAll(b.Path())
 }
+
+func Resume(h host.Host) error {
+	return nil
+}

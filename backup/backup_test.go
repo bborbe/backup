@@ -43,3 +43,11 @@ func TestValidBackupName(t *testing.T) {
 		t.Fatal(err)
 	}
 }
+
+func TestResume(t *testing.T) {
+	err := Resume(host.ByName(rootdir.ByName("/rootdir"), "hostname"))
+	err = AssertThat(err, NilValue())
+	if err != nil {
+		t.Fatal(err)
+	}
+}
