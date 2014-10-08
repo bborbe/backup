@@ -1,14 +1,13 @@
-package util
+package dto
 
 import (
 	"sort"
 	"testing"
 	. "github.com/bborbe/assert"
-	"github.com/bborbe/backup/dto"
 )
 
 func TestHostSortEmpty(t *testing.T) {
-	backups := make([]dto.Host, 0)
+	backups := make([]Host, 0)
 	sort.Sort(HostByDate(backups))
 	err := AssertThat(backups, NotNilValue())
 	if err != nil {
@@ -21,7 +20,7 @@ func TestHostSortEmpty(t *testing.T) {
 }
 
 func TestHostSortOne(t *testing.T) {
-	backups := []dto.Host{createHost("test")}
+	backups := []Host{createHost("test")}
 	sort.Sort(HostByDate(backups))
 	err := AssertThat(backups, NotNilValue())
 	if err != nil {
@@ -34,7 +33,7 @@ func TestHostSortOne(t *testing.T) {
 }
 
 func TestHostSort(t *testing.T) {
-	backups := []dto.Host{createHost("c"), createHost("a"), createHost("b")}
+	backups := []Host{createHost("c"), createHost("a"), createHost("b")}
 	sort.Sort(HostByDate(backups))
 	err := AssertThat(backups, NotNilValue())
 	if err != nil {
@@ -59,7 +58,7 @@ func TestHostSort(t *testing.T) {
 }
 
 func TestHostSortReal(t *testing.T) {
-	backups := []dto.Host{createHost("2013-08-25T16:33:26"), createHost("2013-07-29T10:20:15"), createHost("2013-08-23T07:45:48")}
+	backups := []Host{createHost("2013-08-25T16:33:26"), createHost("2013-07-29T10:20:15"), createHost("2013-08-23T07:45:48")}
 	sort.Sort(HostByDate(backups))
 	err := AssertThat(backups, NotNilValue())
 	if err != nil {
@@ -84,7 +83,7 @@ func TestHostSortReal(t *testing.T) {
 }
 
 func TestHostSortSameLetter(t *testing.T) {
-	backups := []dto.Host{createHost("aaa"), createHost("a"), createHost("aa")}
+	backups := []Host{createHost("aaa"), createHost("a"), createHost("aa")}
 	sort.Sort(HostByDate(backups))
 	err := AssertThat(backups, NotNilValue())
 	if err != nil {
@@ -108,8 +107,8 @@ func TestHostSortSameLetter(t *testing.T) {
 	}
 }
 
-func createHost(name string) dto.Host {
-	host := dto.NewHost()
+func createHost(name string) Host {
+	host := NewHost()
 	host.SetName(name)
 	return host
 }

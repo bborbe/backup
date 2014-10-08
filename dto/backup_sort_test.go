@@ -1,14 +1,13 @@
-package util
+package dto
 
 import (
 	"sort"
 	"testing"
 	. "github.com/bborbe/assert"
-	"github.com/bborbe/backup/dto"
 )
 
 func TestBackupSortEmpty(t *testing.T) {
-	backups := make([]dto.Backup, 0)
+	backups := make([]Backup, 0)
 	sort.Sort(BackupByDate(backups))
 	err := AssertThat(backups, NotNilValue())
 	if err != nil {
@@ -21,7 +20,7 @@ func TestBackupSortEmpty(t *testing.T) {
 }
 
 func TestBackupSortOne(t *testing.T) {
-	backups := []dto.Backup{createBackup("test")}
+	backups := []Backup{createBackup("test")}
 	sort.Sort(BackupByDate(backups))
 	err := AssertThat(backups, NotNilValue())
 	if err != nil {
@@ -34,7 +33,7 @@ func TestBackupSortOne(t *testing.T) {
 }
 
 func TestBackupSort(t *testing.T) {
-	backups := []dto.Backup{createBackup("c"), createBackup("a"), createBackup("b")}
+	backups := []Backup{createBackup("c"), createBackup("a"), createBackup("b")}
 	sort.Sort(BackupByDate(backups))
 	err := AssertThat(backups, NotNilValue())
 	if err != nil {
@@ -59,7 +58,7 @@ func TestBackupSort(t *testing.T) {
 }
 
 func TestBackupSortReal(t *testing.T) {
-	backups := []dto.Backup{createBackup("2013-08-25T16:33:26"), createBackup("2013-07-29T10:20:15"), createBackup("2013-08-23T07:45:48")}
+	backups := []Backup{createBackup("2013-08-25T16:33:26"), createBackup("2013-07-29T10:20:15"), createBackup("2013-08-23T07:45:48")}
 	sort.Sort(BackupByDate(backups))
 	err := AssertThat(backups, NotNilValue())
 	if err != nil {
@@ -84,7 +83,7 @@ func TestBackupSortReal(t *testing.T) {
 }
 
 func TestBackupSortSameLetter(t *testing.T) {
-	backups := []dto.Backup{createBackup("aaa"), createBackup("a"), createBackup("aa")}
+	backups := []Backup{createBackup("aaa"), createBackup("a"), createBackup("aa")}
 	sort.Sort(BackupByDate(backups))
 	err := AssertThat(backups, NotNilValue())
 	if err != nil {
@@ -108,8 +107,8 @@ func TestBackupSortSameLetter(t *testing.T) {
 	}
 }
 
-func createBackup(name string) dto.Backup {
-	backup := dto.NewBackup()
+func createBackup(name string) Backup {
+	backup := NewBackup()
 	backup.SetName(name)
 	return backup
 }

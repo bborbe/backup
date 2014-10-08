@@ -80,6 +80,7 @@ func (b *backup) Path() string {
 func (b *backup) Name() string {
 	return b.name
 }
+
 func (b *backup) Delete() error {
 	return os.RemoveAll(b.Path())
 }

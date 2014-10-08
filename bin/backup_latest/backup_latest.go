@@ -10,7 +10,6 @@ import (
 	"github.com/bborbe/backup/config"
 	"github.com/bborbe/backup/dto"
 	"github.com/bborbe/backup/service"
-	"github.com/bborbe/backup/util"
 	"github.com/bborbe/log"
 )
 
@@ -52,7 +51,7 @@ func do(writer io.Writer, backupService service.BackupService, hostname string) 
 		}
 		hosts = []dto.Host{host}
 	}
-	sort.Sort(util.HostByDate(hosts))
+	sort.Sort(dto.HostByDate(hosts))
 	for _, host := range hosts {
 		backup, err := backupService.GetLatestBackup(host)
 		if err != nil {
