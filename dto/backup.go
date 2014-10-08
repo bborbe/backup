@@ -21,3 +21,17 @@ func (h *backup) GetName() string {
 func (h *backup) SetName(name string) {
 	h.Name = name
 }
+
+func CreateBackups(backups []string) []Backup {
+	result := make([]Backup, len(backups))
+	for i, backup := range backups {
+		result[i] = CreateBackup(backup)
+	}
+	return result
+}
+
+func CreateBackup(backup string) Backup {
+	h := NewBackup()
+	h.SetName(backup)
+	return h
+}

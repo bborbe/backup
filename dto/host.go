@@ -21,3 +21,9 @@ func (h *host) GetName() string {
 func (h *host) SetName(name string) {
 	h.Name = name
 }
+
+func CreateHost(host string) Host {
+	h := NewHost()
+	h.SetName(host)
+	return h
+}
