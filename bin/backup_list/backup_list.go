@@ -51,13 +51,13 @@ func do(writer io.Writer, backupService service.BackupService, hostname string) 
 		}
 		hosts = []dto.Host{host}
 	}
-	sort.Sort(dto.HostByDate(hosts))
+	sort.Sort(dto.HostByName(hosts))
 	for _, host := range hosts {
 		backups, err := backupService.ListBackups(host)
 		if err != nil {
 			return err
 		}
-		sort.Sort(dto.BackupByDate(backups))
+		sort.Sort(dto.BackupByName(backups))
 		for _, backup := range backups {
 			fmt.Fprintf(writer, "%s/%s\n", host.GetName(), backup.GetName())
 		}

@@ -17,7 +17,7 @@ func getTimeByName(backupName string) (time.Time, error) {
 
 func latestBackup(backups []dto.Backup) dto.Backup {
 	if backups != nil && len(backups) > 0 {
-		sort.Sort(dto.BackupByDate(backups))
+		sort.Sort(dto.BackupByName(backups))
 		return backups[len(backups)-1]
 	}
 	return nil
@@ -47,7 +47,7 @@ func ageLessThanDays(t time.Time, now time.Time, days int64) bool {
 }
 
 func getKeepDay(backups []dto.Backup, now time.Time) ([]dto.Backup, error) {
-	sort.Sort(dto.BackupByDate(backups))
+	sort.Sort(dto.BackupByName(backups))
 	var result []dto.Backup
 
 	var lastYear int = -1
@@ -128,7 +128,7 @@ func GetKeepBackups(backups []dto.Backup) ([]dto.Backup, error) {
 }
 
 func getKeepMonth(backups []dto.Backup) ([]dto.Backup, error) {
-	sort.Sort(dto.BackupByDate(backups))
+	sort.Sort(dto.BackupByName(backups))
 	var lastYear int64 = -1
 	var lastMonth int64 = -1
 	var result []dto.Backup
@@ -154,7 +154,7 @@ func getKeepMonth(backups []dto.Backup) ([]dto.Backup, error) {
 }
 
 func getKeepWeek(backups []dto.Backup, now time.Time) ([]dto.Backup, error) {
-	sort.Sort(dto.BackupByDate(backups))
+	sort.Sort(dto.BackupByName(backups))
 	var result []dto.Backup
 	var lastWeek int = -1
 	for _, backup := range backups {

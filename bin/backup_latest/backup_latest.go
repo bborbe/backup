@@ -51,7 +51,7 @@ func do(writer io.Writer, backupService service.BackupService, hostname string) 
 		}
 		hosts = []dto.Host{host}
 	}
-	sort.Sort(dto.HostByDate(hosts))
+	sort.Sort(dto.HostByName(hosts))
 	for _, host := range hosts {
 		backup, err := backupService.GetLatestBackup(host)
 		if err != nil {

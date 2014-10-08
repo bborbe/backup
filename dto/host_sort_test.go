@@ -8,7 +8,7 @@ import (
 
 func TestHostSortEmpty(t *testing.T) {
 	backups := make([]Host, 0)
-	sort.Sort(HostByDate(backups))
+	sort.Sort(HostByName(backups))
 	err := AssertThat(backups, NotNilValue())
 	if err != nil {
 		t.Fatal(err)
@@ -21,7 +21,7 @@ func TestHostSortEmpty(t *testing.T) {
 
 func TestHostSortOne(t *testing.T) {
 	backups := []Host{createHost("test")}
-	sort.Sort(HostByDate(backups))
+	sort.Sort(HostByName(backups))
 	err := AssertThat(backups, NotNilValue())
 	if err != nil {
 		t.Fatal(err)
@@ -34,7 +34,7 @@ func TestHostSortOne(t *testing.T) {
 
 func TestHostSort(t *testing.T) {
 	backups := []Host{createHost("c"), createHost("a"), createHost("b")}
-	sort.Sort(HostByDate(backups))
+	sort.Sort(HostByName(backups))
 	err := AssertThat(backups, NotNilValue())
 	if err != nil {
 		t.Fatal(err)
@@ -59,7 +59,7 @@ func TestHostSort(t *testing.T) {
 
 func TestHostSortReal(t *testing.T) {
 	backups := []Host{createHost("2013-08-25T16:33:26"), createHost("2013-07-29T10:20:15"), createHost("2013-08-23T07:45:48")}
-	sort.Sort(HostByDate(backups))
+	sort.Sort(HostByName(backups))
 	err := AssertThat(backups, NotNilValue())
 	if err != nil {
 		t.Fatal(err)
@@ -84,7 +84,7 @@ func TestHostSortReal(t *testing.T) {
 
 func TestHostSortSameLetter(t *testing.T) {
 	backups := []Host{createHost("aaa"), createHost("a"), createHost("aa")}
-	sort.Sort(HostByDate(backups))
+	sort.Sort(HostByName(backups))
 	err := AssertThat(backups, NotNilValue())
 	if err != nil {
 		t.Fatal(err)

@@ -8,7 +8,7 @@ import (
 
 func TestBackupSortEmpty(t *testing.T) {
 	backups := make([]Backup, 0)
-	sort.Sort(BackupByDate(backups))
+	sort.Sort(BackupByName(backups))
 	err := AssertThat(backups, NotNilValue())
 	if err != nil {
 		t.Fatal(err)
@@ -21,7 +21,7 @@ func TestBackupSortEmpty(t *testing.T) {
 
 func TestBackupSortOne(t *testing.T) {
 	backups := []Backup{createBackup("test")}
-	sort.Sort(BackupByDate(backups))
+	sort.Sort(BackupByName(backups))
 	err := AssertThat(backups, NotNilValue())
 	if err != nil {
 		t.Fatal(err)
@@ -34,7 +34,7 @@ func TestBackupSortOne(t *testing.T) {
 
 func TestBackupSort(t *testing.T) {
 	backups := []Backup{createBackup("c"), createBackup("a"), createBackup("b")}
-	sort.Sort(BackupByDate(backups))
+	sort.Sort(BackupByName(backups))
 	err := AssertThat(backups, NotNilValue())
 	if err != nil {
 		t.Fatal(err)
@@ -59,7 +59,7 @@ func TestBackupSort(t *testing.T) {
 
 func TestBackupSortReal(t *testing.T) {
 	backups := []Backup{createBackup("2013-08-25T16:33:26"), createBackup("2013-07-29T10:20:15"), createBackup("2013-08-23T07:45:48")}
-	sort.Sort(BackupByDate(backups))
+	sort.Sort(BackupByName(backups))
 	err := AssertThat(backups, NotNilValue())
 	if err != nil {
 		t.Fatal(err)
@@ -84,7 +84,7 @@ func TestBackupSortReal(t *testing.T) {
 
 func TestBackupSortSameLetter(t *testing.T) {
 	backups := []Backup{createBackup("aaa"), createBackup("a"), createBackup("aa")}
-	sort.Sort(BackupByDate(backups))
+	sort.Sort(BackupByName(backups))
 	err := AssertThat(backups, NotNilValue())
 	if err != nil {
 		t.Fatal(err)
