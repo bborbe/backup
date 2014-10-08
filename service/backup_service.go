@@ -3,7 +3,6 @@ package service
 import (
 	"errors"
 	"fmt"
-	"os"
 	"sort"
 
 	"github.com/bborbe/backup/backup"
@@ -133,12 +132,18 @@ func (s *backupService) Cleanup(hostDto dto.Host) error {
 	if err != nil {
 		return err
 	}
+
+	h := host.ByName(s.rootdir, hostDto.GetName())
+
 	logger.Debugf("found %d backup to delete for host %s", len(backups), hostDto.GetName())
-	for _, b := range backups {
-		dir := fmt.Sprintf("%s%c%s%c%s", s.rootdir.Path(), os.PathSeparator, hostDto.GetName(), os.PathSeparator, b.GetName())
-		logger.Infof("delete %s started", dir)
-		os.RemoveAll(dir)
-		logger.Infof("delete %s finished", dir)
+	for _, backupDto := range backups {
+		b := backup.ByName(h, backupDto.GetName())
+		logger.Infof("delete %s started", b.Path())
+		b.Delete()
+		if err != nil {
+			return err
+		}
+		logger.Infof("delete %s finished", b.Path())
 	}
 	return nil
 }

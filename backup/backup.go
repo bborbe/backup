@@ -20,6 +20,7 @@ type backup struct {
 type Backup interface {
 	Path() string
 	Name() string
+	Delete() error
 }
 
 var logger = log.DefaultLogger
@@ -72,10 +73,13 @@ func validBackupName(name string) bool {
 	return re.MatchString(name)
 }
 
-func (h *backup) Path() string {
-	return fmt.Sprintf("%s%c%s", h.host.Path(), os.PathSeparator, h.name)
+func (b *backup) Path() string {
+	return fmt.Sprintf("%s%c%s", b.host.Path(), os.PathSeparator, b.name)
 }
 
-func (h *backup) Name() string {
-	return h.name
+func (b *backup) Name() string {
+	return b.name
+}
+func (b *backup) Delete() error {
+	return os.RemoveAll(b.Path())
 }
