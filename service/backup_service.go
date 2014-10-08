@@ -8,6 +8,7 @@ import (
 
 	"github.com/bborbe/backup/backup"
 	"github.com/bborbe/backup/dto"
+	"github.com/bborbe/backup/fileutil"
 	"github.com/bborbe/backup/host"
 	"github.com/bborbe/backup/keep"
 	"github.com/bborbe/backup/rootdir"
@@ -69,23 +70,18 @@ func (s *backupService) ListBackups(hostDto dto.Host) ([]dto.Backup, error) {
 	return backupDtos, nil
 }
 
-func (s *backupService) GetHost(host string) (dto.Host, error) {
-	dir := fmt.Sprintf("%s%c%s", s.rootdir.Path(), os.PathSeparator, host)
-	file, err := os.Open(dir)
+func (s *backupService) GetHost(hostname string) (dto.Host, error) {
+	h := host.ByName(s.rootdir, hostname)
+	isDir, err := fileutil.IsDir(h.Path())
 	if err != nil {
 		return nil, err
 	}
-	defer file.Close()
-	fileinfo, err := file.Stat()
-	if err != nil {
-		return nil, err
+	if !isDir {
+		return nil, fmt.Errorf("dir %s is not a directory", h.Path())
 	}
-	if !fileinfo.IsDir() {
-		return nil, fmt.Errorf("dir %s is not a directory", dir)
-	}
-	h := dto.NewHost()
-	h.SetName(host)
-	return h, nil
+	hostDto := dto.NewHost()
+	hostDto.SetName(hostname)
+	return hostDto, nil
 }
 
 func (s *backupService) GetLatestBackup(host dto.Host) (dto.Backup, error) {
@@ -99,9 +95,9 @@ func (s *backupService) GetLatestBackup(host dto.Host) (dto.Backup, error) {
 	}
 	var names []string
 	backups := make(map[string]dto.Backup, 0)
-	for _, backup := range list {
-		backups[backup.GetName()] = backup
-		names = append(names, backup.GetName())
+	for _, b := range list {
+		backups[b.GetName()] = b
+		names = append(names, b.GetName())
 	}
 	sort.Strings(names)
 	return backups[names[len(names)-1]], nil
@@ -121,9 +117,9 @@ func (s *backupService) ListOldBackups(host dto.Host) ([]dto.Backup, error) {
 		keepMap[b.GetName()] = true
 	}
 	var result []dto.Backup
-	for _, backup := range backups {
-		if !keepMap[backup.GetName()] {
-			result = append(result, backup)
+	for _, b := range backups {
+		if !keepMap[b.GetName()] {
+			result = append(result, b)
 		}
 	}
 	return result, nil
@@ -138,8 +134,8 @@ func (s *backupService) Cleanup(hostDto dto.Host) error {
 		return err
 	}
 	logger.Debugf("found %d backup to delete for host %s", len(backups), hostDto.GetName())
-	for _, backup := range backups {
-		dir := fmt.Sprintf("%s%c%s%c%s", s.rootdir.Path(), os.PathSeparator, hostDto.GetName(), os.PathSeparator, backup.GetName())
+	for _, b := range backups {
+		dir := fmt.Sprintf("%s%c%s%c%s", s.rootdir.Path(), os.PathSeparator, hostDto.GetName(), os.PathSeparator, b.GetName())
 		logger.Infof("delete %s started", dir)
 		os.RemoveAll(dir)
 		logger.Infof("delete %s finished", dir)
