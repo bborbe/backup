@@ -1,37 +1,32 @@
-package keep
+package backup
 
 import (
 	"sort"
 	"strconv"
 	"time"
-
-	"github.com/bborbe/backup/dto"
-	"github.com/bborbe/log"
 )
-
-var logger = log.DefaultLogger
 
 func getTimeByName(backupName string) (time.Time, error) {
 	return time.Parse("2006-01-02T15:04:05", backupName)
 }
 
-func latestBackup(backups []dto.Backup) dto.Backup {
+func latestBackup(backups []Backup) Backup {
 	if backups != nil && len(backups) > 0 {
-		sort.Sort(dto.BackupByName(backups))
+		sort.Sort(BackupByName(backups))
 		return backups[len(backups)-1]
 	}
 	return nil
 }
 
-func getKeepToday(backups []dto.Backup, now time.Time) ([]dto.Backup, error) {
-	var result []dto.Backup
-	for _, backup := range backups {
-		t, err := getTimeByName(backup.GetName())
+func getKeepToday(backups []Backup, now time.Time) ([]Backup, error) {
+	var result []Backup
+	for _, b := range backups {
+		t, err := getTimeByName(b.Name())
 		if err != nil {
 			return nil, err
 		}
 		if isToday(t, now) {
-			result = append(result, backup)
+			result = append(result, b)
 		}
 	}
 	return result, nil
@@ -46,21 +41,21 @@ func ageLessThanDays(t time.Time, now time.Time, days int64) bool {
 	return diff <= 24*60*60*days
 }
 
-func getKeepDay(backups []dto.Backup, now time.Time) ([]dto.Backup, error) {
-	sort.Sort(dto.BackupByName(backups))
-	var result []dto.Backup
+func getKeepDay(backups []Backup, now time.Time) ([]Backup, error) {
+	sort.Sort(BackupByName(backups))
+	var result []Backup
 
 	var lastYear int = -1
 	var lastMonth time.Month = -1
 	var lastDay int = -1
 
-	for _, backup := range backups {
-		t, err := getTimeByName(backup.GetName())
+	for _, b := range backups {
+		t, err := getTimeByName(b.Name())
 		if err != nil {
 			return nil, err
 		}
 		if ageLessThanDays(t, now, 7) && (t.Year() != lastYear || t.Month() != lastMonth || t.Day() != lastDay) {
-			result = append(result, backup)
+			result = append(result, b)
 			lastYear = t.Year()
 			lastMonth = t.Month()
 			lastDay = t.Day()
@@ -69,71 +64,71 @@ func getKeepDay(backups []dto.Backup, now time.Time) ([]dto.Backup, error) {
 	return result, nil
 }
 
-func GetKeepBackups(backups []dto.Backup) ([]dto.Backup, error) {
-	keep := make(map[string]dto.Backup, 0)
+func getKeepBackups(backups []Backup) ([]Backup, error) {
+	keep := make(map[string]Backup, 0)
 	now := time.Now()
 	// keep all backups from today
 	{
-		b, err := getKeepToday(backups, now)
+		bs, err := getKeepToday(backups, now)
 		if err != nil {
 			return nil, err
 		}
-		for _, backup := range b {
-			keep[backup.GetName()] = backup
+		for _, b := range bs {
+			keep[b.Name()] = b
 		}
 	}
 	// keep first backup per day if age <= 7 days
 	{
-		b, err := getKeepDay(backups, now)
+		bs, err := getKeepDay(backups, now)
 		if err != nil {
 			return nil, err
 		}
-		for _, backup := range b {
-			keep[backup.GetName()] = backup
+		for _, b := range bs {
+			keep[b.Name()] = b
 		}
 	}
 	// keep first backup per week if age <= 28 days
 	{
-		b, err := getKeepWeek(backups, now)
+		bs, err := getKeepWeek(backups, now)
 		if err != nil {
 			return nil, err
 		}
-		for _, backup := range b {
-			keep[backup.GetName()] = backup
+		for _, b := range bs {
+			keep[b.Name()] = b
 		}
 	}
 	// keep first backup per month
 	{
-		b, err := getKeepMonth(backups)
+		bs, err := getKeepMonth(backups)
 		if err != nil {
 			return nil, err
 		}
-		for _, backup := range b {
-			keep[backup.GetName()] = backup
+		for _, b := range bs {
+			keep[b.Name()] = b
 		}
 	}
 	// keep latest backup / current
 	{
-		backup := latestBackup(backups)
-		if backup != nil {
-			keep[backup.GetName()] = backup
+		b := latestBackup(backups)
+		if b != nil {
+			keep[b.Name()] = b
 		}
 	}
 
-	var result []dto.Backup
+	var result []Backup
 	for _, backup := range keep {
 		result = append(result, backup)
 	}
 	return result, nil
 }
 
-func getKeepMonth(backups []dto.Backup) ([]dto.Backup, error) {
-	sort.Sort(dto.BackupByName(backups))
+func getKeepMonth(backups []Backup) ([]Backup, error) {
+	sort.Sort(BackupByName(backups))
 	var lastYear int64 = -1
 	var lastMonth int64 = -1
-	var result []dto.Backup
-	for _, backup := range backups {
-		name := backup.GetName()
+	var result []Backup
+	for _, b := range backups {
+		name := b.Name()
 		year, err := strconv.ParseInt(name[0:4], 10, 64)
 		if err != nil {
 			return nil, err
@@ -145,7 +140,7 @@ func getKeepMonth(backups []dto.Backup) ([]dto.Backup, error) {
 		logger.Tracef("year %d month %d", year, month)
 
 		if year != lastYear || month != lastMonth {
-			result = append(result, backup)
+			result = append(result, b)
 		}
 		lastYear = year
 		lastMonth = month
@@ -153,18 +148,18 @@ func getKeepMonth(backups []dto.Backup) ([]dto.Backup, error) {
 	return result, nil
 }
 
-func getKeepWeek(backups []dto.Backup, now time.Time) ([]dto.Backup, error) {
-	sort.Sort(dto.BackupByName(backups))
-	var result []dto.Backup
+func getKeepWeek(backups []Backup, now time.Time) ([]Backup, error) {
+	sort.Sort(BackupByName(backups))
+	var result []Backup
 	var lastWeek int = -1
-	for _, backup := range backups {
-		t, err := getTimeByName(backup.GetName())
+	for _, b := range backups {
+		t, err := getTimeByName(b.Name())
 		if err != nil {
 			return nil, err
 		}
 		_, week := t.ISOWeek()
 		if ageLessThanDays(t, now, 40) && week != lastWeek {
-			result = append(result, backup)
+			result = append(result, b)
 			lastWeek = week
 		}
 	}

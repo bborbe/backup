@@ -1,10 +1,11 @@
-package keep
+package backup
 
 import (
 	"testing"
 	"time"
 	. "github.com/bborbe/assert"
-	"github.com/bborbe/backup/dto"
+	"github.com/bborbe/backup/host"
+	"github.com/bborbe/backup/rootdir"
 )
 
 func TestAgeLessThan7Days(t *testing.T) {
@@ -37,9 +38,12 @@ func TestAgeLessThan7Days(t *testing.T) {
 
 func TestGetKeepMonth(t *testing.T) {
 	var err error
-	var result []dto.Backup
+	var result []Backup
+
+	h := host.ByName(rootdir.ByName("/rootdir"), "hostname")
+
 	{
-		backups := []dto.Backup{}
+		backups := []Backup{}
 		result, err = getKeepMonth(backups)
 		if err != nil {
 			t.Fatal(err)
@@ -54,8 +58,8 @@ func TestGetKeepMonth(t *testing.T) {
 		}
 	}
 	{
-		backups := []dto.Backup{
-			dto.CreateBackup("2013-12-12T24:15:59"),
+		backups := []Backup{
+			ByName(h, "2013-12-12T24:15:59"),
 		}
 		result, err = getKeepMonth(backups)
 		if err != nil {
@@ -71,9 +75,9 @@ func TestGetKeepMonth(t *testing.T) {
 		}
 	}
 	{
-		backups := []dto.Backup{
-			dto.CreateBackup("2013-12-12T24:15:59"),
-			dto.CreateBackup("2013-12-01T24:15:59"),
+		backups := []Backup{
+			ByName(h, "2013-12-12T24:15:59"),
+			ByName(h, "2013-12-01T24:15:59"),
 		}
 		result, err = getKeepMonth(backups)
 		if err != nil {
@@ -87,14 +91,14 @@ func TestGetKeepMonth(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		err = AssertThat("2013-12-01T24:15:59", Is(result[0].GetName()))
+		err = AssertThat("2013-12-01T24:15:59", Is(result[0].Name()))
 	}
 	{
-		backups := []dto.Backup{
-			dto.CreateBackup("2012-11-12T24:15:59"),
-			dto.CreateBackup("2013-11-01T24:15:59"),
-			dto.CreateBackup("2013-05-28T24:15:59"),
-			dto.CreateBackup("2013-05-29T24:15:59"),
+		backups := []Backup{
+			ByName(h, "2012-11-12T24:15:59"),
+			ByName(h, "2013-11-01T24:15:59"),
+			ByName(h, "2013-05-28T24:15:59"),
+			ByName(h, "2013-05-29T24:15:59"),
 		}
 		result, err = getKeepMonth(backups)
 		if err != nil {
@@ -111,13 +115,16 @@ func TestGetKeepMonth(t *testing.T) {
 	}
 }
 func TestGetKeepToday(t *testing.T) {
-	var result []dto.Backup
+	var result []Backup
 	now, err := getTimeByName("2013-12-24T20:15:59")
 	if err != nil {
 		t.Fatal(err)
 	}
+
+	h := host.ByName(rootdir.ByName("/rootdir"), "hostname")
+
 	{
-		backups := []dto.Backup{}
+		backups := []Backup{}
 		result, err = getKeepToday(backups, now)
 		if err != nil {
 			t.Fatal(err)
@@ -132,10 +139,10 @@ func TestGetKeepToday(t *testing.T) {
 		}
 	}
 	{
-		backups := []dto.Backup{
-			dto.CreateBackup("2013-12-23T10:15:59"),
-			dto.CreateBackup("2013-12-24T15:15:59"),
-			dto.CreateBackup("2013-12-25T20:15:59"),
+		backups := []Backup{
+			ByName(h, "2013-12-23T10:15:59"),
+			ByName(h, "2013-12-24T15:15:59"),
+			ByName(h, "2013-12-25T20:15:59"),
 		}
 		result, err = getKeepToday(backups, now)
 		if err != nil {
@@ -197,45 +204,48 @@ func TestgetTimeByName(t *testing.T) {
 func TestLatestBackup(t *testing.T) {
 	var (
 		err     error
-		backups []dto.Backup
-		backup  dto.Backup
+		backups []Backup
+		b       Backup
 	)
 	{
-		backups = []dto.Backup{}
-		backup = latestBackup(backups)
-		err = AssertThat(backup, NilValue())
+		backups = []Backup{}
+		b = latestBackup(backups)
+		err = AssertThat(b, NilValue())
+		if err != nil {
+			t.Fatal(err)
+		}
+	}
+
+	h := host.ByName(rootdir.ByName("/rootdir"), "hostname")
+
+	{
+		backups := []Backup{
+			ByName(h, "2013-12-06T20:15:59"),
+		}
+		b = latestBackup(backups)
+		err = AssertThat(b, NotNilValue())
+		if err != nil {
+			t.Fatal(err)
+		}
+		err = AssertThat(b.Name(), Is("2013-12-06T20:15:59"))
 		if err != nil {
 			t.Fatal(err)
 		}
 	}
 	{
-		backups := []dto.Backup{
-			dto.CreateBackup("2013-12-06T20:15:59"),
+		backups := []Backup{
+			ByName(h, "2013-12-06T20:15:55"),
+			ByName(h, "2013-12-06T20:15:54"),
+			ByName(h, "2013-12-06T20:15:53"),
+			ByName(h, "2013-12-06T20:15:56"),
+			ByName(h, "2013-12-06T20:15:52"),
 		}
-		backup = latestBackup(backups)
-		err = AssertThat(backup, NotNilValue())
+		b = latestBackup(backups)
+		err = AssertThat(b, NotNilValue())
 		if err != nil {
 			t.Fatal(err)
 		}
-		err = AssertThat(backup.GetName(), Is("2013-12-06T20:15:59"))
-		if err != nil {
-			t.Fatal(err)
-		}
-	}
-	{
-		backups := []dto.Backup{
-			dto.CreateBackup("2013-12-06T20:15:55"),
-			dto.CreateBackup("2013-12-06T20:15:54"),
-			dto.CreateBackup("2013-12-06T20:15:53"),
-			dto.CreateBackup("2013-12-06T20:15:56"),
-			dto.CreateBackup("2013-12-06T20:15:52"),
-		}
-		backup = latestBackup(backups)
-		err = AssertThat(backup, NotNilValue())
-		if err != nil {
-			t.Fatal(err)
-		}
-		err = AssertThat(backup.GetName(), Is("2013-12-06T20:15:56"))
+		err = AssertThat(b.Name(), Is("2013-12-06T20:15:56"))
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -243,13 +253,16 @@ func TestLatestBackup(t *testing.T) {
 }
 
 func TestGetKeepWeek(t *testing.T) {
-	var result []dto.Backup
+	var result []Backup
 	now, err := getTimeByName("2013-12-24T20:15:59")
 	if err != nil {
 		t.Fatal(err)
 	}
+
+	h := host.ByName(rootdir.ByName("/rootdir"), "hostname")
+
 	{
-		backups := []dto.Backup{}
+		backups := []Backup{}
 		result, err = getKeepWeek(backups, now)
 		if err != nil {
 			t.Fatal(err)
@@ -264,26 +277,26 @@ func TestGetKeepWeek(t *testing.T) {
 		}
 	}
 	{
-		backups := []dto.Backup{
-			dto.CreateBackup("2013-12-06T20:15:59"),
-			dto.CreateBackup("2013-12-07T20:15:59"),
-			dto.CreateBackup("2013-12-08T20:15:59"),
-			dto.CreateBackup("2013-12-09T20:15:59"),
-			dto.CreateBackup("2013-12-10T20:15:59"),
-			dto.CreateBackup("2013-12-11T20:15:59"),
-			dto.CreateBackup("2013-12-12T20:15:59"),
-			dto.CreateBackup("2013-12-13T20:15:59"),
-			dto.CreateBackup("2013-12-14T20:15:59"),
-			dto.CreateBackup("2013-12-15T20:15:59"),
-			dto.CreateBackup("2013-12-16T20:15:59"),
-			dto.CreateBackup("2013-12-17T20:15:59"),
-			dto.CreateBackup("2013-12-18T20:15:59"),
-			dto.CreateBackup("2013-12-19T20:15:59"),
-			dto.CreateBackup("2013-12-20T20:15:59"),
-			dto.CreateBackup("2013-12-21T20:15:59"),
-			dto.CreateBackup("2013-12-22T20:15:59"),
-			dto.CreateBackup("2013-12-23T20:15:59"),
-			dto.CreateBackup("2013-12-24T20:15:59"),
+		backups := []Backup{
+			ByName(h, "2013-12-06T20:15:59"),
+			ByName(h, "2013-12-07T20:15:59"),
+			ByName(h, "2013-12-08T20:15:59"),
+			ByName(h, "2013-12-09T20:15:59"),
+			ByName(h, "2013-12-10T20:15:59"),
+			ByName(h, "2013-12-11T20:15:59"),
+			ByName(h, "2013-12-12T20:15:59"),
+			ByName(h, "2013-12-13T20:15:59"),
+			ByName(h, "2013-12-14T20:15:59"),
+			ByName(h, "2013-12-15T20:15:59"),
+			ByName(h, "2013-12-16T20:15:59"),
+			ByName(h, "2013-12-17T20:15:59"),
+			ByName(h, "2013-12-18T20:15:59"),
+			ByName(h, "2013-12-19T20:15:59"),
+			ByName(h, "2013-12-20T20:15:59"),
+			ByName(h, "2013-12-21T20:15:59"),
+			ByName(h, "2013-12-22T20:15:59"),
+			ByName(h, "2013-12-23T20:15:59"),
+			ByName(h, "2013-12-24T20:15:59"),
 		}
 		result, err = getKeepWeek(backups, now)
 		if err != nil {
@@ -301,13 +314,16 @@ func TestGetKeepWeek(t *testing.T) {
 }
 
 func TestGetKeepDay(t *testing.T) {
-	var result []dto.Backup
+	var result []Backup
 	now, err := getTimeByName("2013-12-24T20:15:59")
 	if err != nil {
 		t.Fatal(err)
 	}
+
+	h := host.ByName(rootdir.ByName("/rootdir"), "hostname")
+
 	{
-		backups := []dto.Backup{}
+		backups := []Backup{}
 		result, err = getKeepDay(backups, now)
 		if err != nil {
 			t.Fatal(err)
@@ -322,17 +338,17 @@ func TestGetKeepDay(t *testing.T) {
 		}
 	}
 	{
-		backups := []dto.Backup{
-			dto.CreateBackup("2013-12-16T20:15:59"),
-			dto.CreateBackup("2013-12-17T20:15:58"),
-			dto.CreateBackup("2013-12-17T20:15:59"),
-			dto.CreateBackup("2013-12-18T20:15:59"),
-			dto.CreateBackup("2013-12-19T20:15:59"),
-			dto.CreateBackup("2013-12-20T20:15:59"),
-			dto.CreateBackup("2013-12-21T20:15:59"),
-			dto.CreateBackup("2013-12-22T20:15:59"),
-			dto.CreateBackup("2013-12-23T20:15:59"),
-			dto.CreateBackup("2013-12-24T20:15:59"),
+		backups := []Backup{
+			ByName(h, "2013-12-16T20:15:59"),
+			ByName(h, "2013-12-17T20:15:58"),
+			ByName(h, "2013-12-17T20:15:59"),
+			ByName(h, "2013-12-18T20:15:59"),
+			ByName(h, "2013-12-19T20:15:59"),
+			ByName(h, "2013-12-20T20:15:59"),
+			ByName(h, "2013-12-21T20:15:59"),
+			ByName(h, "2013-12-22T20:15:59"),
+			ByName(h, "2013-12-23T20:15:59"),
+			ByName(h, "2013-12-24T20:15:59"),
 		}
 		result, err = getKeepDay(backups, now)
 		if err != nil {

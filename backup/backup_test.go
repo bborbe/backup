@@ -8,7 +8,7 @@ import (
 )
 
 func TestImplementsBackup(t *testing.T) {
-	backup := ByName(host.ByName(rootdir.New("/rootdir"), "hostname"), "backupname")
+	backup := ByName(host.ByName(rootdir.ByName("/rootdir"), "hostname"), "backupname")
 	var expected *Backup
 	err := AssertThat(backup, Implements(expected))
 	if err != nil {
@@ -17,7 +17,7 @@ func TestImplementsBackup(t *testing.T) {
 }
 
 func TestName(t *testing.T) {
-	backup := ByName(host.ByName(rootdir.New("/rootdir"), "hostname"), "backupname")
+	backup := ByName(host.ByName(rootdir.ByName("/rootdir"), "hostname"), "backupname")
 	err := AssertThat(backup.Name(), Is("backupname"))
 	if err != nil {
 		t.Fatal(err)
@@ -25,7 +25,7 @@ func TestName(t *testing.T) {
 }
 
 func TestPath(t *testing.T) {
-	backup := ByName(host.ByName(rootdir.New("/rootdir"), "hostname"), "backupname")
+	backup := ByName(host.ByName(rootdir.ByName("/rootdir"), "hostname"), "backupname")
 	err := AssertThat(backup.Path(), Is("/rootdir/hostname/backupname"))
 	if err != nil {
 		t.Fatal(err)

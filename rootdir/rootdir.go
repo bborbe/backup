@@ -6,7 +6,7 @@ type Rootdir interface {
 
 type rootdir string
 
-func New(dir string) Rootdir {
+func ByName(dir string) Rootdir {
 	d := rootdir(dir)
 	return &d
 }

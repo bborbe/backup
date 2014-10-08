@@ -68,6 +68,14 @@ func All(h host.Host) ([]Backup, error) {
 	return backups, nil
 }
 
+func KeepBackups(h host.Host) ([]Backup, error) {
+	backups, err := All(h)
+	if err != nil {
+		return nil, err
+	}
+	return getKeepBackups(backups)
+}
+
 func validBackupName(name string) bool {
 	re := regexp.MustCompile("\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}")
 	return re.MatchString(name)

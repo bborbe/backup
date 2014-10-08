@@ -9,7 +9,6 @@ import (
 	"github.com/bborbe/backup/dto"
 	"github.com/bborbe/backup/fileutil"
 	"github.com/bborbe/backup/host"
-	"github.com/bborbe/backup/keep"
 	"github.com/bborbe/backup/rootdir"
 	"github.com/bborbe/log"
 )
@@ -33,7 +32,7 @@ var logger = log.DefaultLogger
 
 func NewBackupService(rootdirectory string) *backupService {
 	s := new(backupService)
-	s.rootdir = rootdir.New(rootdirectory)
+	s.rootdir = rootdir.ByName(rootdirectory)
 	return s
 }
 
@@ -62,11 +61,19 @@ func (s *backupService) ListBackups(hostDto dto.Host) ([]dto.Backup, error) {
 	if err != nil {
 		return nil, err
 	}
+	return convertBackupsToBackupDtos(backups), nil
+}
+
+func convertBackupToBackupDto(b backup.Backup) dto.Backup {
+	return dto.CreateBackup(b.Name())
+}
+
+func convertBackupsToBackupDtos(backups []backup.Backup) []dto.Backup {
 	backupDtos := make([]dto.Backup, len(backups))
 	for i := 0; i < len(backups); i++ {
-		backupDtos[i] = dto.CreateBackup(backups[i].Name())
+		backupDtos[i] = convertBackupToBackupDto(backups[i])
 	}
-	return backupDtos, nil
+	return backupDtos
 }
 
 func (s *backupService) GetHost(hostname string) (dto.Host, error) {
@@ -83,8 +90,12 @@ func (s *backupService) GetHost(hostname string) (dto.Host, error) {
 	return hostDto, nil
 }
 
-func (s *backupService) GetLatestBackup(host dto.Host) (dto.Backup, error) {
-	list, err := s.ListBackups(host)
+func (s *backupService) GetLatestBackup(hostDto dto.Host) (dto.Backup, error) {
+	if hostDto == nil {
+		return nil, errors.New("parameter host missing")
+	}
+	h := host.ByName(s.rootdir, hostDto.GetName())
+	list, err := backup.All(h)
 	if err != nil {
 		logger.Debugf("list backups failed: %v", err)
 		return nil, err
@@ -93,35 +104,35 @@ func (s *backupService) GetLatestBackup(host dto.Host) (dto.Backup, error) {
 		return nil, nil
 	}
 	var names []string
-	backups := make(map[string]dto.Backup, 0)
+	backups := make(map[string]backup.Backup, 0)
 	for _, b := range list {
-		backups[b.GetName()] = b
-		names = append(names, b.GetName())
+		backups[b.Name()] = b
+		names = append(names, b.Name())
 	}
 	sort.Strings(names)
-	return backups[names[len(names)-1]], nil
+	return convertBackupToBackupDto(backups[names[len(names)-1]]), nil
 }
 
-func (s *backupService) ListOldBackups(host dto.Host) ([]dto.Backup, error) {
-	backups, err := s.ListBackups(host)
-	if err != nil {
-		return nil, err
+func (s *backupService) ListOldBackups(hostDto dto.Host) ([]dto.Backup, error) {
+	if hostDto == nil {
+		return nil, errors.New("parameter host missing")
 	}
-	keepBackups, err := keep.GetKeepBackups(backups)
+	h := host.ByName(s.rootdir, hostDto.GetName())
+	keepBackups, err := backup.KeepBackups(h)
 	if err != nil {
 		return nil, err
 	}
 	keepMap := make(map[string]bool)
 	for _, b := range keepBackups {
-		keepMap[b.GetName()] = true
+		keepMap[b.Name()] = true
 	}
-	var result []dto.Backup
-	for _, b := range backups {
-		if !keepMap[b.GetName()] {
+	var result []backup.Backup
+	for _, b := range keepBackups {
+		if !keepMap[b.Name()] {
 			result = append(result, b)
 		}
 	}
-	return result, nil
+	return convertBackupsToBackupDtos(result), nil
 }
 
 func (s *backupService) Cleanup(hostDto dto.Host) error {
@@ -148,10 +159,14 @@ func (s *backupService) Cleanup(hostDto dto.Host) error {
 	return nil
 }
 
-func (s *backupService) ListKeepBackups(host dto.Host) ([]dto.Backup, error) {
-	backups, err := s.ListBackups(host)
+func (s *backupService) ListKeepBackups(hostDto dto.Host) ([]dto.Backup, error) {
+	if hostDto == nil {
+		return nil, errors.New("parameter host missing")
+	}
+	h := host.ByName(s.rootdir, hostDto.GetName())
+	keepBackups, err := backup.KeepBackups(h)
 	if err != nil {
 		return nil, err
 	}
-	return keep.GetKeepBackups(backups)
+	return convertBackupsToBackupDtos(keepBackups), nil
 }
