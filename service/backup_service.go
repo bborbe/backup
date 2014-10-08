@@ -8,7 +8,6 @@ import (
 	"sort"
 
 	"github.com/bborbe/backup/dto"
-	"github.com/bborbe/backup/fileutil"
 	"github.com/bborbe/backup/host"
 	"github.com/bborbe/backup/keep"
 	"github.com/bborbe/backup/rootdir"
@@ -47,25 +46,11 @@ func (s *backupService) ListHosts() ([]dto.Host, error) {
 	if err != nil {
 		return nil, err
 	}
-	return s.createHosts(hosts)
-}
-
-func (s *backupService) createHosts(hosts []host.Host) ([]dto.Host, error) {
-	result := []dto.Host{}
-	for _, h := range hosts {
-		dir := h.Path()
-		isDir, err := fileutil.IsDir(dir)
-		if err != nil {
-			logger.Debugf("is dir failed: %v", err)
-			return nil, err
-		}
-		if isDir {
-			result = append(result, dto.CreateHost(h.Name()))
-		} else {
-			logger.Debugf("createHost for %s failed, is not a directory", h)
-		}
+	hostDtos := make([]dto.Host, len(hosts))
+	for i := 0; i < len(hosts); i++ {
+		hostDtos[i] = dto.CreateHost(hosts[i].Name())
 	}
-	return result, nil
+	return hostDtos, nil
 }
 
 func (s *backupService) ListBackups(h dto.Host) ([]dto.Backup, error) {
@@ -142,7 +127,7 @@ func (s *backupService) GetLatestBackup(host dto.Host) (dto.Backup, error) {
 		names = append(names, backup.GetName())
 	}
 	sort.Strings(names)
-	return backups[names[len(names)-1]], nil
+	return backups[names[len(names) - 1]], nil
 }
 
 func (s *backupService) ListOldBackups(host dto.Host) ([]dto.Backup, error) {
