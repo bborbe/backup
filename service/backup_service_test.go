@@ -628,7 +628,7 @@ func TestListKeepBackups(t *testing.T) {
 		backups  []dto.Backup
 		host     dto.Host
 		hostName string
-		err error
+		err      error
 	)
 	hostName = "firewall.example.com"
 	clearBackupRootDir(BACKUP_ROOT_DIR)

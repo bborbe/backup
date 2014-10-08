@@ -38,14 +38,14 @@ func main() {
 func do(writer io.Writer, backupService service.BackupService, rootdirName string, hostname string) error {
 	logger.Debug("start")
 	var hosts []dto.Host
-	              var err error
+	var err error
 	if hostname == config.DEFAULT_HOST {
 		hosts, err = backupService.ListHosts()
 		if err != nil {
 			return err
 		}
 	} else {
-		host, err := backupService.GetHost( hostname)
+		host, err := backupService.GetHost(hostname)
 		if err != nil {
 			return err
 		}
