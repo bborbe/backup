@@ -2,15 +2,11 @@ package main
 
 import (
 	"flag"
-	"fmt"
 	"io"
 	"os"
-	"sort"
 
 	"github.com/bborbe/backup/config"
-	"github.com/bborbe/backup/dto"
 	"github.com/bborbe/backup/service"
-	"github.com/bborbe/backup/util"
 	"github.com/bborbe/log"
 )
 
@@ -37,35 +33,7 @@ func main() {
 
 func do(writer io.Writer, backupService service.BackupService, rootdirName string, hostname string) error {
 	logger.Debug("start")
-	var hosts []dto.Host
 
-	rootdir, err := backupService.GetRootdir(rootdirName)
-	if err != nil {
-		return err
-	}
-
-	if hostname == config.DEFAULT_HOST {
-		hosts, err = backupService.ListHosts()
-		if err != nil {
-			return err
-		}
-	} else {
-		host, err := backupService.GetHost(rootdir, hostname)
-		if err != nil {
-			return err
-		}
-		hosts = []dto.Host{host}
-	}
-	sort.Sort(util.HostByDate(hosts))
-	for _, host := range hosts {
-		backup, err := backupService.GetLatestBackup(host)
-		if err != nil {
-			return err
-		}
-		if backup != nil {
-			fmt.Fprintf(writer, "%s/%s\n", host.GetName(), backup.GetName())
-		}
-	}
 	logger.Debug("done")
 	return nil
 }

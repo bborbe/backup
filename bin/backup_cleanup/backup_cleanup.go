@@ -50,18 +50,13 @@ func do(writer io.Writer, backupService service.BackupService, rootdirName strin
 	defer l.Unlock()
 	logger.Debug("start")
 
-	rootdir, err := backupService.GetRootdir(rootdirName)
-	if err != nil {
-		return err
-	}
-
 	if hostName == config.DEFAULT_HOST {
 		hosts, err = backupService.ListHosts()
 		if err != nil {
 			return err
 		}
 	} else {
-		host, err := backupService.GetHost(rootdir, hostName)
+		host, err := backupService.GetHost(hostName)
 		if err != nil {
 			return err
 		}

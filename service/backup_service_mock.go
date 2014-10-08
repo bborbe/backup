@@ -2,7 +2,6 @@ package service
 
 import (
 	"github.com/bborbe/backup/dto"
-	"github.com/bborbe/backup/rootdir"
 )
 
 type backupServiceMock struct {
@@ -23,15 +22,12 @@ func NewBackupServiceMock() *backupServiceMock {
 	return new(backupServiceMock)
 }
 
-func (s *backupServiceMock) GetRootdir(dir string) (rootdir.Rootdir, error) {
-	return nil, nil
-}
 
 func (s *backupServiceMock) Resume(host dto.Host) error {
 	return nil
 }
 
-func (s *backupServiceMock) GetHost(rootdir rootdir.Rootdir, host string) (dto.Host, error) {
+func (s *backupServiceMock) GetHost(host string) (dto.Host, error) {
 	return nil, nil
 }
 
