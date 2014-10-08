@@ -5,6 +5,9 @@ import (
 	"fmt"
 	"os"
 
+	"regexp"
+
+	"github.com/bborbe/backup/fileutil"
 	"github.com/bborbe/backup/host"
 	"github.com/bborbe/log"
 )
@@ -52,9 +55,21 @@ func All(h host.Host) ([]Backup, error) {
 	}
 	backups := make([]Backup, 0)
 	for _, name := range names {
-		backups = append(backups, ByName(h, name))
+		backup := ByName(h, name)
+		isDir, err := fileutil.IsDir(backup.Path())
+		if err != nil {
+			return nil, err
+		}
+		if isDir && validBackupName(name) {
+			backups = append(backups, backup)
+		}
 	}
 	return backups, nil
+}
+
+func validBackupName(name string) bool {
+	re := regexp.MustCompile("\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}")
+	return re.MatchString(name)
 }
 
 func (h *backup) Path() string {

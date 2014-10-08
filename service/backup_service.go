@@ -4,9 +4,9 @@ import (
 	"errors"
 	"fmt"
 	"os"
-	"regexp"
 	"sort"
 
+	"github.com/bborbe/backup/backup"
 	"github.com/bborbe/backup/dto"
 	"github.com/bborbe/backup/host"
 	"github.com/bborbe/backup/keep"
@@ -53,43 +53,20 @@ func (s *backupService) ListHosts() ([]dto.Host, error) {
 	return hostDtos, nil
 }
 
-func (s *backupService) ListBackups(h dto.Host) ([]dto.Backup, error) {
-	if h == nil {
+func (s *backupService) ListBackups(hostDto dto.Host) ([]dto.Backup, error) {
+	if hostDto == nil {
 		return nil, errors.New("parameter host missing")
 	}
-	dir := fmt.Sprintf("%s%c%s", s.rootdir.Path(), os.PathSeparator, h.GetName())
-	file, err := os.Open(dir)
+	h := host.ByName(s.rootdir, hostDto.GetName())
+	backups, err := backup.All(h)
 	if err != nil {
-		logger.Debugf("open dir failed: %v", err)
 		return nil, err
 	}
-	defer file.Close()
-	fileinfo, err := file.Stat()
-	if err != nil {
-		logger.Debugf("file stat failed: %v", err)
-		return nil, err
+	backupDtos := make([]dto.Backup, len(backups))
+	for i := 0; i < len(backups); i++ {
+		backupDtos[i] = dto.CreateBackup(backups[i].Name())
 	}
-	if !fileinfo.IsDir() {
-		return nil, fmt.Errorf("dir %s is not a directory", dir)
-	}
-	dirnames, err := file.Readdirnames(0)
-	if err != nil {
-		logger.Debugf("read dir names failed: %v", err)
-		return nil, err
-	}
-	var names []string
-	for _, name := range dirnames {
-		if validBackupName(name) {
-			names = append(names, name)
-		}
-	}
-	backups := dto.CreateBackups(names)
-	return backups, nil
-}
-
-func validBackupName(name string) bool {
-	re := regexp.MustCompile("\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}")
-	return re.MatchString(name)
+	return backupDtos, nil
 }
 
 func (s *backupService) GetHost(host string) (dto.Host, error) {
@@ -127,7 +104,7 @@ func (s *backupService) GetLatestBackup(host dto.Host) (dto.Backup, error) {
 		names = append(names, backup.GetName())
 	}
 	sort.Strings(names)
-	return backups[names[len(names) - 1]], nil
+	return backups[names[len(names)-1]], nil
 }
 
 func (s *backupService) ListOldBackups(host dto.Host) ([]dto.Backup, error) {
