@@ -6,11 +6,11 @@ import (
 	. "github.com/bborbe/assert"
 	"github.com/bborbe/backup/config"
 	backup_mock "github.com/bborbe/backup/service"
-	server_mock "github.com/bborbe/server/mock"
+	"github.com/bborbe/io"
 )
 
 func TestResumeFail(t *testing.T) {
-	writer := server_mock.NewWriter()
+	writer := io.NewWriter()
 	backupService := backup_mock.NewBackupServiceMock()
 	backupService.SetResume(fmt.Errorf("error"))
 
@@ -29,7 +29,7 @@ func TestResumeFail(t *testing.T) {
 }
 
 func TestResumeSuccess(t *testing.T) {
-	writer := server_mock.NewWriter()
+	writer := io.NewWriter()
 	backupService := backup_mock.NewBackupServiceMock()
 	backupService.SetResume(nil)
 
