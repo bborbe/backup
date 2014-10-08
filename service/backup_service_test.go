@@ -17,7 +17,7 @@ func TestImplementsBackupService(t *testing.T) {
 }
 
 func TestListHosts(t *testing.T) {
-	testutil.ClearBackupRootDir(testutil.BACKUP_ROOT_DIR)
+	testutil.ClearRootDir(testutil.BACKUP_ROOT_DIR)
 	service := NewBackupService(testutil.BACKUP_ROOT_DIR)
 	{
 		_, err := service.ListHosts()
@@ -58,7 +58,7 @@ func TestListHosts(t *testing.T) {
 }
 
 func TestGetHost(t *testing.T) {
-	testutil.ClearBackupRootDir(testutil.BACKUP_ROOT_DIR)
+	testutil.ClearRootDir(testutil.BACKUP_ROOT_DIR)
 	service := NewBackupService(testutil.BACKUP_ROOT_DIR)
 	hostName := "firewall.example.com"
 	testutil.CreateRootDir(testutil.BACKUP_ROOT_DIR)
@@ -83,7 +83,7 @@ func TestGetHost(t *testing.T) {
 }
 
 func TestListBackups(t *testing.T) {
-	testutil.ClearBackupRootDir(testutil.BACKUP_ROOT_DIR)
+	testutil.ClearRootDir(testutil.BACKUP_ROOT_DIR)
 	service := NewBackupService(testutil.BACKUP_ROOT_DIR)
 	{
 		_, err := service.ListBackups(nil)
@@ -165,7 +165,7 @@ func TestListBackups(t *testing.T) {
 //GetLatestBackup(host dto.Host) (dto.Backup, error)
 func TestGetLatestBackup(t *testing.T) {
 	var backupName string
-	testutil.ClearBackupRootDir(testutil.BACKUP_ROOT_DIR)
+	testutil.ClearRootDir(testutil.BACKUP_ROOT_DIR)
 	service := NewBackupService(testutil.BACKUP_ROOT_DIR)
 	{
 		_, err := service.GetLatestBackup(nil)
@@ -245,7 +245,7 @@ func TestGetLatestBackup(t *testing.T) {
 
 //ListOldBackups(host dto.Host) ([]dto.Backup, error)
 func TestListOldBackups(t *testing.T) {
-	testutil.ClearBackupRootDir(testutil.BACKUP_ROOT_DIR)
+	testutil.ClearRootDir(testutil.BACKUP_ROOT_DIR)
 	service := NewBackupService(testutil.BACKUP_ROOT_DIR)
 	{
 		_, err := service.ListOldBackups(nil)
@@ -266,7 +266,7 @@ func TestListOldBackups(t *testing.T) {
 
 //Cleanup() error
 func TestCleanup(t *testing.T) {
-	testutil.ClearBackupRootDir(testutil.BACKUP_ROOT_DIR)
+	testutil.ClearRootDir(testutil.BACKUP_ROOT_DIR)
 	service := NewBackupService(testutil.BACKUP_ROOT_DIR)
 	{
 		err := service.Cleanup(nil)
@@ -306,7 +306,7 @@ func TestListKeepBackups(t *testing.T) {
 		err      error
 	)
 	hostName = "firewall.example.com"
-	testutil.ClearBackupRootDir(testutil.BACKUP_ROOT_DIR)
+	testutil.ClearRootDir(testutil.BACKUP_ROOT_DIR)
 	testutil.CreateRootDir(testutil.BACKUP_ROOT_DIR)
 	testutil.CreateHostDir(testutil.BACKUP_ROOT_DIR, hostName)
 	service = NewBackupService(testutil.BACKUP_ROOT_DIR)

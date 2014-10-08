@@ -8,6 +8,7 @@ import (
 	"sort"
 
 	"github.com/bborbe/backup/dto"
+	"github.com/bborbe/backup/fileutil"
 	"github.com/bborbe/backup/host"
 	"github.com/bborbe/backup/keep"
 	"github.com/bborbe/backup/rootdir"
@@ -53,7 +54,7 @@ func (s *backupService) createHosts(hosts []host.Host) ([]dto.Host, error) {
 	result := []dto.Host{}
 	for _, h := range hosts {
 		dir := h.Path()
-		isDir, err := isDir(dir)
+		isDir, err := fileutil.IsDir(dir)
 		if err != nil {
 			logger.Debugf("is dir failed: %v", err)
 			return nil, err
@@ -65,20 +66,6 @@ func (s *backupService) createHosts(hosts []host.Host) ([]dto.Host, error) {
 		}
 	}
 	return result, nil
-}
-
-func isDir(dir string) (bool, error) {
-	file, err := os.Open(dir)
-	if err != nil {
-		logger.Debugf("open dir %s failed: %v", dir, err)
-		return false, nil
-	}
-	defer file.Close()
-	fileinfo, err := file.Stat()
-	if err != nil {
-		return false, err
-	}
-	return fileinfo.IsDir(), nil
 }
 
 func (s *backupService) ListBackups(h dto.Host) ([]dto.Backup, error) {

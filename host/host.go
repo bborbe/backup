@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/bborbe/backup/fileutil"
 	"github.com/bborbe/backup/rootdir"
 	"github.com/bborbe/log"
 )
@@ -52,7 +53,14 @@ func All(root rootdir.Rootdir) ([]Host, error) {
 	}
 	hosts := make([]Host, 0)
 	for _, name := range names {
-		hosts = append(hosts, ByName(root, name))
+		host := ByName(root, name)
+		isDir, err := fileutil.IsDir(host.Path())
+		if err != nil {
+			return nil, err
+		}
+		if isDir {
+			hosts = append(hosts, host)
+		}
 	}
 	return hosts, nil
 }
