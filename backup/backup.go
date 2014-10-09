@@ -7,6 +7,9 @@ import (
 
 	"regexp"
 
+	"sort"
+	"time"
+
 	"github.com/bborbe/backup/fileutil"
 	"github.com/bborbe/backup/host"
 	"github.com/bborbe/log"
@@ -26,8 +29,13 @@ type Backup interface {
 }
 
 const INCOMPLETE = "incomplete"
+const CURRENT = "current"
 
 var logger = log.DefaultLogger
+
+func ByTime(h host.Host, t time.Time) Backup {
+	return ByName(h, t.Format("2006-01-02T15:04:05"))
+}
 
 func ByName(h host.Host, name string) Backup {
 	b := new(backup)
@@ -73,6 +81,9 @@ func All(h host.Host) ([]Backup, error) {
 }
 
 func (b *backup) IsDir() (bool, error) {
+	if !fileutil.Exists(b.Path()) {
+		return false, nil
+	}
 	return fileutil.IsDir(b.Path())
 }
 
@@ -106,13 +117,77 @@ func (b *backup) Delete() error {
 }
 
 func Resume(h host.Host) error {
-	// falls bereits ein fertiges backup fuer heute existiert
-	// symlink von current auf das vorletzte backup umbiegen
-	// backup von heute in incomplete umbennen
+	existsIncomplete, err := existsIncomplete(h)
+	if err != nil {
+		return err
+	}
+	if existsIncomplete {
+		logger.Debug("skip resume => incomplete dir exists")
+		return nil
+	}
+	backups, err := All(h)
+	if err != nil {
+		return err
+	}
+	if len(backups) < 2 {
+		return fmt.Errorf("can't resume with less than two existing backups")
+	}
+	existsBackupForToday, err := existsBackupForToday(backups)
+	if err != nil {
+		return err
+	}
+	if !existsBackupForToday {
+		logger.Debug("skip resume => no backup for today exists")
+		return nil
+	}
+	sort.Sort(BackupByName(backups))
+	err = renameLastBackupToIncomplete(h, backups)
+	if err != nil {
+		return err
+	}
+	err = removeCurrentSymlink(h)
+	if err != nil {
+		return err
+	}
+	err = symlinkBeforeLastToCurrent(h, backups)
+	if err != nil {
+		return err
+	}
 	return nil
 }
 
-func ExistsIncomplete(h host.Host) (bool, error) {
-	//	i := ByName(h, INCOMPLETE)
-	return false, nil
+func removeCurrentSymlink(h host.Host) error {
+	return os.Remove(current(h).Path())
+}
+
+func symlinkBeforeLastToCurrent(h host.Host, backups []Backup) error {
+	beforeLastBackup := backups[len(backups)-2]
+	return os.Symlink(beforeLastBackup.Path(), current(h).Path())
+}
+
+func renameLastBackupToIncomplete(h host.Host, backups []Backup) error {
+	lastBackup := backups[len(backups)-1]
+	return os.Rename(lastBackup.Path(), incomplete(h).Path())
+}
+
+func existsIncomplete(h host.Host) (bool, error) {
+	logger.Debugf("existsIncomplete host: %s", h.Name())
+	return incomplete(h).IsDir()
+}
+
+func incomplete(h host.Host) Backup {
+	return ByName(h, INCOMPLETE)
+}
+
+func current(h host.Host) Backup {
+	return ByName(h, CURRENT)
+}
+
+func existsBackupForToday(backups []Backup) (bool, error) {
+	now := time.Now()
+	backupsToday, err := getKeepToday(backups, now)
+	if err != nil {
+		return false, err
+	}
+	return len(backupsToday) > 0, nil
 }

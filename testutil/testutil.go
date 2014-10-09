@@ -41,6 +41,11 @@ func CreateBackupDir(root string, host string, backup string) error {
 	return os.Mkdir(dir, fileMode)
 }
 
+func CreateBackupCurrentSymlink(root string, host string, backup string) error {
+	logger.Debugf("CreateBackupCurrentSymlink root: %s host: %s backup: %s", root, host, backup)
+	return os.Symlink(fmt.Sprintf("%s%c%s%c%s", root, os.PathSeparator, host, os.PathSeparator, backup), fmt.Sprintf("%s%c%s%c%s", root, os.PathSeparator, host, os.PathSeparator, "current"))
+}
+
 func CreateFile(path string) error {
 	logger.Debugf("CreateFile file: %s", path)
 	var fileMode os.FileMode
