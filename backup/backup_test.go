@@ -34,11 +34,11 @@ func TestPath(t *testing.T) {
 
 func TestValidBackupName(t *testing.T) {
 	var err error
-	err = AssertThat(validBackupName("foo"), Is(false))
+	err = AssertThat(validName("foo"), Is(false))
 	if err != nil {
 		t.Fatal(err)
 	}
-	err = AssertThat(validBackupName("2013-12-12T24:15:59"), Is(true))
+	err = AssertThat(validName("2013-12-12T24:15:59"), Is(true))
 	if err != nil {
 		t.Fatal(err)
 	}

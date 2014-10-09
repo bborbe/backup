@@ -21,7 +21,11 @@ type Backup interface {
 	Path() string
 	Name() string
 	Delete() error
+	IsDir() (bool, error)
+	ValidName() bool
 }
+
+const INCOMPLETE = "incomplete"
 
 var logger = log.DefaultLogger
 
@@ -57,15 +61,19 @@ func All(h host.Host) ([]Backup, error) {
 	backups := make([]Backup, 0)
 	for _, name := range names {
 		backup := ByName(h, name)
-		isDir, err := fileutil.IsDir(backup.Path())
+		isDir, err := backup.IsDir()
 		if err != nil {
 			return nil, err
 		}
-		if isDir && validBackupName(name) {
+		if isDir && backup.ValidName() {
 			backups = append(backups, backup)
 		}
 	}
 	return backups, nil
+}
+
+func (b *backup) IsDir() (bool, error) {
+	return fileutil.IsDir(b.Path())
 }
 
 func KeepBackups(h host.Host) ([]Backup, error) {
@@ -76,7 +84,11 @@ func KeepBackups(h host.Host) ([]Backup, error) {
 	return getKeepBackups(backups)
 }
 
-func validBackupName(name string) bool {
+func (b *backup) ValidName() bool {
+	return validName(b.Name())
+}
+
+func validName(name string) bool {
 	re := regexp.MustCompile("\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}")
 	return re.MatchString(name)
 }
@@ -94,5 +106,13 @@ func (b *backup) Delete() error {
 }
 
 func Resume(h host.Host) error {
+	// falls bereits ein fertiges backup fuer heute existiert
+	// symlink von current auf das vorletzte backup umbiegen
+	// backup von heute in incomplete umbennen
 	return nil
+}
+
+func ExistsIncomplete(h host.Host) (bool, error) {
+	//	i := ByName(h, INCOMPLETE)
+	return false, nil
 }
