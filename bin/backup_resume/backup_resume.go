@@ -14,11 +14,13 @@ import (
 
 var logger = log.DefaultLogger
 
+const NO_HOST = "-"
+
 func main() {
 	defer logger.Close()
 	logLevelPtr := flag.Int("loglevel", config.DEFAULT_LOG_LEVEL, "int")
 	rootdirPtr := flag.String("rootdir", config.DEFAULT_ROOT_DIR, "string")
-	hostPtr := flag.String("host", config.DEFAULT_HOST, "string")
+	hostPtr := flag.String("host", NO_HOST, "string")
 	flag.Parse()
 	logger.SetLevelThreshold(*logLevelPtr)
 	logger.Debugf("set log level to %s", log.LogLevelToString(*logLevelPtr))
@@ -29,14 +31,19 @@ func main() {
 	err := do(writer, backupService, *hostPtr)
 	if err != nil {
 		logger.Fatal(err)
+		logger.Close()
 		os.Exit(1)
 	}
 }
 
 func do(writer io.Writer, backupService service.BackupService, hostname string) error {
 	logger.Debug("start")
+	if hostname == NO_HOST {
+		return fmt.Errorf("parameter host missing")
+	}
 	host, err := backupService.GetHost(hostname)
 	if err != nil {
+		fmt.Fprintf(writer, "host %s not found", hostname)
 		return err
 	}
 	err = backupService.Resume(host)
