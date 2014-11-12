@@ -32,22 +32,30 @@ func (s *statusChecker) Check() ([]dto.Status, error) {
 }
 
 func createStatusDtoForHosts(backupService service.BackupService, hosts []dto.Host) ([]dto.Status, error) {
-	status := make([]dto.Status, 0)
+	result := make([]dto.Status, 0)
 	for _, host := range hosts {
-		backup, err := backupService.GetLatestBackup(host)
+		status, err := createStatusDtoForHost(backupService, host)
 		if err != nil {
-			logger.Debugf("get latest backup failed: %v", err)
 			return nil, err
 		}
-		if backup != nil {
-			logger.Debugf("host: %s backup: %s", host.GetName(), backup.GetName())
-			status = append(status, createStatusDto(host.GetName(), true))
-		} else {
-			logger.Debugf("no backup for host %s found", host.GetName())
-			status = append(status, createStatusDto(host.GetName(), false))
-		}
+		result = append(result, status)
 	}
-	return status, nil
+	return result, nil
+}
+
+func createStatusDtoForHost(backupService service.BackupService, host dto.Host) (dto.Status, error) {
+	backup, err := backupService.GetLatestBackup(host)
+	if err != nil {
+		logger.Debugf("get latest backup failed: %v", err)
+		return nil, err
+	}
+
+	if backup != nil {
+		logger.Debugf("host: %s backup: %s", host.GetName(), backup.GetName())
+		return createStatusDto(host.GetName(), true), nil
+	}
+	logger.Debugf("no backup for host %s found", host.GetName())
+	return createStatusDto(host.GetName(), false), nil
 }
 
 func createStatusDto(hostname string, status bool) dto.Status {
