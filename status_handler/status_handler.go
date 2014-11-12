@@ -3,6 +3,7 @@ package status_handler
 import (
 	"net/http"
 
+	"github.com/bborbe/backup/dto"
 	"github.com/bborbe/backup/status_checker"
 	"github.com/bborbe/log"
 	"github.com/bborbe/server/handler/error"
@@ -29,6 +30,28 @@ func (s *statusHandler) ServeHTTP(responseWriter http.ResponseWriter, request *h
 		e.ServeHTTP(responseWriter, request)
 		return
 	}
+	status = filter(status, request.FormValue("status"))
 	handler := json.NewJsonHandler(status)
 	handler.ServeHTTP(responseWriter, request)
+}
+
+func filter(list []dto.Status, status string) []dto.Status {
+	if list == nil {
+		return list
+	}
+	result := make([]dto.Status, 0)
+	for _, s := range list {
+		if "true" == status {
+			if s.GetStatus() {
+				result = append(result, s)
+			}
+		} else if "false" == status {
+			if !s.GetStatus() {
+				result = append(result, s)
+			}
+		} else {
+			result = append(result, s)
+		}
+	}
+	return result
 }
