@@ -5,6 +5,7 @@ import (
 	. "github.com/bborbe/assert"
 	"github.com/bborbe/backup/dto"
 	"github.com/bborbe/backup/service"
+	"github.com/bborbe/backup/timeparser"
 )
 
 func TestImplementsStatusChecker(t *testing.T) {
@@ -81,7 +82,7 @@ func TestCreateStatusDtoForHostsOneHost(t *testing.T) {
 		statusDtos []dto.Status
 	)
 	hostName := "fire.example.com"
-	backupName := "foobar"
+	backupName := "2014-01-10T23:15:35"
 	hostDtos = []dto.Host{
 		createHostDto(hostName),
 	}
@@ -112,4 +113,52 @@ func createBackupDto(name string) dto.Backup {
 	backup := dto.NewBackup()
 	backup.SetName(name)
 	return backup
+}
+
+func TestBackupIsInLastReturnTrueIfBackupDateIsNow(t *testing.T) {
+	timeParser := timeparser.New()
+	now, err := timeParser.TimeByName("2014-01-01T12:45:59")
+	if err != nil {
+		t.Fatal(err)
+	}
+	result, err := backupIsInLastDays(createBackupDto("2014-01-01T12:45:59"), timeParser, now)
+	if err != nil {
+		t.Fatal(err)
+	}
+	err = AssertThat(result, Is(true))
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestBackupIsInLastDaysReturnTrueIfDivIsLessThanSevenDays(t *testing.T) {
+	timeParser := timeparser.New()
+	now, err := timeParser.TimeByName("2014-01-02T12:45:59")
+	if err != nil {
+		t.Fatal(err)
+	}
+	result, err := backupIsInLastDays(createBackupDto("2014-01-01T12:45:59"), timeParser, now)
+	if err != nil {
+		t.Fatal(err)
+	}
+	err = AssertThat(result, Is(true))
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestBackupIsInLastDaysReturnFalseIfBackupDateIfMoreThanSevenDaysBefore(t *testing.T) {
+	timeParser := timeparser.New()
+	now, err := timeParser.TimeByName("2014-01-09T12:45:59")
+	if err != nil {
+		t.Fatal(err)
+	}
+	result, err := backupIsInLastDays(createBackupDto("2014-01-01T12:45:59"), timeParser, now)
+	if err != nil {
+		t.Fatal(err)
+	}
+	err = AssertThat(result, Is(false))
+	if err != nil {
+		t.Fatal(err)
+	}
 }

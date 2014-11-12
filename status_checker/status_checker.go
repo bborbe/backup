@@ -1,8 +1,11 @@
 package status_checker
 
 import (
+	"time"
+
 	"github.com/bborbe/backup/dto"
 	"github.com/bborbe/backup/service"
+	"github.com/bborbe/backup/timeparser"
 	"github.com/bborbe/log"
 )
 
@@ -55,7 +58,20 @@ func createStatusDtoForHost(backupService service.BackupService, host dto.Host) 
 	}
 
 	logger.Debugf("host: %s backup: %s", host.GetName(), backup.GetName())
-	return createStatusDto(host, backup, true), nil
+	result, err := backupIsInLastDays(backup, timeparser.New(), time.Now())
+	if err != nil {
+		logger.Debug("parse backup failed")
+		return nil, err
+	}
+	return createStatusDto(host, backup, result), nil
+}
+
+func backupIsInLastDays(backup dto.Backup, timeParser timeparser.TimeParser, now time.Time) (bool, error) {
+	t, err := timeParser.TimeByName(backup.GetName())
+	if err != nil {
+		return false, err
+	}
+	return !now.After(t.Add(time.Duration(time.Hour * 24 * 7))), nil
 }
 
 func createStatusDto(host dto.Host, backup dto.Backup, status bool) dto.Status {
