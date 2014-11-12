@@ -12,6 +12,7 @@ import (
 
 	"github.com/bborbe/backup/fileutil"
 	"github.com/bborbe/backup/host"
+	"github.com/bborbe/backup/timeparser"
 	"github.com/bborbe/log"
 )
 
@@ -92,7 +93,7 @@ func KeepBackups(h host.Host) ([]Backup, error) {
 	if err != nil {
 		return nil, err
 	}
-	return getKeepBackups(backups)
+	return getKeepBackups(backups, timeparser.New())
 }
 
 func (b *backup) ValidName() bool {
@@ -185,7 +186,7 @@ func current(h host.Host) Backup {
 
 func existsBackupForToday(backups []Backup) (bool, error) {
 	now := time.Now()
-	backupsToday, err := getKeepToday(backups, now)
+	backupsToday, err := getKeepToday(backups, now, timeparser.New())
 	if err != nil {
 		return false, err
 	}

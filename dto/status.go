@@ -8,8 +8,9 @@ type Status interface {
 }
 
 type status struct {
-	Host   string `json:"host"`
-	Status bool   `json:"status"`
+	Host         string `json:"host"`
+	Status       bool   `json:"status"`
+	LatestBackup string `json:"latestBackup"`
 }
 
 func NewStatus() *status {
@@ -31,4 +32,12 @@ func (h *status) GetStatus() bool {
 
 func (h *status) SetStatus(status bool) {
 	h.Status = status
+}
+
+func (h *status) GetLatestBackup() string {
+	return h.LatestBackup
+}
+
+func (h *status) SetLatestBackup(latestBackup string) {
+	h.LatestBackup = latestBackup
 }

@@ -49,18 +49,21 @@ func createStatusDtoForHost(backupService service.BackupService, host dto.Host) 
 		logger.Debugf("get latest backup failed: %v", err)
 		return nil, err
 	}
-
-	if backup != nil {
-		logger.Debugf("host: %s backup: %s", host.GetName(), backup.GetName())
-		return createStatusDto(host.GetName(), true), nil
+	if backup == nil {
+		logger.Debugf("no backup for host %s found", host.GetName())
+		return createStatusDto(host, nil, false), nil
 	}
-	logger.Debugf("no backup for host %s found", host.GetName())
-	return createStatusDto(host.GetName(), false), nil
+
+	logger.Debugf("host: %s backup: %s", host.GetName(), backup.GetName())
+	return createStatusDto(host, backup, true), nil
 }
 
-func createStatusDto(hostname string, status bool) dto.Status {
+func createStatusDto(host dto.Host, backup dto.Backup, status bool) dto.Status {
 	statusDto := dto.NewStatus()
 	statusDto.SetStatus(status)
-	statusDto.SetHost(hostname)
+	statusDto.SetHost(host.GetName())
+	if backup != nil {
+		statusDto.SetLatestBackup(backup.GetName())
+	}
 	return statusDto
 }

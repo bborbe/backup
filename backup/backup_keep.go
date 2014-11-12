@@ -4,11 +4,9 @@ import (
 	"sort"
 	"strconv"
 	"time"
-)
 
-func getTimeByName(backupName string) (time.Time, error) {
-	return time.Parse("2006-01-02T15:04:05", backupName)
-}
+	"github.com/bborbe/backup/timeparser"
+)
 
 func latestBackup(backups []Backup) Backup {
 	if backups != nil && len(backups) > 0 {
@@ -18,10 +16,10 @@ func latestBackup(backups []Backup) Backup {
 	return nil
 }
 
-func getKeepToday(backups []Backup, now time.Time) ([]Backup, error) {
+func getKeepToday(backups []Backup, now time.Time, timeParser timeparser.TimeParser) ([]Backup, error) {
 	var result []Backup
 	for _, b := range backups {
-		t, err := getTimeByName(b.Name())
+		t, err := timeParser.TimeByName(b.Name())
 		if err != nil {
 			return nil, err
 		}
@@ -41,7 +39,7 @@ func ageLessThanDays(t time.Time, now time.Time, days int64) bool {
 	return diff <= 24*60*60*days
 }
 
-func getKeepDay(backups []Backup, now time.Time) ([]Backup, error) {
+func getKeepDay(backups []Backup, now time.Time, timeParser timeparser.TimeParser) ([]Backup, error) {
 	sort.Sort(BackupByName(backups))
 	var result []Backup
 
@@ -50,7 +48,7 @@ func getKeepDay(backups []Backup, now time.Time) ([]Backup, error) {
 	var lastDay int = -1
 
 	for _, b := range backups {
-		t, err := getTimeByName(b.Name())
+		t, err := timeParser.TimeByName(b.Name())
 		if err != nil {
 			return nil, err
 		}
@@ -64,12 +62,12 @@ func getKeepDay(backups []Backup, now time.Time) ([]Backup, error) {
 	return result, nil
 }
 
-func getKeepBackups(backups []Backup) ([]Backup, error) {
+func getKeepBackups(backups []Backup, timeParser timeparser.TimeParser) ([]Backup, error) {
 	keep := make(map[string]Backup, 0)
 	now := time.Now()
 	// keep all backups from today
 	{
-		bs, err := getKeepToday(backups, now)
+		bs, err := getKeepToday(backups, now, timeParser)
 		if err != nil {
 			return nil, err
 		}
@@ -79,7 +77,7 @@ func getKeepBackups(backups []Backup) ([]Backup, error) {
 	}
 	// keep first backup per day if age <= 7 days
 	{
-		bs, err := getKeepDay(backups, now)
+		bs, err := getKeepDay(backups, now, timeParser)
 		if err != nil {
 			return nil, err
 		}
@@ -89,7 +87,7 @@ func getKeepBackups(backups []Backup) ([]Backup, error) {
 	}
 	// keep first backup per week if age <= 28 days
 	{
-		bs, err := getKeepWeek(backups, now)
+		bs, err := getKeepWeek(backups, now, timeParser)
 		if err != nil {
 			return nil, err
 		}
@@ -148,12 +146,12 @@ func getKeepMonth(backups []Backup) ([]Backup, error) {
 	return result, nil
 }
 
-func getKeepWeek(backups []Backup, now time.Time) ([]Backup, error) {
+func getKeepWeek(backups []Backup, now time.Time, timeParser timeparser.TimeParser) ([]Backup, error) {
 	sort.Sort(BackupByName(backups))
 	var result []Backup
 	var lastWeek int = -1
 	for _, b := range backups {
-		t, err := getTimeByName(b.Name())
+		t, err := timeParser.TimeByName(b.Name())
 		if err != nil {
 			return nil, err
 		}

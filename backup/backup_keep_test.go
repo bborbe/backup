@@ -6,29 +6,30 @@ import (
 	. "github.com/bborbe/assert"
 	"github.com/bborbe/backup/host"
 	"github.com/bborbe/backup/rootdir"
+	"github.com/bborbe/backup/timeparser"
 )
 
 func TestAgeLessThan7Days(t *testing.T) {
 	var err error
 	{
-		ti, _ := getTimeByName("2013-12-24T20:15:59")
-		now, _ := getTimeByName("2013-12-24T20:15:59")
+		ti, _ := timeparser.New().TimeByName("2013-12-24T20:15:59")
+		now, _ := timeparser.New().TimeByName("2013-12-24T20:15:59")
 		err = AssertThat(ageLessThanDays(ti, now, 7), Is(true))
 		if err != nil {
 			t.Fatal(err)
 		}
 	}
 	{
-		ti, _ := getTimeByName("2013-12-17T20:15:59")
-		now, _ := getTimeByName("2013-12-24T20:15:59")
+		ti, _ := timeparser.New().TimeByName("2013-12-17T20:15:59")
+		now, _ := timeparser.New().TimeByName("2013-12-24T20:15:59")
 		err = AssertThat(ageLessThanDays(ti, now, 7), Is(true))
 		if err != nil {
 			t.Fatal(err)
 		}
 	}
 	{
-		ti, _ := getTimeByName("2013-12-17T20:15:58")
-		now, _ := getTimeByName("2013-12-24T20:15:59")
+		ti, _ := timeparser.New().TimeByName("2013-12-17T20:15:58")
+		now, _ := timeparser.New().TimeByName("2013-12-24T20:15:59")
 		err = AssertThat(ageLessThanDays(ti, now, 7), Is(false))
 		if err != nil {
 			t.Fatal(err)
@@ -116,7 +117,7 @@ func TestGetKeepMonth(t *testing.T) {
 }
 func TestGetKeepToday(t *testing.T) {
 	var result []Backup
-	now, err := getTimeByName("2013-12-24T20:15:59")
+	now, err := timeparser.New().TimeByName("2013-12-24T20:15:59")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -125,7 +126,7 @@ func TestGetKeepToday(t *testing.T) {
 
 	{
 		backups := []Backup{}
-		result, err = getKeepToday(backups, now)
+		result, err = getKeepToday(backups, now, timeparser.New())
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -144,7 +145,7 @@ func TestGetKeepToday(t *testing.T) {
 			ByName(h, "2013-12-24T15:15:59"),
 			ByName(h, "2013-12-25T20:15:59"),
 		}
-		result, err = getKeepToday(backups, now)
+		result, err = getKeepToday(backups, now, timeparser.New())
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -161,14 +162,14 @@ func TestGetKeepToday(t *testing.T) {
 
 func TestgetTimeByName(t *testing.T) {
 	{
-		_, err := getTimeByName("")
+		_, err := timeparser.New().TimeByName("")
 		err = AssertThat(err, NotNilValue())
 		if err != nil {
 			t.Fatal(err)
 		}
 	}
 	{
-		calcTime, err := getTimeByName("2013-07-01T00:24:52")
+		calcTime, err := timeparser.New().TimeByName("2013-07-01T00:24:52")
 		err = AssertThat(err, NilValue())
 		if err != nil {
 			t.Fatal(err)
@@ -254,7 +255,7 @@ func TestLatestBackup(t *testing.T) {
 
 func TestGetKeepWeek(t *testing.T) {
 	var result []Backup
-	now, err := getTimeByName("2013-12-24T20:15:59")
+	now, err := timeparser.New().TimeByName("2013-12-24T20:15:59")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -263,7 +264,7 @@ func TestGetKeepWeek(t *testing.T) {
 
 	{
 		backups := []Backup{}
-		result, err = getKeepWeek(backups, now)
+		result, err = getKeepWeek(backups, now, timeparser.New())
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -298,7 +299,7 @@ func TestGetKeepWeek(t *testing.T) {
 			ByName(h, "2013-12-23T20:15:59"),
 			ByName(h, "2013-12-24T20:15:59"),
 		}
-		result, err = getKeepWeek(backups, now)
+		result, err = getKeepWeek(backups, now, timeparser.New())
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -315,7 +316,7 @@ func TestGetKeepWeek(t *testing.T) {
 
 func TestGetKeepDay(t *testing.T) {
 	var result []Backup
-	now, err := getTimeByName("2013-12-24T20:15:59")
+	now, err := timeparser.New().TimeByName("2013-12-24T20:15:59")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -324,7 +325,7 @@ func TestGetKeepDay(t *testing.T) {
 
 	{
 		backups := []Backup{}
-		result, err = getKeepDay(backups, now)
+		result, err = getKeepDay(backups, now, timeparser.New())
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -350,7 +351,7 @@ func TestGetKeepDay(t *testing.T) {
 			ByName(h, "2013-12-23T20:15:59"),
 			ByName(h, "2013-12-24T20:15:59"),
 		}
-		result, err = getKeepDay(backups, now)
+		result, err = getKeepDay(backups, now, timeparser.New())
 		if err != nil {
 			t.Fatal(err)
 		}

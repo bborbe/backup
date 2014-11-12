@@ -21,7 +21,7 @@ func TestCreateStatusDtoTrue(t *testing.T) {
 	var err error
 	hostname := "test"
 	status := true
-	statusDto := createStatusDto(hostname, status)
+	statusDto := createStatusDto(dto.CreateHost(hostname), dto.CreateBackup("2014-01-01T12:23:45"), status)
 	err = AssertThat(statusDto, NotNilValue())
 	if err != nil {
 		t.Fatal(err)
@@ -40,7 +40,7 @@ func TestCreateStatusDtoFalse(t *testing.T) {
 	var err error
 	hostname := "test"
 	status := false
-	statusDto := createStatusDto(hostname, status)
+	statusDto := createStatusDto(dto.CreateHost(hostname), nil, status)
 	err = AssertThat(statusDto, NotNilValue())
 	if err != nil {
 		t.Fatal(err)
