@@ -18,12 +18,12 @@ const NO_HOST = "-"
 
 func main() {
 	defer logger.Close()
-	logLevelPtr := flag.Int("loglevel", config.DEFAULT_LOG_LEVEL, "int")
+	logLevelPtr := flag.String("loglevel", log.LogLevelToString(config.DEFAULT_LOG_LEVEL), "one of OFF,TRACE,DEBUG,INFO,WARN,ERROR")
 	rootdirPtr := flag.String("rootdir", config.DEFAULT_ROOT_DIR, "string")
 	hostPtr := flag.String("host", NO_HOST, "string")
 	flag.Parse()
-	logger.SetLevelThreshold(*logLevelPtr)
-	logger.Debugf("set log level to %s", log.LogLevelToString(*logLevelPtr))
+	logger.SetLevelThreshold(log.LogStringToLevel(*logLevelPtr))
+	logger.Debugf("set log level to %s", *logLevelPtr)
 
 	writer := os.Stdout
 	logger.Debugf("use backup dir %s", *rootdirPtr)
