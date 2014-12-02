@@ -30,6 +30,7 @@ func main() {
 	err := do(writer, backupService, *hostPtr)
 	if err != nil {
 		logger.Fatal(err)
+		logger.Close()
 		os.Exit(1)
 	}
 }

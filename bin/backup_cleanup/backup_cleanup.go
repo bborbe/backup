@@ -33,6 +33,7 @@ func main() {
 	err := do(writer, backupService, *rootdirPtr, *hostPtr, LOCK_NAME)
 	if err != nil {
 		logger.Fatal(err)
+		logger.Close()
 		os.Exit(1)
 	}
 }
