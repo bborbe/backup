@@ -3,6 +3,7 @@ package dto
 import (
 	"sort"
 	"testing"
+
 	. "github.com/bborbe/assert"
 )
 

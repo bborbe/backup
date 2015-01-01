@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"testing"
+
 	. "github.com/bborbe/assert"
 	"github.com/bborbe/backup/config"
 	backup_mock "github.com/bborbe/backup/service"

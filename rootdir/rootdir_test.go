@@ -2,6 +2,7 @@ package rootdir
 
 import (
 	"testing"
+
 	. "github.com/bborbe/assert"
 )
 

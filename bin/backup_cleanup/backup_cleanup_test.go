@@ -3,6 +3,7 @@ package main
 import (
 	"os"
 	"testing"
+
 	. "github.com/bborbe/assert"
 	"github.com/bborbe/backup/config"
 	"github.com/bborbe/backup/dto"

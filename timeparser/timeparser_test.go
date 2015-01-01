@@ -2,6 +2,7 @@ package timeparser
 
 import (
 	"testing"
+
 	. "github.com/bborbe/assert"
 )
 
