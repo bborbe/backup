@@ -6,7 +6,7 @@ import (
 	"github.com/bborbe/backup/dto"
 	"github.com/bborbe/backup/status_checker"
 	"github.com/bborbe/log"
-	"github.com/bborbe/server/handler/error"
+	error_handler "github.com/bborbe/server/handler/error"
 	"github.com/bborbe/server/handler/json"
 )
 
@@ -26,7 +26,7 @@ func (s *statusHandler) ServeHTTP(responseWriter http.ResponseWriter, request *h
 	status, err := s.statusChecker.Check()
 	if err != nil {
 		logger.Debugf("check status failed: %v", err)
-		e := error.NewErrorMessage(http.StatusInternalServerError, err.Error())
+		e := error_handler.NewErrorMessage(http.StatusInternalServerError, err.Error())
 		e.ServeHTTP(responseWriter, request)
 		return
 	}

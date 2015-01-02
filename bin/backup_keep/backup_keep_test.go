@@ -7,7 +7,7 @@ import (
 	"github.com/bborbe/backup/config"
 	"github.com/bborbe/backup/dto"
 	backup_mock "github.com/bborbe/backup/service"
-	"github.com/bborbe/io"
+	io "github.com/bborbe/io/mock"
 )
 
 func TestDoEmpty(t *testing.T) {

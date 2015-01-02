@@ -8,11 +8,11 @@ import (
 	"github.com/bborbe/backup/config"
 	"github.com/bborbe/backup/dto"
 	backup_mock "github.com/bborbe/backup/service"
-	"github.com/bborbe/io"
+	io_mock "github.com/bborbe/io/mock"
 )
 
 func TestDoEmpty(t *testing.T) {
-	writer := io.NewWriter()
+	writer := io_mock.NewWriter()
 	backupService := backup_mock.NewBackupServiceMock()
 	backupService.SetListHosts(make([]dto.Host, 0), nil)
 	err := do(writer, backupService, config.DEFAULT_ROOT_DIR, config.DEFAULT_HOST, os.TempDir()+"/bla.lock")
@@ -30,7 +30,7 @@ func TestDoEmpty(t *testing.T) {
 }
 
 func TestDoNotEmpty(t *testing.T) {
-	writer := io.NewWriter()
+	writer := io_mock.NewWriter()
 	backupService := backup_mock.NewBackupServiceMock()
 	hosts := []dto.Host{
 		backup_mock.CreateHost("hostA"),

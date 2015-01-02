@@ -7,7 +7,7 @@ import (
 	. "github.com/bborbe/assert"
 	"github.com/bborbe/backup/config"
 	backup_mock "github.com/bborbe/backup/service"
-	"github.com/bborbe/io"
+	io "github.com/bborbe/io/mock"
 )
 
 func TestResumeFail(t *testing.T) {
