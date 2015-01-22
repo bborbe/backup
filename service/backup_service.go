@@ -119,19 +119,9 @@ func (s *backupService) ListOldBackups(hostDto dto.Host) ([]dto.Backup, error) {
 		return nil, errors.New("parameter host missing")
 	}
 	h := host.ByName(s.rootdir, hostDto.GetName())
-	keepBackups, err := backup.KeepBackups(h)
+	result, err := backup.OldBackups(h)
 	if err != nil {
 		return nil, err
-	}
-	keepMap := make(map[string]bool)
-	for _, b := range keepBackups {
-		keepMap[b.Name()] = true
-	}
-	var result []backup.Backup
-	for _, b := range keepBackups {
-		if !keepMap[b.Name()] {
-			result = append(result, b)
-		}
 	}
 	return convertBackupsToBackupDtos(result), nil
 }

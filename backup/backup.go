@@ -88,14 +88,6 @@ func (b *backup) IsDir() (bool, error) {
 	return fileutil.IsDir(b.Path())
 }
 
-func KeepBackups(h host.Host) ([]Backup, error) {
-	backups, err := All(h)
-	if err != nil {
-		return nil, err
-	}
-	return getKeepBackups(backups, timeparser.New())
-}
-
 func (b *backup) ValidName() bool {
 	return validName(b.Name())
 }
@@ -191,4 +183,34 @@ func existsBackupForToday(backups []Backup) (bool, error) {
 		return false, err
 	}
 	return len(backupsToday) > 0, nil
+}
+
+func KeepBackups(h host.Host) ([]Backup, error) {
+	backups, err := All(h)
+	if err != nil {
+		return nil, err
+	}
+	return getKeepBackups(backups, timeparser.New())
+}
+
+func OldBackups(h host.Host) ([]Backup, error) {
+	allBackups, err := All(h)
+	if err != nil {
+		return nil, err
+	}
+	keepBackups, err := getKeepBackups(allBackups, timeparser.New())
+	if err != nil {
+		return nil, err
+	}
+	keepMap := make(map[string]bool)
+	for _, b := range keepBackups {
+		keepMap[b.Name()] = true
+	}
+	var result []Backup
+	for _, b := range allBackups {
+		if !keepMap[b.Name()] {
+			result = append(result, b)
+		}
+	}
+	return result, nil
 }
