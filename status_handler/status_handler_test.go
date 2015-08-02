@@ -59,7 +59,7 @@ func TestStatusCheckerNil(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
-	err = AssertThat(string(response.Content()), Is("null"))
+	err = AssertThat(string(response.Content()), Is("[]"))
 	if err != nil {
 		t.Error(err)
 	}
