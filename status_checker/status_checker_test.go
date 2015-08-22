@@ -4,13 +4,13 @@ import (
 	"testing"
 
 	. "github.com/bborbe/assert"
-	"github.com/bborbe/backup/dto"
-	"github.com/bborbe/backup/service"
-	"github.com/bborbe/backup/timeparser"
+	backup_dto "github.com/bborbe/backup/dto"
+	backup_service "github.com/bborbe/backup/service"
+	backup_timeparser "github.com/bborbe/backup/timeparser"
 )
 
 func TestImplementsStatusChecker(t *testing.T) {
-	var backupService service.BackupService
+	var backupService backup_service.BackupService
 	object := NewStatusChecker(backupService)
 	var expected *StatusChecker
 	err := AssertThat(object, Implements(expected))
@@ -23,7 +23,7 @@ func TestCreateStatusDtoTrue(t *testing.T) {
 	var err error
 	hostname := "test"
 	status := true
-	statusDto := createStatusDto(dto.CreateHost(hostname), dto.CreateBackup("2014-01-01T12:23:45"), status)
+	statusDto := createStatusDto(backup_dto.CreateHost(hostname), backup_dto.CreateBackup("2014-01-01T12:23:45"), status)
 	err = AssertThat(statusDto, NotNilValue())
 	if err != nil {
 		t.Fatal(err)
@@ -42,7 +42,7 @@ func TestCreateStatusDtoFalse(t *testing.T) {
 	var err error
 	hostname := "test"
 	status := false
-	statusDto := createStatusDto(dto.CreateHost(hostname), nil, status)
+	statusDto := createStatusDto(backup_dto.CreateHost(hostname), nil, status)
 	err = AssertThat(statusDto, NotNilValue())
 	if err != nil {
 		t.Fatal(err)
@@ -60,11 +60,11 @@ func TestCreateStatusDtoFalse(t *testing.T) {
 func TestCreateStatusDtoForHostsEmptyHosts(t *testing.T) {
 	var (
 		err           error
-		backupService service.BackupService
-		hostDtos      []dto.Host
-		statusDtos    []dto.Status
+		backupService backup_service.BackupService
+		hostDtos      []backup_dto.Host
+		statusDtos    []backup_dto.Status
 	)
-	hostDtos = []dto.Host{}
+	hostDtos = []backup_dto.Host{}
 	statusDtos, err = createStatusDtoForHosts(backupService, hostDtos)
 	err = AssertThat(statusDtos, NotNilValue())
 	if err != nil {
@@ -79,15 +79,15 @@ func TestCreateStatusDtoForHostsEmptyHosts(t *testing.T) {
 func TestCreateStatusDtoForHostsOneHost(t *testing.T) {
 	var (
 		err        error
-		hostDtos   []dto.Host
-		statusDtos []dto.Status
+		hostDtos   []backup_dto.Host
+		statusDtos []backup_dto.Status
 	)
 	hostName := "fire.example.com"
 	backupName := "2014-01-10T23:15:35"
-	hostDtos = []dto.Host{
+	hostDtos = []backup_dto.Host{
 		createHostDto(hostName),
 	}
-	backupService := service.NewBackupServiceMock()
+	backupService := backup_service.NewBackupServiceMock()
 	backupService.SetLatestBackup(createBackupDto(backupName), nil)
 	statusDtos, err = createStatusDtoForHosts(backupService, hostDtos)
 	err = AssertThat(statusDtos, NotNilValue())
@@ -104,20 +104,20 @@ func TestCreateStatusDtoForHostsOneHost(t *testing.T) {
 	}
 }
 
-func createHostDto(name string) dto.Host {
-	host := dto.NewHost()
+func createHostDto(name string) backup_dto.Host {
+	host := backup_dto.NewHost()
 	host.SetName(name)
 	return host
 }
 
-func createBackupDto(name string) dto.Backup {
-	backup := dto.NewBackup()
+func createBackupDto(name string) backup_dto.Backup {
+	backup := backup_dto.NewBackup()
 	backup.SetName(name)
 	return backup
 }
 
 func TestBackupIsInLastReturnTrueIfBackupDateIsNow(t *testing.T) {
-	timeParser := timeparser.New()
+	timeParser := backup_timeparser.New()
 	now, err := timeParser.TimeByName("2014-01-01T12:45:59")
 	if err != nil {
 		t.Fatal(err)
@@ -133,7 +133,7 @@ func TestBackupIsInLastReturnTrueIfBackupDateIsNow(t *testing.T) {
 }
 
 func TestBackupIsInLastDaysReturnTrueIfDivIsLessThanSevenDays(t *testing.T) {
-	timeParser := timeparser.New()
+	timeParser := backup_timeparser.New()
 	now, err := timeParser.TimeByName("2014-01-02T12:45:59")
 	if err != nil {
 		t.Fatal(err)
@@ -149,7 +149,7 @@ func TestBackupIsInLastDaysReturnTrueIfDivIsLessThanSevenDays(t *testing.T) {
 }
 
 func TestBackupIsInLastDaysReturnFalseIfBackupDateIfMoreThanSevenDaysBefore(t *testing.T) {
-	timeParser := timeparser.New()
+	timeParser := backup_timeparser.New()
 	now, err := timeParser.TimeByName("2014-01-09T12:45:59")
 	if err != nil {
 		t.Fatal(err)

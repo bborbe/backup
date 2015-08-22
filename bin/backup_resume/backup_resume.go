@@ -2,13 +2,12 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"io"
 	"os"
 
-	"fmt"
-
-	"github.com/bborbe/backup/config"
-	"github.com/bborbe/backup/service"
+	backup_config "github.com/bborbe/backup/config"
+	backup_service "github.com/bborbe/backup/service"
 	"github.com/bborbe/log"
 )
 
@@ -18,8 +17,8 @@ const NO_HOST = "-"
 
 func main() {
 	defer logger.Close()
-	logLevelPtr := flag.String("loglevel", log.LogLevelToString(config.DEFAULT_LOG_LEVEL), "one of OFF,TRACE,DEBUG,INFO,WARN,ERROR")
-	rootdirPtr := flag.String("rootdir", config.DEFAULT_ROOT_DIR, "string")
+	logLevelPtr := flag.String("loglevel", log.LogLevelToString(backup_config.DEFAULT_LOG_LEVEL), "one of OFF,TRACE,DEBUG,INFO,WARN,ERROR")
+	rootdirPtr := flag.String("rootdir", backup_config.DEFAULT_ROOT_DIR, "string")
 	hostPtr := flag.String("host", NO_HOST, "string")
 	flag.Parse()
 	logger.SetLevelThreshold(log.LogStringToLevel(*logLevelPtr))
@@ -27,7 +26,7 @@ func main() {
 
 	writer := os.Stdout
 	logger.Debugf("use backup dir %s", *rootdirPtr)
-	backupService := service.NewBackupService(*rootdirPtr)
+	backupService := backup_service.NewBackupService(*rootdirPtr)
 	err := do(writer, backupService, *hostPtr)
 	if err != nil {
 		logger.Fatal(err)
@@ -36,7 +35,7 @@ func main() {
 	}
 }
 
-func do(writer io.Writer, backupService service.BackupService, hostname string) error {
+func do(writer io.Writer, backupService backup_service.BackupService, hostname string) error {
 	logger.Debug("start")
 	if hostname == NO_HOST {
 		return fmt.Errorf("parameter host missing")

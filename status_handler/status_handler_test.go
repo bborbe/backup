@@ -6,13 +6,13 @@ import (
 	"testing"
 
 	. "github.com/bborbe/assert"
-	"github.com/bborbe/backup/dto"
-	"github.com/bborbe/backup/status_checker"
+	backup_dto "github.com/bborbe/backup/dto"
+	backup_status_checker "github.com/bborbe/backup/status_checker"
 	"github.com/bborbe/server/mock"
 )
 
 func TestImplementsStatusHandler(t *testing.T) {
-	var statusChecker status_checker.StatusChecker
+	var statusChecker backup_status_checker.StatusChecker
 	object := NewStatusHandler(statusChecker)
 	var expected *http.Handler
 	err := AssertThat(object, Implements(expected))
@@ -23,9 +23,9 @@ func TestImplementsStatusHandler(t *testing.T) {
 
 func TestStatusCheckerFailure(t *testing.T) {
 	logger.Debug("TestStatusCheckerFailure")
-	var status []dto.Status
+	var status []backup_dto.Status
 	err := errors.New("baem!")
-	statusChecker := status_checker.NewStatusCheckerMock(status, err)
+	statusChecker := backup_status_checker.NewStatusCheckerMock(status, err)
 	handler := NewStatusHandler(statusChecker)
 	response := mock.NewHttpResponseWriterMock()
 	request, err := mock.NewHttpRequestMock("http://www.example.com")
@@ -45,9 +45,9 @@ func TestStatusCheckerFailure(t *testing.T) {
 
 func TestStatusCheckerNil(t *testing.T) {
 	logger.Debug("TestStatusCheckerNil")
-	var status []dto.Status
+	var status []backup_dto.Status
 	var err error
-	statusChecker := status_checker.NewStatusCheckerMock(status, err)
+	statusChecker := backup_status_checker.NewStatusCheckerMock(status, err)
 	handler := NewStatusHandler(statusChecker)
 	response := mock.NewHttpResponseWriterMock()
 	request, err := mock.NewHttpRequestMock("http://www.example.com")
@@ -67,12 +67,12 @@ func TestStatusCheckerNil(t *testing.T) {
 
 func TestStatusCheckerOne(t *testing.T) {
 	logger.Debug("TestStatusCheckerNil")
-	var status []dto.Status
+	var status []backup_dto.Status
 	var err error
-	status = []dto.Status{
+	status = []backup_dto.Status{
 		createStatus(true, "fire.example.com"),
 	}
-	statusChecker := status_checker.NewStatusCheckerMock(status, err)
+	statusChecker := backup_status_checker.NewStatusCheckerMock(status, err)
 	handler := NewStatusHandler(statusChecker)
 	response := mock.NewHttpResponseWriterMock()
 	request, err := mock.NewHttpRequestMock("http://www.example.com")
@@ -92,13 +92,13 @@ func TestStatusCheckerOne(t *testing.T) {
 
 func TestStatusCheckerTwo(t *testing.T) {
 	logger.Debug("TestStatusCheckerNil")
-	var status []dto.Status
+	var status []backup_dto.Status
 	var err error
-	status = []dto.Status{
+	status = []backup_dto.Status{
 		createStatus(true, "fire.example.com"),
 		createStatus(false, "burn.example.com"),
 	}
-	statusChecker := status_checker.NewStatusCheckerMock(status, err)
+	statusChecker := backup_status_checker.NewStatusCheckerMock(status, err)
 	handler := NewStatusHandler(statusChecker)
 	response := mock.NewHttpResponseWriterMock()
 	request, err := mock.NewHttpRequestMock("http://www.example.com")
@@ -116,8 +116,8 @@ func TestStatusCheckerTwo(t *testing.T) {
 	}
 }
 
-func createStatus(status bool, host string) dto.Status {
-	s := dto.NewStatus()
+func createStatus(status bool, host string) backup_dto.Status {
+	s := backup_dto.NewStatus()
 	s.SetStatus(status)
 	s.SetHost(host)
 	return s

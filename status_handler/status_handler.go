@@ -3,8 +3,8 @@ package status_handler
 import (
 	"net/http"
 
-	"github.com/bborbe/backup/dto"
-	"github.com/bborbe/backup/status_checker"
+	backup_dto "github.com/bborbe/backup/dto"
+	backup_status_checker "github.com/bborbe/backup/status_checker"
 	"github.com/bborbe/log"
 	error_handler "github.com/bborbe/server/handler/error"
 	"github.com/bborbe/server/handler/json"
@@ -13,10 +13,10 @@ import (
 var logger = log.DefaultLogger
 
 type statusHandler struct {
-	statusChecker status_checker.StatusChecker
+	statusChecker backup_status_checker.StatusChecker
 }
 
-func NewStatusHandler(statusChecker status_checker.StatusChecker) http.Handler {
+func NewStatusHandler(statusChecker backup_status_checker.StatusChecker) http.Handler {
 	s := new(statusHandler)
 	s.statusChecker = statusChecker
 	return s
@@ -35,11 +35,11 @@ func (s *statusHandler) ServeHTTP(responseWriter http.ResponseWriter, request *h
 	handler.ServeHTTP(responseWriter, request)
 }
 
-func filter(list []dto.Status, status string) []dto.Status {
+func filter(list []backup_dto.Status, status string) []backup_dto.Status {
 	if list == nil {
 		return list
 	}
-	result := make([]dto.Status, 0)
+	result := make([]backup_dto.Status, 0)
 	for _, s := range list {
 		if "true" == status {
 			if s.GetStatus() {

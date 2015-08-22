@@ -4,18 +4,18 @@ import (
 	"testing"
 
 	. "github.com/bborbe/assert"
-	"github.com/bborbe/backup/config"
-	"github.com/bborbe/backup/dto"
-	backup_mock "github.com/bborbe/backup/service"
+	backup_config "github.com/bborbe/backup/config"
+	backup_dto "github.com/bborbe/backup/dto"
+	backup_service "github.com/bborbe/backup/service"
 	io_mock "github.com/bborbe/io/mock"
 )
 
 func TestDoEmpty(t *testing.T) {
 	writer := io_mock.NewWriter()
-	backupService := backup_mock.NewBackupServiceMock()
-	backupService.SetListHosts(make([]dto.Host, 0), nil)
-	backupService.SetListBackups(make([]dto.Backup, 0), nil)
-	err := do(writer, backupService, config.DEFAULT_HOST)
+	backupService := backup_service.NewBackupServiceMock()
+	backupService.SetListHosts(make([]backup_dto.Host, 0), nil)
+	backupService.SetListBackups(make([]backup_dto.Backup, 0), nil)
+	err := do(writer, backupService, backup_config.DEFAULT_HOST)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -31,17 +31,17 @@ func TestDoEmpty(t *testing.T) {
 
 func TestDoNotEmpty(t *testing.T) {
 	writer := io_mock.NewWriter()
-	backupService := backup_mock.NewBackupServiceMock()
-	hosts := []dto.Host{
-		backup_mock.CreateHost("hostA"),
+	backupService := backup_service.NewBackupServiceMock()
+	hosts := []backup_dto.Host{
+		backup_service.CreateHost("hostA"),
 	}
 	backupService.SetListHosts(hosts, nil)
-	backups := []dto.Backup{
-		backup_mock.CreateBackup("2013-12-24T20:15:59"),
-		backup_mock.CreateBackup("2013-12-25T20:15:59"),
+	backups := []backup_dto.Backup{
+		backup_service.CreateBackup("2013-12-24T20:15:59"),
+		backup_service.CreateBackup("2013-12-25T20:15:59"),
 	}
 	backupService.SetListBackups(backups, nil)
-	err := do(writer, backupService, config.DEFAULT_HOST)
+	err := do(writer, backupService, backup_config.DEFAULT_HOST)
 	if err != nil {
 		t.Fatal(err)
 	}

@@ -5,17 +5,17 @@ import (
 	"testing"
 
 	. "github.com/bborbe/assert"
-	"github.com/bborbe/backup/config"
-	backup_mock "github.com/bborbe/backup/service"
+	backup_config "github.com/bborbe/backup/config"
+	backup_service "github.com/bborbe/backup/service"
 	io_mock "github.com/bborbe/io/mock"
 )
 
 func TestResumeFail(t *testing.T) {
 	writer := io_mock.NewWriter()
-	backupService := backup_mock.NewBackupServiceMock()
+	backupService := backup_service.NewBackupServiceMock()
 	backupService.SetResume(fmt.Errorf("error"))
 
-	err := do(writer, backupService, config.DEFAULT_HOST)
+	err := do(writer, backupService, backup_config.DEFAULT_HOST)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -31,10 +31,10 @@ func TestResumeFail(t *testing.T) {
 
 func TestResumeSuccess(t *testing.T) {
 	writer := io_mock.NewWriter()
-	backupService := backup_mock.NewBackupServiceMock()
+	backupService := backup_service.NewBackupServiceMock()
 	backupService.SetResume(nil)
 
-	err := do(writer, backupService, config.DEFAULT_HOST)
+	err := do(writer, backupService, backup_config.DEFAULT_HOST)
 	if err != nil {
 		t.Fatal(err)
 	}

@@ -4,21 +4,19 @@ import (
 	"errors"
 	"fmt"
 	"os"
-
 	"regexp"
-
 	"sort"
 	"time"
 
-	"github.com/bborbe/backup/fileutil"
-	"github.com/bborbe/backup/host"
-	"github.com/bborbe/backup/timeparser"
+	backup_fileutil "github.com/bborbe/backup/fileutil"
+	backup_host "github.com/bborbe/backup/host"
+	backup_timeparser "github.com/bborbe/backup/timeparser"
 	"github.com/bborbe/log"
 )
 
 type backup struct {
 	name string
-	host host.Host
+	host backup_host.Host
 }
 
 type Backup interface {
@@ -34,18 +32,18 @@ const CURRENT = "current"
 
 var logger = log.DefaultLogger
 
-func ByTime(h host.Host, t time.Time) Backup {
+func ByTime(h backup_host.Host, t time.Time) Backup {
 	return ByName(h, t.Format("2006-01-02T15:04:05"))
 }
 
-func ByName(h host.Host, name string) Backup {
+func ByName(h backup_host.Host, name string) Backup {
 	b := new(backup)
 	b.host = h
 	b.name = name
 	return b
 }
 
-func All(h host.Host) ([]Backup, error) {
+func All(h backup_host.Host) ([]Backup, error) {
 	file, err := os.Open(h.Path())
 	if err != nil {
 		logger.Debugf("open host %s failed: %v", h.Path(), err)
@@ -82,10 +80,10 @@ func All(h host.Host) ([]Backup, error) {
 }
 
 func (b *backup) IsDir() (bool, error) {
-	if !fileutil.Exists(b.Path()) {
+	if !backup_fileutil.Exists(b.Path()) {
 		return false, nil
 	}
-	return fileutil.IsDir(b.Path())
+	return backup_fileutil.IsDir(b.Path())
 }
 
 func (b *backup) ValidName() bool {
@@ -109,7 +107,7 @@ func (b *backup) Delete() error {
 	return os.RemoveAll(b.Path())
 }
 
-func Resume(h host.Host) error {
+func Resume(h backup_host.Host) error {
 	existsIncomplete, err := existsIncomplete(h)
 	if err != nil {
 		return err
@@ -149,56 +147,56 @@ func Resume(h host.Host) error {
 	return nil
 }
 
-func removeCurrentSymlink(h host.Host) error {
+func removeCurrentSymlink(h backup_host.Host) error {
 	return os.Remove(current(h).Path())
 }
 
-func symlinkBeforeLastToCurrent(h host.Host, backups []Backup) error {
+func symlinkBeforeLastToCurrent(h backup_host.Host, backups []Backup) error {
 	beforeLastBackup := backups[len(backups)-2]
 	return os.Symlink(beforeLastBackup.Path(), current(h).Path())
 }
 
-func renameLastBackupToIncomplete(h host.Host, backups []Backup) error {
+func renameLastBackupToIncomplete(h backup_host.Host, backups []Backup) error {
 	lastBackup := backups[len(backups)-1]
 	return os.Rename(lastBackup.Path(), incomplete(h).Path())
 }
 
-func existsIncomplete(h host.Host) (bool, error) {
+func existsIncomplete(h backup_host.Host) (bool, error) {
 	logger.Debugf("existsIncomplete host: %s", h.Name())
 	return incomplete(h).IsDir()
 }
 
-func incomplete(h host.Host) Backup {
+func incomplete(h backup_host.Host) Backup {
 	return ByName(h, INCOMPLETE)
 }
 
-func current(h host.Host) Backup {
+func current(h backup_host.Host) Backup {
 	return ByName(h, CURRENT)
 }
 
 func existsBackupForToday(backups []Backup) (bool, error) {
 	now := time.Now()
-	backupsToday, err := getKeepToday(backups, now, timeparser.New())
+	backupsToday, err := getKeepToday(backups, now, backup_timeparser.New())
 	if err != nil {
 		return false, err
 	}
 	return len(backupsToday) > 0, nil
 }
 
-func KeepBackups(h host.Host) ([]Backup, error) {
+func KeepBackups(h backup_host.Host) ([]Backup, error) {
 	backups, err := All(h)
 	if err != nil {
 		return nil, err
 	}
-	return getKeepBackups(backups, timeparser.New())
+	return getKeepBackups(backups, backup_timeparser.New())
 }
 
-func OldBackups(h host.Host) ([]Backup, error) {
+func OldBackups(h backup_host.Host) ([]Backup, error) {
 	allBackups, err := All(h)
 	if err != nil {
 		return nil, err
 	}
-	keepBackups, err := getKeepBackups(allBackups, timeparser.New())
+	keepBackups, err := getKeepBackups(allBackups, backup_timeparser.New())
 	if err != nil {
 		return nil, err
 	}

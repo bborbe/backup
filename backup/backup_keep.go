@@ -5,7 +5,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/bborbe/backup/timeparser"
+	backup_timeparser "github.com/bborbe/backup/timeparser"
 )
 
 func latestBackup(backups []Backup) Backup {
@@ -16,7 +16,7 @@ func latestBackup(backups []Backup) Backup {
 	return nil
 }
 
-func getKeepToday(backups []Backup, now time.Time, timeParser timeparser.TimeParser) ([]Backup, error) {
+func getKeepToday(backups []Backup, now time.Time, timeParser backup_timeparser.TimeParser) ([]Backup, error) {
 	var result []Backup
 	for _, b := range backups {
 		t, err := timeParser.TimeByName(b.Name())
@@ -39,7 +39,7 @@ func ageLessThanDays(t time.Time, now time.Time, days int64) bool {
 	return diff <= 24*60*60*days
 }
 
-func getKeepDay(backups []Backup, now time.Time, timeParser timeparser.TimeParser) ([]Backup, error) {
+func getKeepDay(backups []Backup, now time.Time, timeParser backup_timeparser.TimeParser) ([]Backup, error) {
 	sort.Sort(BackupByName(backups))
 	var result []Backup
 
@@ -62,7 +62,7 @@ func getKeepDay(backups []Backup, now time.Time, timeParser timeparser.TimeParse
 	return result, nil
 }
 
-func getKeepBackups(backups []Backup, timeParser timeparser.TimeParser) ([]Backup, error) {
+func getKeepBackups(backups []Backup, timeParser backup_timeparser.TimeParser) ([]Backup, error) {
 	keep := make(map[string]Backup, 0)
 	now := time.Now()
 	// keep all backups from today
@@ -146,7 +146,7 @@ func getKeepMonth(backups []Backup) ([]Backup, error) {
 	return result, nil
 }
 
-func getKeepWeek(backups []Backup, now time.Time, timeParser timeparser.TimeParser) ([]Backup, error) {
+func getKeepWeek(backups []Backup, now time.Time, timeParser backup_timeparser.TimeParser) ([]Backup, error) {
 	sort.Sort(BackupByName(backups))
 	var result []Backup
 	var lastWeek int = -1

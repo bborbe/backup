@@ -3,8 +3,7 @@ package main
 import (
 	"flag"
 
-	"github.com/bborbe/backup/config"
-	"github.com/bborbe/backup/status_server"
+	backup_ "github.com/bborbe/backup/config"
 	"github.com/bborbe/log"
 )
 
