@@ -2,4 +2,3 @@
 
 chown -R root:root /opt/backup
 find /opt/backup -type d -exec chmod 755 "{}" \;
-find /opt/backup -type f -exec chmod 644 "{}" \;
