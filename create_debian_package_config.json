@@ -5,6 +5,7 @@
   "architecture": "amd64",
   "maintainer": "Benjamin Borbe <bborbe@rocketnews.de>",
   "description": "Backup Server and Utils",
+  "postinst": "src/github.com/bborbe/backup/postinst",
   "files": [
     {
       "source": "bin/backup_old",
