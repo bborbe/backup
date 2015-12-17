@@ -44,7 +44,7 @@ go install $INSTALLS
 
 echo "Install completed, create debian package"
 
-/opt/debian/bin/create_debian_package_by_config \
+/opt/debian/bin/create_debian_package \
 -loglevel=DEBUG \
 -version=$VERSION \
 -config=src/$SOURCEDIRECTORY/create_debian_package_config.json || exit 1
