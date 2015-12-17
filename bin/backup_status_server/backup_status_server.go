@@ -13,7 +13,7 @@ var logger = log.DefaultLogger
 const DEFAULT_PORT int = 8002
 
 func main() {
-	logLevelPtr := flag.String("loglevel", log.LogLevelToString(backup_config.DEFAULT_LOG_LEVEL), "one of OFF,TRACE,DEBUG,INFO,WARN,ERROR")
+	logLevelPtr := flag.String("loglevel", log.LogLevelToString(backup_config.DEFAULT_LOG_LEVEL), log.FLAG_USAGE)
 	rootdirPtr := flag.String("rootdir", backup_config.DEFAULT_ROOT_DIR, "root directory for backups")
 	portnumberPtr := flag.Int("port", DEFAULT_PORT, "server port")
 	flag.Parse()

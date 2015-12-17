@@ -17,7 +17,7 @@ const NO_HOST = "-"
 
 func main() {
 	defer logger.Close()
-	logLevelPtr := flag.String("loglevel", log.LogLevelToString(backup_config.DEFAULT_LOG_LEVEL), "one of OFF,TRACE,DEBUG,INFO,WARN,ERROR")
+	logLevelPtr := flag.String("loglevel", log.LogLevelToString(backup_config.DEFAULT_LOG_LEVEL), log.FLAG_USAGE)
 	rootdirPtr := flag.String("rootdir", backup_config.DEFAULT_ROOT_DIR, "string")
 	hostPtr := flag.String("host", NO_HOST, "string")
 	flag.Parse()
