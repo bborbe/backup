@@ -8,7 +8,7 @@ import (
 	. "github.com/bborbe/assert"
 	backup_dto "github.com/bborbe/backup/dto"
 	backup_status_checker "github.com/bborbe/backup/status_checker"
-	"github.com/bborbe/server/mock"
+	server_mock "github.com/bborbe/server/mock"
 )
 
 func TestImplementsStatusHandler(t *testing.T) {
@@ -27,8 +27,8 @@ func TestStatusCheckerFailure(t *testing.T) {
 	err := errors.New("baem!")
 	statusChecker := backup_status_checker.NewStatusCheckerMock(status, err)
 	handler := NewStatusHandler(statusChecker)
-	response := mock.NewHttpResponseWriterMock()
-	request, err := mock.NewHttpRequestMock("http://www.example.com")
+	response := server_mock.NewHttpResponseWriterMock()
+	request, err := server_mock.NewHttpRequestMock("http://www.example.com")
 	if err != nil {
 		t.Error(err)
 	}
@@ -49,8 +49,8 @@ func TestStatusCheckerNil(t *testing.T) {
 	var err error
 	statusChecker := backup_status_checker.NewStatusCheckerMock(status, err)
 	handler := NewStatusHandler(statusChecker)
-	response := mock.NewHttpResponseWriterMock()
-	request, err := mock.NewHttpRequestMock("http://www.example.com")
+	response := server_mock.NewHttpResponseWriterMock()
+	request, err := server_mock.NewHttpRequestMock("http://www.example.com")
 	if err != nil {
 		t.Error(err)
 	}
@@ -74,8 +74,8 @@ func TestStatusCheckerOne(t *testing.T) {
 	}
 	statusChecker := backup_status_checker.NewStatusCheckerMock(status, err)
 	handler := NewStatusHandler(statusChecker)
-	response := mock.NewHttpResponseWriterMock()
-	request, err := mock.NewHttpRequestMock("http://www.example.com")
+	response := server_mock.NewHttpResponseWriterMock()
+	request, err := server_mock.NewHttpRequestMock("http://www.example.com")
 	if err != nil {
 		t.Error(err)
 	}
@@ -100,8 +100,8 @@ func TestStatusCheckerTwo(t *testing.T) {
 	}
 	statusChecker := backup_status_checker.NewStatusCheckerMock(status, err)
 	handler := NewStatusHandler(statusChecker)
-	response := mock.NewHttpResponseWriterMock()
-	request, err := mock.NewHttpRequestMock("http://www.example.com")
+	response := server_mock.NewHttpResponseWriterMock()
+	request, err := server_mock.NewHttpRequestMock("http://www.example.com")
 	if err != nil {
 		t.Error(err)
 	}

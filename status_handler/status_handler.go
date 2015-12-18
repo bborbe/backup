@@ -7,7 +7,7 @@ import (
 	backup_status_checker "github.com/bborbe/backup/status_checker"
 	"github.com/bborbe/log"
 	error_handler "github.com/bborbe/server/handler/error"
-	"github.com/bborbe/server/handler/json"
+	json_handler "github.com/bborbe/server/handler/json"
 )
 
 var logger = log.DefaultLogger
@@ -31,7 +31,7 @@ func (s *statusHandler) ServeHTTP(responseWriter http.ResponseWriter, request *h
 		return
 	}
 	status = filter(status, request.FormValue("status"))
-	handler := json.NewJsonHandler(status)
+	handler := json_handler.NewJsonHandler(status)
 	handler.ServeHTTP(responseWriter, request)
 }
 
