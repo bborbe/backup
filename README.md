@@ -1,7 +1,20 @@
 # Backup
 
-    backup_latest
-    backup_list
+## Install
+
+`go get github.com/bborbe/backup/bin/backup_cleanup`
+
+`go get github.com/bborbe/backup/bin/backup_keep`
+
+`go get github.com/bborbe/backup/bin/backup_latest`
+
+`go get github.com/bborbe/backup/bin/backup_list`
+
+`go get github.com/bborbe/backup/bin/backup_old`
+
+`go get github.com/bborbe/backup/bin/backup_resume`
+
+`go get github.com/bborbe/backup/bin/backup_status_server`
 
 ## Documentation
 
