@@ -4,14 +4,15 @@ import (
 	"fmt"
 	"testing"
 
+	"bytes"
+
 	. "github.com/bborbe/assert"
 	backup_config "github.com/bborbe/backup/config"
 	backup_service "github.com/bborbe/backup/service"
-	io_mock "github.com/bborbe/io/mock"
 )
 
 func TestResumeFail(t *testing.T) {
-	writer := io_mock.NewWriter()
+	writer := bytes.NewBufferString("")
 	backupService := backup_service.NewBackupServiceMock()
 	backupService.SetResume(fmt.Errorf("error"))
 
@@ -19,18 +20,18 @@ func TestResumeFail(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	err = AssertThat(writer.Content(), NotNilValue())
+	err = AssertThat(writer.String(), NotNilValue())
 	if err != nil {
 		t.Fatal(err)
 	}
-	err = AssertThat(string(writer.Content()), Is("resume backup for host all failed\n"))
+	err = AssertThat(writer.String(), Is("resume backup for host all failed\n"))
 	if err != nil {
 		t.Fatal(err)
 	}
 }
 
 func TestResumeSuccess(t *testing.T) {
-	writer := io_mock.NewWriter()
+	writer := bytes.NewBufferString("")
 	backupService := backup_service.NewBackupServiceMock()
 	backupService.SetResume(nil)
 
@@ -38,11 +39,11 @@ func TestResumeSuccess(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	err = AssertThat(writer.Content(), NotNilValue())
+	err = AssertThat(writer.String(), NotNilValue())
 	if err != nil {
 		t.Fatal(err)
 	}
-	err = AssertThat(string(writer.Content()), Is("resume backup for host all success\n"))
+	err = AssertThat(writer.String(), Is("resume backup for host all success\n"))
 	if err != nil {
 		t.Fatal(err)
 	}

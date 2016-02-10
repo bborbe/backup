@@ -37,7 +37,7 @@ func TestStatusCheckerFailure(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
-	err = AssertThat(string(response.Content()), Is(`{"status":500,"message":"baem!"}`))
+	err = AssertThat(response.String(), Is(`{"status":500,"message":"baem!"}`))
 	if err != nil {
 		t.Error(err)
 	}
@@ -59,7 +59,7 @@ func TestStatusCheckerNil(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
-	err = AssertThat(string(response.Content()), Is("[]"))
+	err = AssertThat(response.String(), Is("[]"))
 	if err != nil {
 		t.Error(err)
 	}
@@ -84,7 +84,7 @@ func TestStatusCheckerOne(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
-	err = AssertThat(string(response.Content()), Is(`[{"host":"fire.example.com","status":true,"latestBackup":""}]`))
+	err = AssertThat(response.String(), Is(`[{"host":"fire.example.com","status":true,"latestBackup":""}]`))
 	if err != nil {
 		t.Error(err)
 	}
@@ -110,7 +110,7 @@ func TestStatusCheckerTwo(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
-	err = AssertThat(string(response.Content()), Is(`[{"host":"fire.example.com","status":true,"latestBackup":""},{"host":"burn.example.com","status":false,"latestBackup":""}]`))
+	err = AssertThat(response.String(), Is(`[{"host":"fire.example.com","status":true,"latestBackup":""},{"host":"burn.example.com","status":false,"latestBackup":""}]`))
 	if err != nil {
 		t.Error(err)
 	}
