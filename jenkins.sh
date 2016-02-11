@@ -1,7 +1,6 @@
 #!/bin/sh
 
 SOURCEDIRECTORY="github.com/bborbe/backup"
-INSTALLS="github.com/bborbe/backup/bin/backup_cleanup github.com/bborbe/backup/bin/backup_keep github.com/bborbe/backup/bin/backup_latest github.com/bborbe/backup/bin/backup_list github.com/bborbe/backup/bin/backup_old github.com/bborbe/backup/bin/backup_resume github.com/bborbe/backup/bin/backup_status_server"
 VERSION="1.0.1-b${BUILD_NUMBER}"
 NAME="backup"
 
@@ -11,6 +10,7 @@ export GOROOT=/opt/go
 export PATH=/opt/go2xunit/bin/:/opt/utils/bin/:/opt/aptly_utils/bin/:/opt/aptly/bin/:/opt/debian_utils/bin/:/opt/debian/bin/:$GOROOT/bin:$PATH
 export GOPATH=${WORKSPACE}
 export REPORT_DIR=${WORKSPACE}/test-reports
+INSTALLS=`cd src && find $SOURCEDIRECTORY/bin -name "*.go" | dirof | unique`
 DEB="${NAME}_${VERSION}.deb"
 rm -rf $REPORT_DIR ${WORKSPACE}/*.deb ${WORKSPACE}/pkg
 mkdir -p $REPORT_DIR
