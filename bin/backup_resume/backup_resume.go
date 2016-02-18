@@ -13,11 +13,14 @@ import (
 
 var logger = log.DefaultLogger
 
-const NO_HOST = "-"
+const (
+	NO_HOST            = "-"
+	PARAMETER_LOGLEVEL = "loglevel"
+)
 
 func main() {
 	defer logger.Close()
-	logLevelPtr := flag.String("loglevel", log.LogLevelToString(backup_config.DEFAULT_LOG_LEVEL), log.FLAG_USAGE)
+	logLevelPtr := flag.String(PARAMETER_LOGLEVEL, log.LogLevelToString(backup_config.DEFAULT_LOG_LEVEL), log.FLAG_USAGE)
 	rootdirPtr := flag.String("rootdir", backup_config.DEFAULT_ROOT_DIR, "string")
 	hostPtr := flag.String("host", NO_HOST, "string")
 	flag.Parse()

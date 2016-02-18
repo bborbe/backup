@@ -14,13 +14,16 @@ import (
 	"github.com/bborbe/log"
 )
 
-const LOCK_NAME = "/var/run/backup_clean.lock"
+const (
+	PARAMETER_LOGLEVEL = "loglevel"
+	LOCK_NAME          = "/var/run/backup_clean.lock"
+)
 
 var logger = log.DefaultLogger
 
 func main() {
 	defer logger.Close()
-	logLevelPtr := flag.String("loglevel", log.LogLevelToString(backup_config.DEFAULT_LOG_LEVEL), log.FLAG_USAGE)
+	logLevelPtr := flag.String(PARAMETER_LOGLEVEL, log.LogLevelToString(backup_config.DEFAULT_LOG_LEVEL), log.FLAG_USAGE)
 	rootdirPtr := flag.String("rootdir", backup_config.DEFAULT_ROOT_DIR, "string")
 	hostPtr := flag.String("host", backup_config.DEFAULT_HOST, "string")
 	flag.Parse()
