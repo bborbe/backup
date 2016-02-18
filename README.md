@@ -16,10 +16,6 @@
 
 `go get github.com/bborbe/backup/bin/backup_status_server`
 
-## Documentation
-
-http://godoc.org/github.com/bborbe/backup
-
 ## Continuous integration
 
 http://jenkins.benjamin-borbe.de/job/Go-Backup/
