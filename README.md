@@ -18,7 +18,7 @@
 
 ## Continuous integration
 
-http://jenkins.benjamin-borbe.de/job/Go-Backup/
+[Jenkins](https://www.benjamin-borbe.de/jenkins/job/Go-Backup/)
 
 ## Copyright and license
 
