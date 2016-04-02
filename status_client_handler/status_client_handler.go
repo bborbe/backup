@@ -6,6 +6,8 @@ import (
 	"io/ioutil"
 	"net/http"
 
+	"sort"
+
 	backup_dto "github.com/bborbe/backup/dto"
 	"github.com/bborbe/log"
 )
@@ -57,6 +59,9 @@ func (s *statusHandler) serveHTTP(responseWriter http.ResponseWriter, request *h
 	if err != nil {
 		return err
 	}
+
+	sort.Sort(backup_dto.StatusByName(statusList))
+
 	responseWriter.Header().Set("Content-Type", "text/html")
 	fmt.Fprint(responseWriter, "<html><body>")
 	fmt.Fprint(responseWriter, "<h1>Backup-Status</h1>")
