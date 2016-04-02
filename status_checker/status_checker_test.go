@@ -28,11 +28,11 @@ func TestCreateStatusDtoTrue(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	err = AssertThat(statusDto.GetStatus(), Is(status))
+	err = AssertThat(statusDto.Status, Is(status))
 	if err != nil {
 		t.Fatal(err)
 	}
-	err = AssertThat(statusDto.GetHost(), Is(hostname))
+	err = AssertThat(statusDto.Host, Is(hostname))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -47,11 +47,11 @@ func TestCreateStatusDtoFalse(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	err = AssertThat(statusDto.GetStatus(), Is(status))
+	err = AssertThat(statusDto.Status, Is(status))
 	if err != nil {
 		t.Fatal(err)
 	}
-	err = AssertThat(statusDto.GetHost(), Is(hostname))
+	err = AssertThat(statusDto.Host, Is(hostname))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -62,7 +62,7 @@ func TestCreateStatusDtoForHostsEmptyHosts(t *testing.T) {
 		err           error
 		backupService backup_service.BackupService
 		hostDtos      []backup_dto.Host
-		statusDtos    []backup_dto.Status
+		statusDtos    []*backup_dto.Status
 	)
 	hostDtos = []backup_dto.Host{}
 	statusDtos, err = createStatusDtoForHosts(backupService, hostDtos)
@@ -80,7 +80,7 @@ func TestCreateStatusDtoForHostsOneHost(t *testing.T) {
 	var (
 		err        error
 		hostDtos   []backup_dto.Host
-		statusDtos []backup_dto.Status
+		statusDtos []*backup_dto.Status
 	)
 	hostName := "fire.example.com"
 	backupName := "2014-01-10T23:15:35"
@@ -98,7 +98,7 @@ func TestCreateStatusDtoForHostsOneHost(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	err = AssertThat(statusDtos[0].GetHost(), Is(hostName))
+	err = AssertThat(statusDtos[0].Host, Is(hostName))
 	if err != nil {
 		t.Fatal(err)
 	}

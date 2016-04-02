@@ -35,18 +35,18 @@ func (s *statusHandler) ServeHTTP(responseWriter http.ResponseWriter, request *h
 	handler.ServeHTTP(responseWriter, request)
 }
 
-func filter(list []backup_dto.Status, status string) []backup_dto.Status {
+func filter(list []*backup_dto.Status, status string) []*backup_dto.Status {
 	if list == nil {
 		return list
 	}
-	result := make([]backup_dto.Status, 0)
+	result := make([]*backup_dto.Status, 0)
 	for _, s := range list {
 		if "true" == status {
-			if s.GetStatus() {
+			if s.Status {
 				result = append(result, s)
 			}
 		} else if "false" == status {
-			if !s.GetStatus() {
+			if !s.Status {
 				result = append(result, s)
 			}
 		} else {

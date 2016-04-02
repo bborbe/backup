@@ -8,7 +8,7 @@ import (
 )
 
 func TestImplementsStatusHandler(t *testing.T) {
-	object := NewStatusHandler("")
+	object := NewStatusHandler(nil, "")
 	var expected *http.Handler
 	err := AssertThat(object, Implements(expected))
 	if err != nil {

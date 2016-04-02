@@ -23,7 +23,7 @@ func TestImplementsStatusHandler(t *testing.T) {
 
 func TestStatusCheckerFailure(t *testing.T) {
 	logger.Debug("TestStatusCheckerFailure")
-	var status []backup_dto.Status
+	var status []*backup_dto.Status
 	err := errors.New("baem!")
 	statusChecker := backup_status_checker.NewStatusCheckerMock(status, err)
 	handler := NewStatusHandler(statusChecker)
@@ -45,7 +45,7 @@ func TestStatusCheckerFailure(t *testing.T) {
 
 func TestStatusCheckerNil(t *testing.T) {
 	logger.Debug("TestStatusCheckerNil")
-	var status []backup_dto.Status
+	var status []*backup_dto.Status
 	var err error
 	statusChecker := backup_status_checker.NewStatusCheckerMock(status, err)
 	handler := NewStatusHandler(statusChecker)
@@ -67,9 +67,9 @@ func TestStatusCheckerNil(t *testing.T) {
 
 func TestStatusCheckerOne(t *testing.T) {
 	logger.Debug("TestStatusCheckerNil")
-	var status []backup_dto.Status
+	var status []*backup_dto.Status
 	var err error
-	status = []backup_dto.Status{
+	status = []*backup_dto.Status{
 		createStatus(true, "fire.example.com"),
 	}
 	statusChecker := backup_status_checker.NewStatusCheckerMock(status, err)
@@ -92,9 +92,9 @@ func TestStatusCheckerOne(t *testing.T) {
 
 func TestStatusCheckerTwo(t *testing.T) {
 	logger.Debug("TestStatusCheckerNil")
-	var status []backup_dto.Status
+	var status []*backup_dto.Status
 	var err error
-	status = []backup_dto.Status{
+	status = []*backup_dto.Status{
 		createStatus(true, "fire.example.com"),
 		createStatus(false, "burn.example.com"),
 	}
@@ -116,9 +116,9 @@ func TestStatusCheckerTwo(t *testing.T) {
 	}
 }
 
-func createStatus(status bool, host string) backup_dto.Status {
-	s := backup_dto.NewStatus()
-	s.SetStatus(status)
-	s.SetHost(host)
+func createStatus(status bool, host string) *backup_dto.Status {
+	s := new(backup_dto.Status)
+	s.Status = status
+	s.Host = host
 	return s
 }

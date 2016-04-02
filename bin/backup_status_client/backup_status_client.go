@@ -5,17 +5,18 @@ import (
 
 	backup_config "github.com/bborbe/backup/config"
 	backup_status_client "github.com/bborbe/backup/status_client"
+	http_client_builder "github.com/bborbe/http/client_builder"
 	"github.com/bborbe/log"
 )
 
 var logger = log.DefaultLogger
 
 const (
-	DEFAULT_PORT int = 8080
-	DEFAULT_SERVER = "http://backup.pn.benjamin-borbe.de:7777"
-	PARAMETER_LOGLEVEL = "loglevel"
-	PARAMETER_PORT = "port"
-	PARAMETER_SERVER = "server"
+	DEFAULT_PORT       int = 8080
+	DEFAULT_SERVER         = "http://backup.pn.benjamin-borbe.de:7777"
+	PARAMETER_LOGLEVEL     = "loglevel"
+	PARAMETER_PORT         = "port"
+	PARAMETER_SERVER       = "server"
 )
 
 func main() {
@@ -28,6 +29,9 @@ func main() {
 	logger.Tracef("server %s", *serverPtr)
 	logger.Tracef("portnumberPtr %d", *portnumberPtr)
 	logger.Debugf("backup status server started at port %d", *portnumberPtr)
-	srv := backup_status_client.NewServer(*portnumberPtr, *serverPtr)
+
+	httpClient := http_client_builder.New().WithoutProxy().Build()
+
+	srv := backup_status_client.NewServer(httpClient.Get, *portnumberPtr, *serverPtr)
 	srv.Run()
 }

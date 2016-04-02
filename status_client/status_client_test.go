@@ -10,7 +10,7 @@ import (
 func TestImplementsServer(t *testing.T) {
 	var port int
 	var rootdir string
-	object := NewServer(port, rootdir)
+	object := NewServer(nil, port, rootdir)
 	var expected *server.Server
 	err := AssertThat(object, Implements(expected))
 	if err != nil {

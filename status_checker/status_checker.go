@@ -12,7 +12,7 @@ import (
 var logger = log.DefaultLogger
 
 type StatusChecker interface {
-	Check() ([]backup_dto.Status, error)
+	Check() ([]*backup_dto.Status, error)
 }
 
 type statusChecker struct {
@@ -25,7 +25,7 @@ func NewStatusChecker(backupService backup_service.BackupService) StatusChecker 
 	return s
 }
 
-func (s *statusChecker) Check() ([]backup_dto.Status, error) {
+func (s *statusChecker) Check() ([]*backup_dto.Status, error) {
 	hosts, err := s.backupService.ListHosts()
 	if err != nil {
 		logger.Debugf("list hosts failed: %v", err)
@@ -34,8 +34,8 @@ func (s *statusChecker) Check() ([]backup_dto.Status, error) {
 	return createStatusDtoForHosts(s.backupService, hosts)
 }
 
-func createStatusDtoForHosts(backupService backup_service.BackupService, hosts []backup_dto.Host) ([]backup_dto.Status, error) {
-	result := make([]backup_dto.Status, 0)
+func createStatusDtoForHosts(backupService backup_service.BackupService, hosts []backup_dto.Host) ([]*backup_dto.Status, error) {
+	result := make([]*backup_dto.Status, 0)
 	for _, host := range hosts {
 		status, err := createStatusDtoForHost(backupService, host)
 		if err != nil {
@@ -46,7 +46,7 @@ func createStatusDtoForHosts(backupService backup_service.BackupService, hosts [
 	return result, nil
 }
 
-func createStatusDtoForHost(backupService backup_service.BackupService, host backup_dto.Host) (backup_dto.Status, error) {
+func createStatusDtoForHost(backupService backup_service.BackupService, host backup_dto.Host) (*backup_dto.Status, error) {
 	backup, err := backupService.GetLatestBackup(host)
 	if err != nil {
 		logger.Debugf("get latest backup failed: %v", err)
@@ -74,12 +74,12 @@ func backupIsInLastDays(backup backup_dto.Backup, timeParser backup_timeparser.T
 	return !now.After(t.Add(time.Duration(time.Hour * 24 * 7))), nil
 }
 
-func createStatusDto(host backup_dto.Host, backup backup_dto.Backup, status bool) backup_dto.Status {
-	statusDto := backup_dto.NewStatus()
-	statusDto.SetStatus(status)
-	statusDto.SetHost(host.GetName())
+func createStatusDto(host backup_dto.Host, backup backup_dto.Backup, status bool) *backup_dto.Status {
+	statusDto := new(backup_dto.Status)
+	statusDto.Status = status
+	statusDto.Host = host.GetName()
 	if backup != nil {
-		statusDto.SetLatestBackup(backup.GetName())
+		statusDto.LatestBackup = backup.GetName()
 	}
 	return statusDto
 }
