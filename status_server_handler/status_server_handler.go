@@ -1,4 +1,4 @@
-package status_handler
+package status_server_handler
 
 import (
 	"net/http"

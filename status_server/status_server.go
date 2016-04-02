@@ -3,7 +3,7 @@ package status_server
 import (
 	backup_service "github.com/bborbe/backup/service"
 	backup_status_checker "github.com/bborbe/backup/status_checker"
-	backup_status_handler "github.com/bborbe/backup/status_handler"
+	backup_status_handler "github.com/bborbe/backup/status_server_handler"
 	"github.com/bborbe/server"
 )
 
