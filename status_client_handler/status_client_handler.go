@@ -52,7 +52,7 @@ func (s *statusHandler) serveHTTP(responseWriter http.ResponseWriter, request *h
 		return fmt.Errorf("request failed: %s", (content))
 	}
 
-	logger.Debugf(string(content))
+	logger.Tracef(string(content))
 
 	var statusList []*backup_dto.Status
 	err = json.Unmarshal(content, &statusList)
