@@ -4,10 +4,10 @@ import (
 	"net/http"
 
 	backup_status_handler "github.com/bborbe/backup/status_client_handler"
-	"github.com/bborbe/server"
+	"fmt"
 )
 
-func NewServer(download func(url string) (resp *http.Response, err error), port int, address string) server.Server {
+func NewServer(download func(url string) (resp *http.Response, err error), port int, address string) *http.Server {
 	handler := backup_status_handler.NewStatusHandler(download, address)
-	return server.NewServerPort(port, handler)
+	return &http.Server{Addr: fmt.Sprintf(":%d", port), Handler: handler}
 }

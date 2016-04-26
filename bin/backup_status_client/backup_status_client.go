@@ -7,31 +7,49 @@ import (
 	backup_status_client "github.com/bborbe/backup/status_client"
 	http_client_builder "github.com/bborbe/http/client_builder"
 	"github.com/bborbe/log"
+	"github.com/facebookgo/grace/gracehttp"
+	"os"
+	"net/http"
 )
 
-var logger = log.DefaultLogger
-
 const (
-	DEFAULT_PORT       int = 8080
-	DEFAULT_SERVER         = "http://backup.pn.benjamin-borbe.de:7777"
-	PARAMETER_LOGLEVEL     = "loglevel"
-	PARAMETER_PORT         = "port"
-	PARAMETER_SERVER       = "server"
+	DEFAULT_PORT int = 8080
+	DEFAULT_SERVER = "http://backup.pn.benjamin-borbe.de:7777"
+	PARAMETER_LOGLEVEL = "loglevel"
+	PARAMETER_PORT = "port"
+	PARAMETER_SERVER = "server"
+)
+
+var (
+	logger = log.DefaultLogger
+	logLevelPtr = flag.String(PARAMETER_LOGLEVEL, log.LogLevelToString(backup_config.DEFAULT_LOG_LEVEL), log.FLAG_USAGE)
+	serverPtr = flag.String(PARAMETER_SERVER, DEFAULT_SERVER, "backup status server address")
+	portnumberPtr = flag.Int(PARAMETER_PORT, DEFAULT_PORT, "server port")
 )
 
 func main() {
-	logLevelPtr := flag.String(PARAMETER_LOGLEVEL, log.LogLevelToString(backup_config.DEFAULT_LOG_LEVEL), log.FLAG_USAGE)
-	serverPtr := flag.String(PARAMETER_SERVER, DEFAULT_SERVER, "backup status server address")
-	portnumberPtr := flag.Int(PARAMETER_PORT, DEFAULT_PORT, "server port")
+	defer logger.Close()
 	flag.Parse()
+
 	logger.SetLevelThreshold(log.LogStringToLevel(*logLevelPtr))
-	logger.Tracef("set log level to %s", *logLevelPtr)
+	logger.Debugf("set log level to %s", *logLevelPtr)
+
+	server, err := createServer(*portnumberPtr, *serverPtr)
+	if err != nil {
+		logger.Fatal(err)
+		logger.Close()
+		os.Exit(1)
+	}
+	logger.Debugf("start server")
+	gracehttp.Serve(server)
+}
+
+func createServer(port int, server string) (*http.Server, error) {
 	logger.Tracef("server %s", *serverPtr)
 	logger.Tracef("portnumberPtr %d", *portnumberPtr)
 	logger.Debugf("backup status server started at port %d", *portnumberPtr)
 
 	httpClient := http_client_builder.New().WithoutProxy().Build()
 
-	srv := backup_status_client.NewServer(httpClient.Get, *portnumberPtr, *serverPtr)
-	srv.Run()
+	return backup_status_client.NewServer(httpClient.Get, port, server), nil
 }

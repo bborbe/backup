@@ -4,16 +4,15 @@ import (
 	"testing"
 
 	. "github.com/bborbe/assert"
-	"github.com/bborbe/server"
+	"net/http"
 )
 
 func TestImplementsServer(t *testing.T) {
+	var expected *http.Server
 	var port int
 	var rootdir string
-	object := NewServer(nil, port, rootdir)
-	var expected *server.Server
-	err := AssertThat(object, Implements(expected))
-	if err != nil {
+	expected = NewServer(nil, port, rootdir)
+	if err := AssertThat(expected, NotNilValue()); err != nil {
 		t.Fatal(err)
 	}
 }

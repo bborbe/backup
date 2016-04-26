@@ -4,12 +4,13 @@ import (
 	backup_service "github.com/bborbe/backup/service"
 	backup_status_checker "github.com/bborbe/backup/status_checker"
 	backup_status_handler "github.com/bborbe/backup/status_server_handler"
-	"github.com/bborbe/server"
+	"fmt"
+	"net/http"
 )
 
-func NewServer(port int, rootdir string) server.Server {
+func NewServer(port int, rootdir string) (*http.Server) {
 	backupService := backup_service.NewBackupService(rootdir)
 	statusChecker := backup_status_checker.NewStatusChecker(backupService)
 	handler := backup_status_handler.NewStatusHandler(statusChecker)
-	return server.NewServerPort(port, handler)
+	return &http.Server{Addr: fmt.Sprintf(":%d", port), Handler: handler}
 }

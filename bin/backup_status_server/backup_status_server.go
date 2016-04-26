@@ -2,29 +2,45 @@ package main
 
 import (
 	"flag"
-
 	backup_config "github.com/bborbe/backup/config"
 	backup_status_server "github.com/bborbe/backup/status_server"
 	"github.com/bborbe/log"
+	"os"
+	"github.com/facebookgo/grace/gracehttp"
+	"net/http"
 )
 
-var logger = log.DefaultLogger
-
 const (
-	DEFAULT_PORT       int = 8002
-	PARAMETER_LOGLEVEL     = "loglevel"
+	DEFAULT_PORT int = 8002
+	PARAMETER_LOGLEVEL = "loglevel"
+	PARAMETER_ROOT = "rootdir"
+	PARAMETER_PORT = "port"
+)
+
+var (
+	logger = log.DefaultLogger
+	logLevelPtr = flag.String(PARAMETER_LOGLEVEL, log.LogLevelToString(backup_config.DEFAULT_LOG_LEVEL), log.FLAG_USAGE)
+	rootdirPtr = flag.String(PARAMETER_ROOT, backup_config.DEFAULT_ROOT_DIR, "root directory for backups")
+	portnumberPtr = flag.Int(PARAMETER_PORT, DEFAULT_PORT, "server port")
 )
 
 func main() {
-	logLevelPtr := flag.String(PARAMETER_LOGLEVEL, log.LogLevelToString(backup_config.DEFAULT_LOG_LEVEL), log.FLAG_USAGE)
-	rootdirPtr := flag.String("rootdir", backup_config.DEFAULT_ROOT_DIR, "root directory for backups")
-	portnumberPtr := flag.Int("port", DEFAULT_PORT, "server port")
+	defer logger.Close()
 	flag.Parse()
+
 	logger.SetLevelThreshold(log.LogStringToLevel(*logLevelPtr))
-	logger.Tracef("set log level to %s", *logLevelPtr)
-	logger.Tracef("rootdir %s", *rootdirPtr)
-	logger.Tracef("portnumberPtr %d", *portnumberPtr)
-	logger.Debugf("backup status server started at port %d", *portnumberPtr)
-	srv := backup_status_server.NewServer(*portnumberPtr, *rootdirPtr)
-	srv.Run()
+	logger.Debugf("set log level to %s", *logLevelPtr)
+
+	server, err := createServer(*portnumberPtr, *rootdirPtr)
+	if err != nil {
+		logger.Fatal(err)
+		logger.Close()
+		os.Exit(1)
+	}
+	logger.Debugf("start server")
+	gracehttp.Serve(server)
+}
+
+func createServer(port int, rootdir string) (*http.Server, error) {
+	return backup_status_server.NewServer(*portnumberPtr, *rootdirPtr), nil
 }
