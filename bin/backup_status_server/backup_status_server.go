@@ -2,25 +2,26 @@ package main
 
 import (
 	"flag"
+	"net/http"
+	"os"
+
 	backup_config "github.com/bborbe/backup/config"
 	backup_status_server "github.com/bborbe/backup/status_server"
 	"github.com/bborbe/log"
-	"os"
 	"github.com/facebookgo/grace/gracehttp"
-	"net/http"
 )
 
 const (
-	DEFAULT_PORT int = 8002
-	PARAMETER_LOGLEVEL = "loglevel"
-	PARAMETER_ROOT = "rootdir"
-	PARAMETER_PORT = "port"
+	DEFAULT_PORT       int = 8002
+	PARAMETER_LOGLEVEL     = "loglevel"
+	PARAMETER_ROOT         = "rootdir"
+	PARAMETER_PORT         = "port"
 )
 
 var (
-	logger = log.DefaultLogger
-	logLevelPtr = flag.String(PARAMETER_LOGLEVEL, log.LogLevelToString(backup_config.DEFAULT_LOG_LEVEL), log.FLAG_USAGE)
-	rootdirPtr = flag.String(PARAMETER_ROOT, backup_config.DEFAULT_ROOT_DIR, "root directory for backups")
+	logger        = log.DefaultLogger
+	logLevelPtr   = flag.String(PARAMETER_LOGLEVEL, log.LogLevelToString(backup_config.DEFAULT_LOG_LEVEL), log.FLAG_USAGE)
+	rootdirPtr    = flag.String(PARAMETER_ROOT, backup_config.DEFAULT_ROOT_DIR, "root directory for backups")
 	portnumberPtr = flag.Int(PARAMETER_PORT, DEFAULT_PORT, "server port")
 )
 

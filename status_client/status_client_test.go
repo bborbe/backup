@@ -3,8 +3,9 @@ package status_client
 import (
 	"testing"
 
-	. "github.com/bborbe/assert"
 	"net/http"
+
+	. "github.com/bborbe/assert"
 )
 
 func TestImplementsServer(t *testing.T) {

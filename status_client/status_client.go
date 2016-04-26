@@ -3,8 +3,9 @@ package status_client
 import (
 	"net/http"
 
-	backup_status_handler "github.com/bborbe/backup/status_client_handler"
 	"fmt"
+
+	backup_status_handler "github.com/bborbe/backup/status_client_handler"
 )
 
 func NewServer(download func(url string) (resp *http.Response, err error), port int, address string) *http.Server {

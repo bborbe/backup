@@ -3,27 +3,28 @@ package main
 import (
 	"flag"
 
+	"net/http"
+	"os"
+
 	backup_config "github.com/bborbe/backup/config"
 	backup_status_client "github.com/bborbe/backup/status_client"
 	http_client_builder "github.com/bborbe/http/client_builder"
 	"github.com/bborbe/log"
 	"github.com/facebookgo/grace/gracehttp"
-	"os"
-	"net/http"
 )
 
 const (
-	DEFAULT_PORT int = 8080
-	DEFAULT_SERVER = "http://backup.pn.benjamin-borbe.de:7777"
-	PARAMETER_LOGLEVEL = "loglevel"
-	PARAMETER_PORT = "port"
-	PARAMETER_SERVER = "server"
+	DEFAULT_PORT       int = 8080
+	DEFAULT_SERVER         = "http://backup.pn.benjamin-borbe.de:7777"
+	PARAMETER_LOGLEVEL     = "loglevel"
+	PARAMETER_PORT         = "port"
+	PARAMETER_SERVER       = "server"
 )
 
 var (
-	logger = log.DefaultLogger
-	logLevelPtr = flag.String(PARAMETER_LOGLEVEL, log.LogLevelToString(backup_config.DEFAULT_LOG_LEVEL), log.FLAG_USAGE)
-	serverPtr = flag.String(PARAMETER_SERVER, DEFAULT_SERVER, "backup status server address")
+	logger        = log.DefaultLogger
+	logLevelPtr   = flag.String(PARAMETER_LOGLEVEL, log.LogLevelToString(backup_config.DEFAULT_LOG_LEVEL), log.FLAG_USAGE)
+	serverPtr     = flag.String(PARAMETER_SERVER, DEFAULT_SERVER, "backup status server address")
 	portnumberPtr = flag.Int(PARAMETER_PORT, DEFAULT_PORT, "server port")
 )
 
