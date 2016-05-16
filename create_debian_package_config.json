@@ -36,13 +36,8 @@
       "target": "/opt/backup/bin/backup_cleanup"
     },
     {
-      "source": "src/github.com/bborbe/backup/etc/default/backup_status_server",
-      "target": "/etc/default/backup_status_server"
-    },
-    {
-      "source": "src/github.com/bborbe/backup/etc/init/backup_status_server.conf",
-      "target": "/etc/init/backup_status_server.conf"
+      "source": "src/github.com/bborbe/backup/etc/systemd/system/backup_status_server.service",
+      "target": "/etc/systemd/system/backup_status_server.service"
     }
-
   ]
 }

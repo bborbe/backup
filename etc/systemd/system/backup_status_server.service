@@ -1,0 +1,9 @@
+[Unit]
+Description=Backup Status
+
+[Service]
+ExecStart=/opt/backup/bin/backup_status_server -port=7777 -rootdir=/rsync -loglevel=INFO
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
