@@ -8,7 +8,7 @@ import (
 	"sort"
 	"time"
 
-	backup_fileutil "github.com/bborbe/backup/fileutil"
+	io_util "github.com/bborbe/io/util"
 	backup_host "github.com/bborbe/backup/host"
 	backup_timeparser "github.com/bborbe/backup/timeparser"
 	"github.com/bborbe/log"
@@ -80,10 +80,10 @@ func All(h backup_host.Host) ([]Backup, error) {
 }
 
 func (b *backup) IsDir() (bool, error) {
-	if !backup_fileutil.Exists(b.Path()) {
+	if !io_util.Exists(b.Path()) {
 		return false, nil
 	}
-	return backup_fileutil.IsDir(b.Path())
+	return io_util.IsDirectory(b.Path())
 }
 
 func (b *backup) ValidName() bool {

@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"os"
 
-	backup_fileutil "github.com/bborbe/backup/fileutil"
+	io_util "github.com/bborbe/io/util"
 	backup_rootdir "github.com/bborbe/backup/rootdir"
 	"github.com/bborbe/log"
 )
@@ -54,7 +54,7 @@ func All(root backup_rootdir.Rootdir) ([]Host, error) {
 	hosts := make([]Host, 0)
 	for _, name := range names {
 		host := ByName(root, name)
-		isDir, err := backup_fileutil.IsDir(host.Path())
+		isDir, err := io_util.IsDirectory(host.Path())
 		if err != nil {
 			return nil, err
 		}

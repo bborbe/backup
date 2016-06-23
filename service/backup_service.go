@@ -4,10 +4,9 @@ import (
 	"errors"
 	"fmt"
 	"sort"
-
+	io_util "github.com/bborbe/io/util"
 	backup_backup "github.com/bborbe/backup/backup"
 	backup_dto "github.com/bborbe/backup/dto"
-	backup_fileutil "github.com/bborbe/backup/fileutil"
 	backup_host "github.com/bborbe/backup/host"
 	backup_rootdir "github.com/bborbe/backup/rootdir"
 	"github.com/bborbe/log"
@@ -79,7 +78,7 @@ func convertBackupsToBackupDtos(backups []backup_backup.Backup) []backup_dto.Bac
 
 func (s *backupService) GetHost(hostname string) (backup_dto.Host, error) {
 	h := backup_host.ByName(s.rootdir, hostname)
-	isDir, err := backup_fileutil.IsDir(h.Path())
+	isDir, err := io_util.IsDirectory(h.Path())
 	if err != nil {
 		return nil, err
 	}
