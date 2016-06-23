@@ -40,28 +40,11 @@ func (s *statusHandler) ServeHTTP(responseWriter http.ResponseWriter, request *h
 
 }
 func (s *statusHandler) serveHTTP(responseWriter http.ResponseWriter, request *http.Request) error {
-	resp, err := s.download(s.address)
+	statusList, err := getStatusList(s.download, s.address)
 	if err != nil {
 		return err
 	}
-	content, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return err
-	}
-	if resp.StatusCode/100 != 2 {
-		return fmt.Errorf("request failed: %s", (content))
-	}
-
-	logger.Tracef(string(content))
-
-	var statusList []*backup_dto.Status
-	err = json.Unmarshal(content, &statusList)
-	if err != nil {
-		return err
-	}
-
 	sort.Sort(backup_dto.StatusByName(statusList))
-
 	responseWriter.Header().Set("Content-Type", "text/html")
 	fmt.Fprint(responseWriter, "<html><body>")
 	fmt.Fprint(responseWriter, "<h1>Backup-Status</h1>")
@@ -82,4 +65,26 @@ func (s *statusHandler) serveHTTP(responseWriter http.ResponseWriter, request *h
 	fmt.Fprint(responseWriter, "</ul>")
 	fmt.Fprint(responseWriter, "</body></html>")
 	return nil
+}
+
+func getStatusList(download Download, address string) ([]*backup_dto.Status, error) {
+	resp, err := download(address)
+	if err != nil {
+		return nil, err
+	}
+	content, err := ioutil.ReadAll(resp.Body)
+	defer resp.Body.Close()
+	if err != nil {
+		return nil, err
+	}
+	if resp.StatusCode/100 != 2 {
+		return nil, fmt.Errorf("request failed: %s", (content))
+	}
+	logger.Tracef(string(content))
+	var statusList []*backup_dto.Status
+	err = json.Unmarshal(content, &statusList)
+	if err != nil {
+		return nil, err
+	}
+	return statusList, nil
 }
