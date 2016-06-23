@@ -2,6 +2,8 @@
 Description=Backup Status
 
 [Service]
+LimitNOFILE=4096
+LimitNPROC=4096
 ExecStart=/opt/backup/bin/backup_status_server -port=7777 -rootdir=/rsync -loglevel=INFO
 Restart=on-failure
 
