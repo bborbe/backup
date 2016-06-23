@@ -50,12 +50,12 @@ func CreateFile(path string) error {
 	logger.Debugf("CreateFile file: %s", path)
 	var fileMode os.FileMode
 	fileMode = 0666
-	f, err := os.OpenFile(path, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, fileMode)
-	defer f.Close()
+	file, err := os.OpenFile(path, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, fileMode)
+	defer file.Close()
 	if err != nil {
 		return err
 	}
-	_, err = f.WriteString("hello world")
+	_, err = file.WriteString("hello world")
 	if err != nil {
 		return err
 	}

@@ -45,11 +45,11 @@ func ByName(h backup_host.Host, name string) Backup {
 
 func All(h backup_host.Host) ([]Backup, error) {
 	file, err := os.Open(h.Path())
+	defer file.Close()
 	if err != nil {
 		logger.Debugf("open host %s failed: %v", h.Path(), err)
 		return nil, err
 	}
-	defer file.Close()
 	fileinfo, err := file.Stat()
 	if err != nil {
 		logger.Debugf("file stat failed: %v", err)

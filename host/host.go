@@ -31,11 +31,11 @@ func ByName(rootdir backup_rootdir.Rootdir, name string) Host {
 
 func All(root backup_rootdir.Rootdir) ([]Host, error) {
 	file, err := os.Open(root.Path())
+	defer file.Close()
 	if err != nil {
 		logger.Debugf("open rootdir %s failed: %v", root.Path(), err)
 		return nil, err
 	}
-	defer file.Close()
 	fileinfo, err := file.Stat()
 	if err != nil {
 		logger.Debugf("file stat failed: %v", err)
