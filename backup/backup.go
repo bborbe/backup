@@ -8,9 +8,9 @@ import (
 	"sort"
 	"time"
 
-	io_util "github.com/bborbe/io/util"
 	backup_host "github.com/bborbe/backup/host"
 	backup_timeparser "github.com/bborbe/backup/timeparser"
+	io_util "github.com/bborbe/io/util"
 	"github.com/bborbe/log"
 )
 

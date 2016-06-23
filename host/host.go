@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"os"
 
-	io_util "github.com/bborbe/io/util"
 	backup_rootdir "github.com/bborbe/backup/rootdir"
+	io_util "github.com/bborbe/io/util"
 	"github.com/bborbe/log"
 )
 
