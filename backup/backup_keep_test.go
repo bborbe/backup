@@ -50,10 +50,6 @@ func TestGetKeepMonth(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		err = AssertThat(result, NotNilValue())
-		if err != nil {
-			t.Fatal(err)
-		}
 		err = AssertThat(len(result), Is(len(backups)))
 		if err != nil {
 			t.Fatal(err)
@@ -128,10 +124,6 @@ func TestGetKeepToday(t *testing.T) {
 	{
 		backups := []Backup{}
 		result, err = getKeepToday(backups, now, backup_timeparser.New())
-		if err != nil {
-			t.Fatal(err)
-		}
-		err = AssertThat(result, NotNilValue())
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -269,10 +261,6 @@ func TestGetKeepWeek(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		err = AssertThat(result, NotNilValue())
-		if err != nil {
-			t.Fatal(err)
-		}
 		err = AssertThat(len(result), Is(len(backups)))
 		if err != nil {
 			t.Fatal(err)
@@ -327,10 +315,6 @@ func TestGetKeepDay(t *testing.T) {
 	{
 		backups := []Backup{}
 		result, err = getKeepDay(backups, now, backup_timeparser.New())
-		if err != nil {
-			t.Fatal(err)
-		}
-		err = AssertThat(result, NotNilValue())
 		if err != nil {
 			t.Fatal(err)
 		}
