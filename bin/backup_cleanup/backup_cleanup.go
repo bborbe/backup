@@ -12,6 +12,7 @@ import (
 	backup_service "github.com/bborbe/backup/service"
 	"github.com/bborbe/lock"
 	"github.com/bborbe/log"
+	"runtime"
 )
 
 const (
@@ -19,16 +20,21 @@ const (
 	LOCK_NAME          = "/var/run/backup_clean.lock"
 )
 
-var logger = log.DefaultLogger
+var (
+	logger      = log.DefaultLogger
+	logLevelPtr = flag.String(PARAMETER_LOGLEVEL, log.LogLevelToString(backup_config.DEFAULT_LOG_LEVEL), log.FLAG_USAGE)
+	rootdirPtr  = flag.String("rootdir", backup_config.DEFAULT_ROOT_DIR, "string")
+	hostPtr     = flag.String("host", backup_config.DEFAULT_HOST, "string")
+)
 
 func main() {
 	defer logger.Close()
-	logLevelPtr := flag.String(PARAMETER_LOGLEVEL, log.LogLevelToString(backup_config.DEFAULT_LOG_LEVEL), log.FLAG_USAGE)
-	rootdirPtr := flag.String("rootdir", backup_config.DEFAULT_ROOT_DIR, "string")
-	hostPtr := flag.String("host", backup_config.DEFAULT_HOST, "string")
 	flag.Parse()
+
 	logger.SetLevelThreshold(log.LogStringToLevel(*logLevelPtr))
 	logger.Debugf("set log level to %s", *logLevelPtr)
+
+	runtime.GOMAXPROCS(runtime.NumCPU())
 
 	writer := os.Stdout
 	logger.Debugf("use backup dir %s", *rootdirPtr)
