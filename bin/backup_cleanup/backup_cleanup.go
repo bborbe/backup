@@ -7,12 +7,13 @@ import (
 	"os"
 	"sort"
 
+	"runtime"
+
 	backup_config "github.com/bborbe/backup/config"
 	backup_dto "github.com/bborbe/backup/dto"
 	backup_service "github.com/bborbe/backup/service"
 	"github.com/bborbe/lock"
 	"github.com/bborbe/log"
-	"runtime"
 )
 
 const (

@@ -6,12 +6,13 @@ import (
 	"net/http"
 	"os"
 
+	"runtime"
+
 	backup_config "github.com/bborbe/backup/config"
 	backup_status_client "github.com/bborbe/backup/status_client"
 	http_client_builder "github.com/bborbe/http/client_builder"
 	"github.com/bborbe/log"
 	"github.com/facebookgo/grace/gracehttp"
-	"runtime"
 )
 
 const (

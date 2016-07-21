@@ -6,10 +6,11 @@ import (
 	"io"
 	"os"
 
+	"runtime"
+
 	backup_config "github.com/bborbe/backup/config"
 	backup_service "github.com/bborbe/backup/service"
 	"github.com/bborbe/log"
-	"runtime"
 )
 
 const (
