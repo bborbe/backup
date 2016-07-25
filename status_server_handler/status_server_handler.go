@@ -5,9 +5,9 @@ import (
 
 	backup_dto "github.com/bborbe/backup/dto"
 	backup_status_checker "github.com/bborbe/backup/status_checker"
+	error_handler "github.com/bborbe/http_handler/error"
+	json_handler "github.com/bborbe/http_handler/json"
 	"github.com/bborbe/log"
-	error_handler "github.com/bborbe/server/handler/error"
-	json_handler "github.com/bborbe/server/handler/json"
 )
 
 var logger = log.DefaultLogger
