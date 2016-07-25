@@ -8,7 +8,7 @@ import (
 	. "github.com/bborbe/assert"
 	backup_dto "github.com/bborbe/backup/dto"
 	backup_status_checker "github.com/bborbe/backup/status_checker"
-	server_mock "github.com/bborbe/server/mock"
+	server_mock "github.com/bborbe/http/mock"
 )
 
 func TestImplementsStatusHandler(t *testing.T) {
