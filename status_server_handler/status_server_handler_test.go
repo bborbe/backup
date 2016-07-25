@@ -35,7 +35,7 @@ func TestStatusCheckerFailure(t *testing.T) {
 	if err = AssertThat(response.Status(), Is(http.StatusInternalServerError)); err != nil {
 		t.Error(err)
 	}
-	if err = AssertThat(response.String(), Is(`{"status":500,"message":"baem!"}\n`)); err != nil {
+	if err = AssertThat(response.String(), Is("{\"status\":500,\"message\":\"baem!\"}\n")); err != nil {
 		t.Error(err)
 	}
 }
