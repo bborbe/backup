@@ -15,8 +15,7 @@ func TestImplementsStatusHandler(t *testing.T) {
 	var statusChecker backup_status_checker.StatusChecker
 	object := NewStatusHandler(statusChecker)
 	var expected *http.Handler
-	err := AssertThat(object, Implements(expected))
-	if err != nil {
+	if err := AssertThat(object, Implements(expected)); err != nil {
 		t.Fatal(err)
 	}
 }
@@ -33,12 +32,10 @@ func TestStatusCheckerFailure(t *testing.T) {
 		t.Error(err)
 	}
 	handler.ServeHTTP(response, request)
-	err = AssertThat(response.Status(), Is(http.StatusInternalServerError))
-	if err != nil {
+	if err = AssertThat(response.Status(), Is(http.StatusInternalServerError)); err != nil {
 		t.Error(err)
 	}
-	err = AssertThat(response.String(), Is(`{"status":500,"message":"baem!"}`))
-	if err != nil {
+	if err = AssertThat(response.String(), Is(`{"status":500,"message":"baem!"}\n`)); err != nil {
 		t.Error(err)
 	}
 }
@@ -55,12 +52,10 @@ func TestStatusCheckerNil(t *testing.T) {
 		t.Error(err)
 	}
 	handler.ServeHTTP(response, request)
-	err = AssertThat(response.Status(), Is(http.StatusOK))
-	if err != nil {
+	if err = AssertThat(response.Status(), Is(http.StatusOK)); err != nil {
 		t.Error(err)
 	}
-	err = AssertThat(response.String(), Is("[]"))
-	if err != nil {
+	if err = AssertThat(response.String(), Is("[]")); err != nil {
 		t.Error(err)
 	}
 }
@@ -80,12 +75,10 @@ func TestStatusCheckerOne(t *testing.T) {
 		t.Error(err)
 	}
 	handler.ServeHTTP(response, request)
-	err = AssertThat(response.Status(), Is(http.StatusOK))
-	if err != nil {
+	if err = AssertThat(response.Status(), Is(http.StatusOK)); err != nil {
 		t.Error(err)
 	}
-	err = AssertThat(response.String(), Is(`[{"host":"fire.example.com","status":true,"latestBackup":""}]`))
-	if err != nil {
+	if err = AssertThat(response.String(), Is(`[{"host":"fire.example.com","status":true,"latestBackup":""}]`)); err != nil {
 		t.Error(err)
 	}
 }
@@ -106,12 +99,10 @@ func TestStatusCheckerTwo(t *testing.T) {
 		t.Error(err)
 	}
 	handler.ServeHTTP(response, request)
-	err = AssertThat(response.Status(), Is(http.StatusOK))
-	if err != nil {
+	if err = AssertThat(response.Status(), Is(http.StatusOK)); err != nil {
 		t.Error(err)
 	}
-	err = AssertThat(response.String(), Is(`[{"host":"fire.example.com","status":true,"latestBackup":""},{"host":"burn.example.com","status":false,"latestBackup":""}]`))
-	if err != nil {
+	if err = AssertThat(response.String(), Is(`[{"host":"fire.example.com","status":true,"latestBackup":""},{"host":"burn.example.com","status":false,"latestBackup":""}]`)); err != nil {
 		t.Error(err)
 	}
 }
