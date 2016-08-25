@@ -153,7 +153,7 @@ func TestGetKeepToday(t *testing.T) {
 	}
 }
 
-func TestgetTimeByName(t *testing.T) {
+func TestGetTimeByName(t *testing.T) {
 	{
 		_, err := backup_timeparser.New().TimeByName("")
 		err = AssertThat(err, NotNilValue())
