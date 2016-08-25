@@ -32,10 +32,10 @@ func TestStatusCheckerFailure(t *testing.T) {
 		t.Error(err)
 	}
 	handler.ServeHTTP(response, request)
-	if err = AssertThat(response.Status(), Is(http.StatusInternalServerError)); err != nil {
+	if err := AssertThat(response.Status(), Is(http.StatusInternalServerError)); err != nil {
 		t.Error(err)
 	}
-	if err = AssertThat(response.String(), Is("{\"status\":500,\"message\":\"baem!\"}\n")); err != nil {
+	if err := AssertThat(response.String(), Is("{\"status\":500,\"message\":\"baem!\"}\n")); err != nil {
 		t.Error(err)
 	}
 }
@@ -52,10 +52,10 @@ func TestStatusCheckerNil(t *testing.T) {
 		t.Error(err)
 	}
 	handler.ServeHTTP(response, request)
-	if err = AssertThat(response.Status(), Is(http.StatusOK)); err != nil {
+	if err := AssertThat(response.Status(), Is(http.StatusOK)); err != nil {
 		t.Error(err)
 	}
-	if err = AssertThat(response.String(), Is("[]")); err != nil {
+	if err := AssertThat(response.String(), Is("[]")); err != nil {
 		t.Error(err)
 	}
 }
@@ -75,10 +75,10 @@ func TestStatusCheckerOne(t *testing.T) {
 		t.Error(err)
 	}
 	handler.ServeHTTP(response, request)
-	if err = AssertThat(response.Status(), Is(http.StatusOK)); err != nil {
+	if err := AssertThat(response.Status(), Is(http.StatusOK)); err != nil {
 		t.Error(err)
 	}
-	if err = AssertThat(response.String(), Is(`[{"host":"fire.example.com","status":true,"latestBackup":""}]`)); err != nil {
+	if err := AssertThat(response.String(), Is(`[{"host":"fire.example.com","status":true,"latestBackup":""}]`)); err != nil {
 		t.Error(err)
 	}
 }
@@ -99,10 +99,10 @@ func TestStatusCheckerTwo(t *testing.T) {
 		t.Error(err)
 	}
 	handler.ServeHTTP(response, request)
-	if err = AssertThat(response.Status(), Is(http.StatusOK)); err != nil {
+	if err := AssertThat(response.Status(), Is(http.StatusOK)); err != nil {
 		t.Error(err)
 	}
-	if err = AssertThat(response.String(), Is(`[{"host":"fire.example.com","status":true,"latestBackup":""},{"host":"burn.example.com","status":false,"latestBackup":""}]`)); err != nil {
+	if err := AssertThat(response.String(), Is(`[{"host":"fire.example.com","status":true,"latestBackup":""},{"host":"burn.example.com","status":false,"latestBackup":""}]`)); err != nil {
 		t.Error(err)
 	}
 }

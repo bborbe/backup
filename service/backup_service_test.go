@@ -18,7 +18,9 @@ func TestImplementsBackupService(t *testing.T) {
 }
 
 func TestListHosts(t *testing.T) {
-	backup_testutil.ClearRootDir(backup_testutil.BACKUP_ROOT_DIR)
+	if err := backup_testutil.ClearRootDir(backup_testutil.BACKUP_ROOT_DIR); err != nil {
+		t.Fatal(err)
+	}
 	service := NewBackupService(backup_testutil.BACKUP_ROOT_DIR)
 	{
 		_, err := service.ListHosts()
@@ -27,7 +29,9 @@ func TestListHosts(t *testing.T) {
 			t.Fatal(err)
 		}
 	}
-	backup_testutil.CreateRootDir(backup_testutil.BACKUP_ROOT_DIR)
+	if err := backup_testutil.CreateRootDir(backup_testutil.BACKUP_ROOT_DIR); err != nil {
+		t.Fatal(err)
+	}
 	{
 		hosts, err := service.ListHosts()
 		err = AssertThat(err, NilValue().Message("expect no error, backup dir existing"))
@@ -40,7 +44,9 @@ func TestListHosts(t *testing.T) {
 		}
 	}
 	hostName := "firewall.example.com"
-	backup_testutil.CreateHostDir(backup_testutil.BACKUP_ROOT_DIR, hostName)
+	if err := backup_testutil.CreateHostDir(backup_testutil.BACKUP_ROOT_DIR, hostName); err != nil {
+		t.Fatal(err)
+	}
 	{
 		hosts, err := service.ListHosts()
 		err = AssertThat(err, NilValue().Message("expect no error, backup dir existing"))
@@ -59,10 +65,14 @@ func TestListHosts(t *testing.T) {
 }
 
 func TestGetHost(t *testing.T) {
-	backup_testutil.ClearRootDir(backup_testutil.BACKUP_ROOT_DIR)
+	if err := backup_testutil.ClearRootDir(backup_testutil.BACKUP_ROOT_DIR); err != nil {
+		t.Fatal(err)
+	}
 	service := NewBackupService(backup_testutil.BACKUP_ROOT_DIR)
 	hostName := "firewall.example.com"
-	backup_testutil.CreateRootDir(backup_testutil.BACKUP_ROOT_DIR)
+	if err := backup_testutil.CreateRootDir(backup_testutil.BACKUP_ROOT_DIR); err != nil {
+		t.Fatal(err)
+	}
 	{
 		_, err := service.GetHost(hostName)
 		err = AssertThat(err, NotNilValue().Message("expect error, backup dir not existing"))
@@ -70,7 +80,9 @@ func TestGetHost(t *testing.T) {
 			t.Fatal(err)
 		}
 	}
-	backup_testutil.CreateHostDir(backup_testutil.BACKUP_ROOT_DIR, hostName)
+	if err := backup_testutil.CreateHostDir(backup_testutil.BACKUP_ROOT_DIR, hostName); err != nil {
+		t.Fatal(err)
+	}
 	{
 		host, err := service.GetHost(hostName)
 		if err != nil {
@@ -182,7 +194,9 @@ func TestListBackups(t *testing.T) {
 //GetLatestBackup(host dto.Host) (dto.Backup, error)
 func TestGetLatestBackup(t *testing.T) {
 	var backupName string
-	backup_testutil.ClearRootDir(backup_testutil.BACKUP_ROOT_DIR)
+	if err := backup_testutil.ClearRootDir(backup_testutil.BACKUP_ROOT_DIR); err != nil {
+		t.Fatal(err)
+	}
 	service := NewBackupService(backup_testutil.BACKUP_ROOT_DIR)
 	{
 		_, err := service.GetLatestBackup(nil)
@@ -191,7 +205,9 @@ func TestGetLatestBackup(t *testing.T) {
 			t.Fatal(err)
 		}
 	}
-	backup_testutil.CreateRootDir(backup_testutil.BACKUP_ROOT_DIR)
+	if err := backup_testutil.CreateRootDir(backup_testutil.BACKUP_ROOT_DIR); err != nil {
+		t.Fatal(err)
+	}
 	{
 		_, err := service.GetLatestBackup(nil)
 		err = AssertThat(err, NotNilValue())
@@ -200,7 +216,9 @@ func TestGetLatestBackup(t *testing.T) {
 		}
 	}
 	hostName := "firewall.example.com"
-	backup_testutil.CreateHostDir(backup_testutil.BACKUP_ROOT_DIR, hostName)
+	if err := backup_testutil.CreateHostDir(backup_testutil.BACKUP_ROOT_DIR, hostName); err != nil {
+		t.Fatal(err)
+	}
 	{
 		host, err := service.GetHost(hostName)
 		if err != nil {
@@ -217,7 +235,9 @@ func TestGetLatestBackup(t *testing.T) {
 		}
 	}
 	backupName = "2013-07-01T00:24:52"
-	backup_testutil.CreateBackupDir(backup_testutil.BACKUP_ROOT_DIR, hostName, backupName)
+	if err := backup_testutil.CreateBackupDir(backup_testutil.BACKUP_ROOT_DIR, hostName, backupName); err != nil {
+		t.Fatal(err)
+	}
 	{
 		host, err := service.GetHost(hostName)
 		if err != nil {
@@ -238,7 +258,9 @@ func TestGetLatestBackup(t *testing.T) {
 		}
 	}
 	backupName = "2013-07-02T00:24:52"
-	backup_testutil.CreateBackupDir(backup_testutil.BACKUP_ROOT_DIR, hostName, backupName)
+	if err := backup_testutil.CreateBackupDir(backup_testutil.BACKUP_ROOT_DIR, hostName, backupName); err != nil {
+		t.Fatal(err)
+	}
 	{
 		host, err := service.GetHost(hostName)
 		if err != nil {
@@ -262,7 +284,9 @@ func TestGetLatestBackup(t *testing.T) {
 
 //ListOldBackups(host dto.Host) ([]dto.Backup, error)
 func TestListOldBackups(t *testing.T) {
-	backup_testutil.ClearRootDir(backup_testutil.BACKUP_ROOT_DIR)
+	if err := backup_testutil.ClearRootDir(backup_testutil.BACKUP_ROOT_DIR); err != nil {
+		t.Fatal(err)
+	}
 	service := NewBackupService(backup_testutil.BACKUP_ROOT_DIR)
 	{
 		_, err := service.ListOldBackups(nil)
@@ -271,7 +295,9 @@ func TestListOldBackups(t *testing.T) {
 			t.Fatal(err)
 		}
 	}
-	backup_testutil.CreateRootDir(backup_testutil.BACKUP_ROOT_DIR)
+	if err := backup_testutil.CreateRootDir(backup_testutil.BACKUP_ROOT_DIR); err != nil {
+		t.Fatal(err)
+	}
 	{
 		_, err := service.ListOldBackups(nil)
 		err = AssertThat(err, NotNilValue())
@@ -283,7 +309,9 @@ func TestListOldBackups(t *testing.T) {
 
 //Cleanup() error
 func TestCleanup(t *testing.T) {
-	backup_testutil.ClearRootDir(backup_testutil.BACKUP_ROOT_DIR)
+	if err := backup_testutil.ClearRootDir(backup_testutil.BACKUP_ROOT_DIR); err != nil {
+		t.Fatal(err)
+	}
 	service := NewBackupService(backup_testutil.BACKUP_ROOT_DIR)
 	{
 		err := service.Cleanup(nil)
@@ -292,7 +320,9 @@ func TestCleanup(t *testing.T) {
 			t.Fatal(err)
 		}
 	}
-	backup_testutil.CreateRootDir(backup_testutil.BACKUP_ROOT_DIR)
+	if err := backup_testutil.CreateRootDir(backup_testutil.BACKUP_ROOT_DIR); err != nil {
+		t.Fatal(err)
+	}
 	{
 		err := service.Cleanup(nil)
 		err = AssertThat(err, NotNilValue())
@@ -311,9 +341,15 @@ func TestListKeepBackups(t *testing.T) {
 		err      error
 	)
 	hostName = "firewall.example.com"
-	backup_testutil.ClearRootDir(backup_testutil.BACKUP_ROOT_DIR)
-	backup_testutil.CreateRootDir(backup_testutil.BACKUP_ROOT_DIR)
-	backup_testutil.CreateHostDir(backup_testutil.BACKUP_ROOT_DIR, hostName)
+	if err := backup_testutil.ClearRootDir(backup_testutil.BACKUP_ROOT_DIR); err != nil {
+		t.Fatal(err)
+	}
+	if err := backup_testutil.CreateRootDir(backup_testutil.BACKUP_ROOT_DIR); err != nil {
+		t.Fatal(err)
+	}
+	if err := backup_testutil.CreateHostDir(backup_testutil.BACKUP_ROOT_DIR, hostName); err != nil {
+		t.Fatal(err)
+	}
 	service = NewBackupService(backup_testutil.BACKUP_ROOT_DIR)
 
 	host, err = service.GetHost(hostName)

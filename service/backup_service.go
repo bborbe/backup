@@ -141,8 +141,7 @@ func (s *backupService) Cleanup(hostDto backup_dto.Host) error {
 	for _, backupDto := range backups {
 		b := backup_backup.ByName(h, backupDto.GetName())
 		logger.Infof("delete %s started", b.Path())
-		b.Delete()
-		if err != nil {
+		if err := b.Delete(); err != nil {
 			return err
 		}
 		logger.Infof("delete %s finished", b.Path())
