@@ -8,9 +8,14 @@ install:
 	GOBIN=$(GOPATH)/bin GO15VENDOREXPERIMENT=1 go install bin/backup_status_server/backup_status_server.go
 test:
 	GO15VENDOREXPERIMENT=1 go test `glide novendor`
-check:
-	golint ./...
+vet:
+	go tool vet .
+	go tool vet .-shadow .
+lint:
+	golint -min_confidence 1 ./...
+errcheck:
 	errcheck -ignore '(Close|Write)' ./...
+check: lint vet errcheck
 run:
 	backup_status_server \
 	-loglevel=DEBUG \
