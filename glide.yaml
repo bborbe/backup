@@ -12,7 +12,7 @@ import:
   subpackages:
   - util
 - package: github.com/bborbe/lock
-- package: github.com/bborbe/log
+- package: github.com/golang/glog
 - package: github.com/bborbe/stringutil
 - package: github.com/facebookgo/grace
   subpackages:

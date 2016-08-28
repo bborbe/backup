@@ -11,7 +11,7 @@ import (
 	backup_host "github.com/bborbe/backup/host"
 	backup_timeparser "github.com/bborbe/backup/timeparser"
 	io_util "github.com/bborbe/io/util"
-	"github.com/bborbe/log"
+	"github.com/golang/glog"
 )
 
 type backup struct {
@@ -30,8 +30,6 @@ type Backup interface {
 const INCOMPLETE = "incomplete"
 const CURRENT = "current"
 
-var logger = log.DefaultLogger
-
 func ByTime(h backup_host.Host, t time.Time) Backup {
 	return ByName(h, t.Format("2006-01-02T15:04:05"))
 }
@@ -47,22 +45,22 @@ func All(h backup_host.Host) ([]Backup, error) {
 	file, err := os.Open(h.Path())
 	defer file.Close()
 	if err != nil {
-		logger.Debugf("open host %s failed: %v", h.Path(), err)
+		glog.V(2).Infof("open host %s failed: %v", h.Path(), err)
 		return nil, err
 	}
 	fileinfo, err := file.Stat()
 	if err != nil {
-		logger.Debugf("file stat failed: %v", err)
+		glog.V(2).Infof("file stat failed: %v", err)
 		return nil, err
 	}
 	if !fileinfo.IsDir() {
 		msg := fmt.Sprintf("host %s is not a directory", h.Path())
-		logger.Debug(msg)
+		glog.V(2).Info(msg)
 		return nil, errors.New(msg)
 	}
 	names, err := file.Readdirnames(0)
 	if err != nil {
-		logger.Debugf("read dir names failed: %v", err)
+		glog.V(2).Infof("read dir names failed: %v", err)
 		return nil, err
 	}
 	backups := make([]Backup, 0)
@@ -113,7 +111,7 @@ func Resume(h backup_host.Host) error {
 		return err
 	}
 	if existsIncomplete {
-		logger.Debug("skip resume => incomplete dir exists")
+		glog.V(2).Info("skip resume => incomplete dir exists")
 		return nil
 	}
 	backups, err := All(h)
@@ -128,7 +126,7 @@ func Resume(h backup_host.Host) error {
 		return err
 	}
 	if !existsBackupForToday {
-		logger.Debug("skip resume => no backup for today exists")
+		glog.V(2).Info("skip resume => no backup for today exists")
 		return nil
 	}
 	sort.Sort(BackupByName(backups))
@@ -162,7 +160,7 @@ func renameLastBackupToIncomplete(h backup_host.Host, backups []Backup) error {
 }
 
 func existsIncomplete(h backup_host.Host) (bool, error) {
-	logger.Debugf("existsIncomplete host: %s", h.Name())
+	glog.V(2).Infof("existsIncomplete host: %s", h.Name())
 	return incomplete(h).IsDir()
 }
 

@@ -13,38 +13,30 @@ import (
 	backup_dto "github.com/bborbe/backup/dto"
 	backup_service "github.com/bborbe/backup/service"
 	"github.com/bborbe/lock"
-	"github.com/bborbe/log"
+	"github.com/golang/glog"
 )
 
 const (
-	PARAMETER_LOGLEVEL = "loglevel"
-	LOCK_NAME          = "/var/run/backup_clean.lock"
+	LOCK_NAME = "/var/run/backup_clean.lock"
 )
 
 var (
-	logger      = log.DefaultLogger
-	logLevelPtr = flag.String(PARAMETER_LOGLEVEL, log.LogLevelToString(backup_config.DEFAULT_LOG_LEVEL), log.FLAG_USAGE)
-	rootdirPtr  = flag.String("rootdir", backup_config.DEFAULT_ROOT_DIR, "string")
-	hostPtr     = flag.String("host", backup_config.DEFAULT_HOST, "string")
+	rootdirPtr = flag.String("rootdir", backup_config.DEFAULT_ROOT_DIR, "string")
+	hostPtr    = flag.String("host", backup_config.DEFAULT_HOST, "string")
 )
 
 func main() {
-	defer logger.Close()
+	defer glog.Flush()
+	glog.CopyStandardLogTo("info")
 	flag.Parse()
-
-	logger.SetLevelThreshold(log.LogStringToLevel(*logLevelPtr))
-	logger.Debugf("set log level to %s", *logLevelPtr)
-
 	runtime.GOMAXPROCS(runtime.NumCPU())
 
 	writer := os.Stdout
-	logger.Debugf("use backup dir %s", *rootdirPtr)
+	glog.V(2).Infof("use backup dir %s", *rootdirPtr)
 	backupService := backup_service.NewBackupService(*rootdirPtr)
 	err := do(writer, backupService, *rootdirPtr, *hostPtr, LOCK_NAME)
 	if err != nil {
-		logger.Fatal(err)
-		logger.Close()
-		os.Exit(1)
+		glog.Exit(err)
 	}
 }
 
@@ -58,7 +50,7 @@ func do(writer io.Writer, backupService backup_service.BackupService, rootdirNam
 		return err
 	}
 	defer l.Unlock()
-	logger.Debug("start")
+	glog.V(2).Info("start")
 
 	if hostName == backup_config.DEFAULT_HOST {
 		hosts, err = backupService.ListHosts()
@@ -80,6 +72,6 @@ func do(writer io.Writer, backupService backup_service.BackupService, rootdirNam
 		}
 		fmt.Fprintf(writer, "%s cleaned\n", host.GetName())
 	}
-	logger.Debug("done")
+	glog.V(2).Info("done")
 	return nil
 }

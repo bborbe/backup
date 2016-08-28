@@ -6,6 +6,7 @@ import (
 	"time"
 
 	backup_timeparser "github.com/bborbe/backup/timeparser"
+	"github.com/golang/glog"
 )
 
 func latestBackup(backups []Backup) Backup {
@@ -135,7 +136,7 @@ func getKeepMonth(backups []Backup) ([]Backup, error) {
 		if err != nil {
 			return nil, err
 		}
-		logger.Tracef("year %d month %d", year, month)
+		glog.V(4).Infof("year %d month %d", year, month)
 
 		if year != lastYear || month != lastMonth {
 			result = append(result, b)

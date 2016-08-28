@@ -10,7 +10,7 @@ import (
 	backup_host "github.com/bborbe/backup/host"
 	backup_rootdir "github.com/bborbe/backup/rootdir"
 	io_util "github.com/bborbe/io/util"
-	"github.com/bborbe/log"
+	"github.com/golang/glog"
 )
 
 type BackupService interface {
@@ -27,8 +27,6 @@ type BackupService interface {
 type backupService struct {
 	rootdir backup_rootdir.Rootdir
 }
-
-var logger = log.DefaultLogger
 
 func NewBackupService(rootdirectory string) *backupService {
 	s := new(backupService)
@@ -98,7 +96,7 @@ func (s *backupService) GetLatestBackup(hostDto backup_dto.Host) (backup_dto.Bac
 	h := backup_host.ByName(s.rootdir, hostDto.GetName())
 	list, err := backup_backup.All(h)
 	if err != nil {
-		logger.Debugf("list backups failed: %v", err)
+		glog.V(2).Infof("list backups failed: %v", err)
 		return nil, err
 	}
 	if len(list) == 0 {
@@ -137,14 +135,14 @@ func (s *backupService) Cleanup(hostDto backup_dto.Host) error {
 
 	h := backup_host.ByName(s.rootdir, hostDto.GetName())
 
-	logger.Debugf("found %d backup to delete for host %s", len(backups), hostDto.GetName())
+	glog.V(2).Infof("found %d backup to delete for host %s", len(backups), hostDto.GetName())
 	for _, backupDto := range backups {
 		b := backup_backup.ByName(h, backupDto.GetName())
-		logger.Infof("delete %s started", b.Path())
+		glog.Infof("delete %s started", b.Path())
 		if err := b.Delete(); err != nil {
 			return err
 		}
-		logger.Infof("delete %s finished", b.Path())
+		glog.Infof("delete %s finished", b.Path())
 	}
 	return nil
 }

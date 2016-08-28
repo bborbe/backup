@@ -9,12 +9,10 @@ import (
 	"sort"
 
 	backup_dto "github.com/bborbe/backup/dto"
-	"github.com/bborbe/log"
+	"github.com/golang/glog"
 )
 
 type Download func(url string) (resp *http.Response, err error)
-
-var logger = log.DefaultLogger
 
 type statusHandler struct {
 	address  string
@@ -29,10 +27,10 @@ func NewStatusHandler(download Download, address string) http.Handler {
 }
 
 func (s *statusHandler) ServeHTTP(responseWriter http.ResponseWriter, request *http.Request) {
-	logger.Debug("handle request")
+	glog.V(2).Info("handle request")
 	err := s.serveHTTP(responseWriter, request)
 	if err != nil {
-		logger.Debug(err)
+		glog.V(2).Info(err)
 		responseWriter.WriteHeader(http.StatusInternalServerError)
 		fmt.Fprintf(responseWriter, "%v", err)
 		return
@@ -80,7 +78,7 @@ func getStatusList(download Download, address string) ([]*backup_dto.Status, err
 	if resp.StatusCode/100 != 2 {
 		return nil, fmt.Errorf("request failed: %s", (content))
 	}
-	logger.Tracef(string(content))
+	glog.V(4).Infof(string(content))
 	var statusList []*backup_dto.Status
 	err = json.Unmarshal(content, &statusList)
 	if err != nil {

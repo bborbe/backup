@@ -9,6 +9,7 @@ import (
 	backup_dto "github.com/bborbe/backup/dto"
 	backup_status_checker "github.com/bborbe/backup/status_checker"
 	server_mock "github.com/bborbe/http/mock"
+	"github.com/golang/glog"
 )
 
 func TestImplementsStatusHandler(t *testing.T) {
@@ -21,7 +22,7 @@ func TestImplementsStatusHandler(t *testing.T) {
 }
 
 func TestStatusCheckerFailure(t *testing.T) {
-	logger.Debug("TestStatusCheckerFailure")
+	glog.V(2).Info("TestStatusCheckerFailure")
 	var status []*backup_dto.Status
 	err := errors.New("baem!")
 	statusChecker := backup_status_checker.NewStatusCheckerMock(status, err)
@@ -41,7 +42,7 @@ func TestStatusCheckerFailure(t *testing.T) {
 }
 
 func TestStatusCheckerNil(t *testing.T) {
-	logger.Debug("TestStatusCheckerNil")
+	glog.V(2).Info("TestStatusCheckerNil")
 	var status []*backup_dto.Status
 	var err error
 	statusChecker := backup_status_checker.NewStatusCheckerMock(status, err)
@@ -61,7 +62,7 @@ func TestStatusCheckerNil(t *testing.T) {
 }
 
 func TestStatusCheckerOne(t *testing.T) {
-	logger.Debug("TestStatusCheckerNil")
+	glog.V(2).Info("TestStatusCheckerNil")
 	var status []*backup_dto.Status
 	var err error
 	status = []*backup_dto.Status{
@@ -84,7 +85,7 @@ func TestStatusCheckerOne(t *testing.T) {
 }
 
 func TestStatusCheckerTwo(t *testing.T) {
-	logger.Debug("TestStatusCheckerNil")
+	glog.V(2).Info("TestStatusCheckerNil")
 	var status []*backup_dto.Status
 	var err error
 	status = []*backup_dto.Status{

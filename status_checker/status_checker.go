@@ -6,10 +6,8 @@ import (
 	backup_dto "github.com/bborbe/backup/dto"
 	backup_service "github.com/bborbe/backup/service"
 	backup_timeparser "github.com/bborbe/backup/timeparser"
-	"github.com/bborbe/log"
+	"github.com/golang/glog"
 )
-
-var logger = log.DefaultLogger
 
 type StatusChecker interface {
 	Check() ([]*backup_dto.Status, error)
@@ -28,7 +26,7 @@ func NewStatusChecker(backupService backup_service.BackupService) StatusChecker 
 func (s *statusChecker) Check() ([]*backup_dto.Status, error) {
 	hosts, err := s.backupService.ListHosts()
 	if err != nil {
-		logger.Debugf("list hosts failed: %v", err)
+		glog.V(2).Infof("list hosts failed: %v", err)
 		return nil, err
 	}
 	return createStatusDtoForHosts(s.backupService, hosts)
@@ -49,18 +47,18 @@ func createStatusDtoForHosts(backupService backup_service.BackupService, hosts [
 func createStatusDtoForHost(backupService backup_service.BackupService, host backup_dto.Host) (*backup_dto.Status, error) {
 	backup, err := backupService.GetLatestBackup(host)
 	if err != nil {
-		logger.Debugf("get latest backup failed: %v", err)
+		glog.V(2).Infof("get latest backup failed: %v", err)
 		return nil, err
 	}
 	if backup == nil {
-		logger.Debugf("no backup for host %s found", host.GetName())
+		glog.V(2).Infof("no backup for host %s found", host.GetName())
 		return createStatusDto(host, nil, false), nil
 	}
 
-	logger.Debugf("host: %s backup: %s", host.GetName(), backup.GetName())
+	glog.V(2).Infof("host: %s backup: %s", host.GetName(), backup.GetName())
 	result, err := backupIsInLastDays(backup, backup_timeparser.New(), time.Now())
 	if err != nil {
-		logger.Debug("parse backup failed")
+		glog.V(2).Info("parse backup failed")
 		return nil, err
 	}
 	return createStatusDto(host, backup, result), nil

@@ -7,10 +7,8 @@ import (
 	backup_status_checker "github.com/bborbe/backup/status_checker"
 	error_handler "github.com/bborbe/http_handler/error"
 	json_handler "github.com/bborbe/http_handler/json"
-	"github.com/bborbe/log"
+	"github.com/golang/glog"
 )
-
-var logger = log.DefaultLogger
 
 type statusHandler struct {
 	statusChecker backup_status_checker.StatusChecker
@@ -25,7 +23,7 @@ func NewStatusHandler(statusChecker backup_status_checker.StatusChecker) http.Ha
 func (s *statusHandler) ServeHTTP(responseWriter http.ResponseWriter, request *http.Request) {
 	status, err := s.statusChecker.Check()
 	if err != nil {
-		logger.Debugf("check status failed: %v", err)
+		glog.V(2).Infof("check status failed: %v", err)
 		e := error_handler.NewErrorMessage(http.StatusInternalServerError, err.Error())
 		e.ServeHTTP(responseWriter, request)
 		return

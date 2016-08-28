@@ -10,43 +10,35 @@ import (
 
 	backup_config "github.com/bborbe/backup/config"
 	backup_service "github.com/bborbe/backup/service"
-	"github.com/bborbe/log"
+	"github.com/golang/glog"
 )
 
 const (
-	NO_HOST            = "-"
-	PARAMETER_LOGLEVEL = "loglevel"
+	NO_HOST = "-"
 )
 
 var (
-	logger      = log.DefaultLogger
-	logLevelPtr = flag.String(PARAMETER_LOGLEVEL, log.LogLevelToString(backup_config.DEFAULT_LOG_LEVEL), log.FLAG_USAGE)
-	rootdirPtr  = flag.String("rootdir", backup_config.DEFAULT_ROOT_DIR, "string")
-	hostPtr     = flag.String("host", NO_HOST, "string")
+	rootdirPtr = flag.String("rootdir", backup_config.DEFAULT_ROOT_DIR, "string")
+	hostPtr    = flag.String("host", NO_HOST, "string")
 )
 
 func main() {
-	defer logger.Close()
+	defer glog.Flush()
+	glog.CopyStandardLogTo("info")
 	flag.Parse()
-
-	logger.SetLevelThreshold(log.LogStringToLevel(*logLevelPtr))
-	logger.Debugf("set log level to %s", *logLevelPtr)
-
 	runtime.GOMAXPROCS(runtime.NumCPU())
 
 	writer := os.Stdout
-	logger.Debugf("use backup dir %s", *rootdirPtr)
+	glog.V(2).Infof("use backup dir %s", *rootdirPtr)
 	backupService := backup_service.NewBackupService(*rootdirPtr)
 	err := do(writer, backupService, *hostPtr)
 	if err != nil {
-		logger.Fatal(err)
-		logger.Close()
-		os.Exit(1)
+		glog.Exit(err)
 	}
 }
 
 func do(writer io.Writer, backupService backup_service.BackupService, hostname string) error {
-	logger.Debug("start")
+	glog.V(2).Info("start")
 	if hostname == NO_HOST {
 		return fmt.Errorf("parameter host missing")
 	}
@@ -58,10 +50,10 @@ func do(writer io.Writer, backupService backup_service.BackupService, hostname s
 	err = backupService.Resume(host)
 	if err != nil {
 		fmt.Fprintf(writer, "resume backup for host %s failed\n", hostname)
-		logger.Warn(err)
+		glog.Warning(err)
 	} else {
 		fmt.Fprintf(writer, "resume backup for host %s success\n", hostname)
 	}
-	logger.Debug("done")
+	glog.V(2).Info("done")
 	return nil
 }

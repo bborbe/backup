@@ -7,7 +7,7 @@ import (
 
 	backup_rootdir "github.com/bborbe/backup/rootdir"
 	io_util "github.com/bborbe/io/util"
-	"github.com/bborbe/log"
+	"github.com/golang/glog"
 )
 
 type host struct {
@@ -20,8 +20,6 @@ type Host interface {
 	Name() string
 }
 
-var logger = log.DefaultLogger
-
 func ByName(rootdir backup_rootdir.Rootdir, name string) Host {
 	h := new(host)
 	h.rootdir = rootdir
@@ -33,22 +31,22 @@ func All(root backup_rootdir.Rootdir) ([]Host, error) {
 	file, err := os.Open(root.Path())
 	defer file.Close()
 	if err != nil {
-		logger.Debugf("open rootdir %s failed: %v", root.Path(), err)
+		glog.V(2).Infof("open rootdir %s failed: %v", root.Path(), err)
 		return nil, err
 	}
 	fileinfo, err := file.Stat()
 	if err != nil {
-		logger.Debugf("file stat failed: %v", err)
+		glog.V(2).Infof("file stat failed: %v", err)
 		return nil, err
 	}
 	if !fileinfo.IsDir() {
 		msg := fmt.Sprintf("rootdir %s is not a directory", root.Path())
-		logger.Debug(msg)
+		glog.V(2).Info(msg)
 		return nil, errors.New(msg)
 	}
 	names, err := file.Readdirnames(0)
 	if err != nil {
-		logger.Debugf("read dir names failed: %v", err)
+		glog.V(2).Infof("read dir names failed: %v", err)
 		return nil, err
 	}
 	hosts := make([]Host, 0)
