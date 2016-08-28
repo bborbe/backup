@@ -18,7 +18,8 @@ errcheck:
 check: lint vet errcheck
 run:
 	backup_status_server \
-	-loglevel=DEBUG \
+	-logtostderr \
+	-v=2 \
 	-port=8080 \
 	-rootdir=/tmp
 open:

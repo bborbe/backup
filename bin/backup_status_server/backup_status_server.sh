@@ -7,7 +7,7 @@
 case "$1" in
 	start)
 		echo "Starting backup_status_server"
-		/opt/backup/bin/backup_status_server -loglevel=ERROR -port=7777 -rootdir=/rsync > /var/log/backup_status_server.log &
+		/opt/backup/bin/backup_status_server -logtostderr -v=2 -port=7777 -rootdir=/rsync > /var/log/backup_status_server.log &
 	;;
 	stop)
 		echo "Stopping backup_status_server"
