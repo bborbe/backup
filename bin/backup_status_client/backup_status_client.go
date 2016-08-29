@@ -41,11 +41,12 @@ func main() {
 
 func do(
 	port int,
-	serverAddr string,
+	server string,
 ) error {
+	glog.Infof("port: %v server: %v", port, server)
 	server, err := createServer(
 		port,
-		serverAddr,
+		server,
 	)
 	if err != nil {
 		return err
@@ -58,9 +59,6 @@ func createServer(
 	port int,
 	server string,
 ) (*http.Server, error) {
-	glog.V(4).Infof("server %s", *serverPtr)
-	glog.V(4).Infof("portnumberPtr %d", *portnumberPtr)
-	glog.V(2).Infof("backup status server started at port %d", *portnumberPtr)
 
 	httpClient := http_client_builder.New().WithoutProxy().Build()
 

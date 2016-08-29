@@ -27,19 +27,21 @@ func NewStatusHandler(download Download, address string) http.Handler {
 }
 
 func (s *statusHandler) ServeHTTP(responseWriter http.ResponseWriter, request *http.Request) {
-	glog.V(2).Info("handle request")
+	glog.V(2).Info("handle status request")
 	err := s.serveHTTP(responseWriter, request)
 	if err != nil {
-		glog.V(2).Info(err)
+		glog.V(1).Info(err)
 		responseWriter.WriteHeader(http.StatusInternalServerError)
 		fmt.Fprintf(responseWriter, "%v", err)
 		return
 	}
-
+	glog.V(2).Info("handle status request completed")
 }
+
 func (s *statusHandler) serveHTTP(responseWriter http.ResponseWriter, request *http.Request) error {
 	statusList, err := getStatusList(s.download, s.address)
 	if err != nil {
+		glog.V(1).Infof("get status list from %v failed: %v", s.address, err)
 		return err
 	}
 	sort.Sort(backup_dto.StatusByName(statusList))
@@ -82,6 +84,7 @@ func getStatusList(download Download, address string) ([]*backup_dto.Status, err
 	var statusList []*backup_dto.Status
 	err = json.Unmarshal(content, &statusList)
 	if err != nil {
+		glog.V(1).Infof("unmarshal jsoni failed: %v", err)
 		return nil, err
 	}
 	return statusList, nil
