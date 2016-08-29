@@ -41,12 +41,12 @@ func main() {
 
 func do(
 	port int,
-	server string,
+	serverAddr string,
 ) error {
-	glog.Infof("port: %v server: %v", port, server)
+	glog.Infof("port: %v server: %v", port, serverAddr)
 	server, err := createServer(
 		port,
-		server,
+		serverAddr,
 	)
 	if err != nil {
 		return err
