@@ -1,26 +1,26 @@
 hash: 37d9675e339d2dceb8bd278a7c42d36c284d4af3c436eaeb33b57de6f5f77650
-updated: 2016-08-29T00:09:58.873376233+02:00
+updated: 2016-08-30T10:06:15.079399711+02:00
 imports:
 - name: github.com/bborbe/flagenv
-  version: ddf8de6851137e93b8384e2c3a30995ac830f56a
+  version: 96aab95bb1341e7a7ccf9160e49792e2ad3b0e08
 - name: github.com/bborbe/http
-  version: 610817d35e311dab1adfecb8b048aa019736a58e
+  version: addca5fc2e2de1bef39a64990873806e7fc9c0a9
   subpackages:
   - client_builder
   - mock
 - name: github.com/bborbe/http_handler
-  version: 15d45afac61e92038e5c8425d4d4586f34e3c445
+  version: 3ce100a4d1664348a31553631244fe337df991f5
   subpackages:
   - error
   - json
 - name: github.com/bborbe/io
-  version: 5891c542e99ec05e63ac475bc8a2202b2fca02aa
+  version: f014e6fbe9170c0692122497023eedb9d6e53cc2
   subpackages:
   - util
 - name: github.com/bborbe/lock
-  version: 6b48c4e132e393b8fafbbd59ee082dddcfb537fa
+  version: 60ec8797970f7e68875b5ae0889e36ebda5403de
 - name: github.com/bborbe/stringutil
-  version: 44bc4d4b32be80f9b400932dc5a36c48b77e3fd7
+  version: 1ee171d7c930864e5d851c9e8909394978a5a1d1
 - name: github.com/facebookgo/clock
   version: 600d898af40aa09a7a93ecb9265d87b0504b6f03
 - name: github.com/facebookgo/grace
@@ -36,4 +36,4 @@ imports:
   version: 23def4e6c14b4da8ac2ed8007337bc5eb5007998
 testImports:
 - name: github.com/bborbe/assert
-  version: 639eac9a24e3c01472758f3c79452b8517bc29f6
+  version: 2db035a4c0870f6f48d1955f7b9542f9dbd4fb64

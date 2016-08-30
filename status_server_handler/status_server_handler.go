@@ -24,12 +24,12 @@ func (s *statusHandler) ServeHTTP(responseWriter http.ResponseWriter, request *h
 	status, err := s.statusChecker.Check()
 	if err != nil {
 		glog.V(2).Infof("check status failed: %v", err)
-		e := error_handler.NewErrorMessage(http.StatusInternalServerError, err.Error())
+		e := error_handler.NewMessage(http.StatusInternalServerError, err.Error())
 		e.ServeHTTP(responseWriter, request)
 		return
 	}
 	status = filter(status, request.FormValue("status"))
-	handler := json_handler.NewJsonHandler(status)
+	handler := json_handler.New(status)
 	handler.ServeHTTP(responseWriter, request)
 }
 
