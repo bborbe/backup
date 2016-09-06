@@ -1,45 +1,45 @@
 {
-  "name": "backup",
-  "section": "utils",
-  "priority": "optional",
-  "architecture": "amd64",
-  "maintainer": "Benjamin Borbe <bborbe@rocketnews.de>",
-  "description": "Backup Server and Utils",
+	"name": "backup",
+	"section": "utils",
+	"priority": "optional",
+	"architecture": "amd64",
+	"maintainer": "Benjamin Borbe <bborbe@rocketnews.de>",
+	"description": "Backup Server and Utils",
 	"postinst": "src/github.com/bborbe/backup/postinst",
 	"postrm": "src/github.com/bborbe/backup/postrm",
 	"prerm": "src/github.com/bborbe/backup/prerm",
-  "files": [
-    {
-      "source": "bin/backup_old",
-      "target": "/opt/backup/bin/backup_old"
-    },
-    {
-      "source": "bin/backup_latest",
-      "target": "/opt/backup/bin/backup_latest"
-    },
-    {
-      "source": "bin/backup_status_server",
-      "target": "/opt/backup/bin/backup_status_server"
-    },
-    {
-      "source": "bin/backup_keep",
-      "target": "/opt/backup/bin/backup_keep"
-    },
-    {
-      "source": "bin/backup_list",
-      "target": "/opt/backup/bin/backup_list"
-    },
-    {
-      "source": "bin/backup_resume",
-      "target": "/opt/backup/bin/backup_resume"
-    },
-    {
-      "source": "bin/backup_cleanup",
-      "target": "/opt/backup/bin/backup_cleanup"
-    },
-    {
-      "source": "src/github.com/bborbe/backup/etc/systemd/system/backup_status_server.service",
-      "target": "/etc/systemd/system/backup_status_server.service"
-    }
-  ]
+	"files": [
+		{
+			"source": "bin/backup_old",
+			"target": "/opt/backup/bin/backup_old"
+		},
+		{
+			"source": "bin/backup_latest",
+			"target": "/opt/backup/bin/backup_latest"
+		},
+		{
+			"source": "bin/backup_status_server",
+			"target": "/opt/backup/bin/backup_status_server"
+		},
+		{
+			"source": "bin/backup_keep",
+			"target": "/opt/backup/bin/backup_keep"
+		},
+		{
+			"source": "bin/backup_list",
+			"target": "/opt/backup/bin/backup_list"
+		},
+		{
+			"source": "bin/backup_resume",
+			"target": "/opt/backup/bin/backup_resume"
+		},
+		{
+			"source": "bin/backup_cleanup",
+			"target": "/opt/backup/bin/backup_cleanup"
+		},
+		{
+			"source": "src/github.com/bborbe/backup/etc/systemd/system/backup_status_server.service",
+			"target": "/etc/systemd/system/backup_status_server.service"
+		}
+	]
 }
