@@ -28,9 +28,6 @@ case "$1" in
 			"$USER"
 		fi
 
-		chown -R ${USER}:${GROUP} /etc/backup
-		chmod 750 /etc/backup
-
 		chown -R ${USER}:${GROUP} /opt/backup
 		chmod 750 /opt/backup
 
