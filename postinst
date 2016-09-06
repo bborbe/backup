@@ -1,38 +1,48 @@
 #!/bin/sh
-# see: dh_installdeb(1)
 
 set -e
 
-# summary of how this script can be called:
-#        * <postinst> `configure' <most-recently-configured-version>
-#        * <old-postinst> `abort-upgrade' <new version>
-#        * <conflictor's-postinst> `abort-remove' `in-favour' <package>
-#          <new-version>
-#        * <postinst> `abort-remove'
-#        * <deconfigured's-postinst> `abort-deconfigure' `in-favour'
-#          <failed-install-package> <version> `removing'
-#          <conflicting-package> <version>
-# for details, see http://www.debian.org/doc/debian-policy/ or
-# the debian-policy package
+USER="backup"
+GROUP="backup"
+SERVICE="backup_status_server.service"
 
 case "$1" in
+	configure)
 
-  configure)
-    chown -R root:root /opt/backup
-    find /opt/backup -type d -exec chmod 755 "{}" \;
-    exit 0
-  ;;
+		if ! getent group "$GROUP" > /dev/null 2>&1 ; then
+			addgroup \
+			--system \
+			--quiet \
+			"$GROUP"
+		fi
+
+		if ! id $USER > /dev/null 2>&1 ; then
+			adduser \
+			--system \
+			--group "$GROUP" \
+			--home /nonexistent \
+			--no-create-home \
+			--disabled-password \
+			--shell /bin/false \
+			--quiet \
+			"$USER"
+		fi
+
+		chown -R ${USER}:${GROUP} /etc/backup
+		chmod 750 /etc/backup
+
+		chown -R ${USER}:${GROUP} /opt/backup
+		chmod 750 /opt/backup
+
+	;;
 
   abort-upgrade)
-    exit 0
   ;;
 
   abort-remove)
-    exit 0
   ;;
 
   abort-deconfigure)
-    exit 0
   ;;
 
   *)
@@ -41,5 +51,10 @@ case "$1" in
   ;;
 
 esac
+
+if [ -d /run/systemd/system ]; then
+	systemctl --system daemon-reload >/dev/null || true
+	deb-systemd-invoke start $SERVICE >/dev/null || true
+fi
 
 exit 0

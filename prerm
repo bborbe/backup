@@ -1,0 +1,14 @@
+#!/bin/sh
+
+set -e
+
+USER="backup"
+GROUP="backup"
+SERVICE="backup_status_server.service"
+
+if [ -d /run/systemd/system ]; then
+	systemctl --system daemon-reload >/dev/null || true
+	deb-systemd-invoke stop $SERVICE >/dev/null || true
+fi
+
+exit 0

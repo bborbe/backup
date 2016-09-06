@@ -1,7 +1,10 @@
 [Unit]
 Description=Backup Status
+After=network.target
 
 [Service]
+User=backup
+Group=backup
 LimitNOFILE=4096
 LimitNPROC=4096
 ExecStart=/opt/backup/bin/backup_status_server -port=7777 -rootdir=/rsync -logtostderr -v=2
