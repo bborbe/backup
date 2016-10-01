@@ -6,10 +6,14 @@ import (
 	"runtime"
 
 	"fmt"
+	"github.com/bborbe/lock"
 	"github.com/golang/glog"
+	"time"
 )
 
 const (
+	defaultWait          = time.Minute * 5
+	defaultLockName      = "/var/run/backup_rsync_client.lock"
 	parameterConfigPath  = "config"
 	parameterTarget      = "target"
 	parameterUser        = "user"
@@ -17,6 +21,9 @@ const (
 	parameterPort        = "port"
 	parameterDirectory   = "dir"
 	parameterExcludeFrom = "exclude_from"
+	parameterWait        = "wait"
+	parameterOneTime     = "one-time"
+	parameterLock        = "lock"
 )
 
 var (
@@ -27,6 +34,9 @@ var (
 	portPtr        = flag.Int(parameterPort, 22, "port")
 	dirPtr         = flag.String(parameterDirectory, "", "dir")
 	excludeFromPtr = flag.String(parameterExcludeFrom, "", "exclude_from")
+	waitPtr        = flag.Duration(parameterWait, defaultWait, "wait")
+	oneTimePtr     = flag.Bool(parameterOneTime, false, "exit after first fetch")
+	lockPtr        = flag.String(parameterLock, defaultLockName, "lock")
 )
 
 func main() {
@@ -42,6 +52,32 @@ func main() {
 }
 
 func do() error {
+	l := lock.NewLock(*lockPtr)
+	if err := l.Lock(); err != nil {
+		return err
+	}
+	defer l.Unlock()
+
+	for {
+		glog.V(1).Infof("backup rsync started")
+		if err := backup(); err != nil {
+			return err
+		}
+		glog.V(1).Infof("backup completed")
+
+		if *oneTimePtr {
+			return nil
+		}
+
+		glog.V(2).Infof("wait %v", *waitPtr)
+		time.Sleep(*waitPtr)
+		glog.V(2).Infof("sleep done")
+	}
+
+	return nil
+}
+
+func backup() error {
 	glog.Infof("backup started")
 	hosts, err := getHosts()
 	if err != nil {
