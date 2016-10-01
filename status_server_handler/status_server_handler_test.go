@@ -10,7 +10,14 @@ import (
 	backup_status_checker "github.com/bborbe/backup/status_checker"
 	server_mock "github.com/bborbe/http/mock"
 	"github.com/golang/glog"
+	"os"
 )
+
+func TestMain(m *testing.M) {
+	exit := m.Run()
+	glog.Flush()
+	os.Exit(exit)
+}
 
 func TestImplementsStatusHandler(t *testing.T) {
 	var statusChecker backup_status_checker.StatusChecker

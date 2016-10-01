@@ -8,7 +8,15 @@ import (
 	backup_host "github.com/bborbe/backup/host"
 	backup_rootdir "github.com/bborbe/backup/rootdir"
 	backup_testutil "github.com/bborbe/backup/testutil"
+	"github.com/golang/glog"
+	"os"
 )
+
+func TestMain(m *testing.M) {
+	exit := m.Run()
+	glog.Flush()
+	os.Exit(exit)
+}
 
 func TestByTime(t *testing.T) {
 	rootdirName := backup_testutil.BACKUP_ROOT_DIR

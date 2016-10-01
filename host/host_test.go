@@ -7,7 +7,15 @@ import (
 	. "github.com/bborbe/assert"
 	backup_rootdir "github.com/bborbe/backup/rootdir"
 	backup_testutil "github.com/bborbe/backup/testutil"
+	"github.com/golang/glog"
+	"os"
 )
+
+func TestMain(m *testing.M) {
+	exit := m.Run()
+	glog.Flush()
+	os.Exit(exit)
+}
 
 func TestImplementsHost(t *testing.T) {
 	h := ByName(backup_rootdir.ByName(backup_testutil.BACKUP_ROOT_DIR), "hostname")

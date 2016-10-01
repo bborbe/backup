@@ -7,7 +7,15 @@ import (
 	backup_dto "github.com/bborbe/backup/dto"
 	backup_service "github.com/bborbe/backup/service"
 	backup_timeparser "github.com/bborbe/backup/timeparser"
+	"github.com/golang/glog"
+	"os"
 )
+
+func TestMain(m *testing.M) {
+	exit := m.Run()
+	glog.Flush()
+	os.Exit(exit)
+}
 
 func TestImplementsStatusChecker(t *testing.T) {
 	var backupService backup_service.BackupService

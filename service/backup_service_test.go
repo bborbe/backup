@@ -6,7 +6,15 @@ import (
 	. "github.com/bborbe/assert"
 	backup_dto "github.com/bborbe/backup/dto"
 	backup_testutil "github.com/bborbe/backup/testutil"
+	"github.com/golang/glog"
+	"os"
 )
+
+func TestMain(m *testing.M) {
+	exit := m.Run()
+	glog.Flush()
+	os.Exit(exit)
+}
 
 func TestImplementsBackupService(t *testing.T) {
 	service := NewBackupService(backup_testutil.BACKUP_ROOT_DIR)

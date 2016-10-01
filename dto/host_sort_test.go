@@ -5,7 +5,15 @@ import (
 	"testing"
 
 	. "github.com/bborbe/assert"
+	"github.com/golang/glog"
+	"os"
 )
+
+func TestMain(m *testing.M) {
+	exit := m.Run()
+	glog.Flush()
+	os.Exit(exit)
+}
 
 func TestHostSortEmpty(t *testing.T) {
 	backups := make([]Host, 0)
