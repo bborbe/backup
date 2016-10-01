@@ -3,7 +3,9 @@ package main
 import (
 	"fmt"
 	"github.com/bborbe/backup/constants"
+	"github.com/bborbe/backup/date"
 	"github.com/golang/glog"
+	"io/ioutil"
 	"os"
 	"time"
 )
@@ -19,21 +21,59 @@ type host struct {
 
 func (h *host) Backup(targetDirectory targetDirectory) error {
 
-	if h.todayHasAllreadyBackup(targetDirectory) {
-		glog.V(1).Infof("skip backup => allready exists")
+	if err := h.createCurrentDirectory(targetDirectory); err != nil {
+		glog.V(2).Infof("create current failed: %v", err)
+		return err
+	}
+
+	found, err := h.todayHasAllreadyBackup(targetDirectory)
+	if err != nil {
+		glog.V(2).Infof("search for existing backups failed: %v", err)
+		return err
+	}
+	if found {
+		glog.V(2).Infof("skip backup => already exists")
 		return nil
 	}
 
-	if err := h.createCurrentDirectory(targetDirectory); err != nil {
-		glog.V(1).Infof("create current failed: %v", err)
-		return err
-	}
-
 	if err := h.createToDirectory(targetDirectory); err != nil {
+		glog.V(2).Infof("create target directory failed: %v", err)
 		return err
 	}
 
-	if err := runRsync(
+	if err := h.rsync(targetDirectory); err != nil {
+		glog.V(2).Infof("rsync failed: %v", err)
+		return err
+	}
+
+	backupDate := time.Now()
+
+	if err := h.renameIncompleteToDate(targetDirectory, backupDate); err != nil {
+		glog.V(2).Infof("rename incomplete to date failed: %v", err)
+		return err
+	}
+
+	if err := h.deleteCurrentSymlink(targetDirectory); err != nil {
+		glog.V(2).Infof("delete current symlink failed: %v", err)
+		return err
+	}
+
+	if err := h.createCurrentSymlink(targetDirectory, backupDate); err != nil {
+		glog.V(2).Infof("create new current symlink failed: %v", err)
+		return err
+	}
+
+	if err := h.deleteEmpty(targetDirectory); err != nil {
+		glog.V(2).Infof("delete empty dir failed: %v", err)
+		return err
+	}
+
+	glog.V(2).Infof("backup completed")
+	return nil
+}
+
+func (h *host) rsync(targetDirectory targetDirectory) error {
+	return runRsync(
 		"-azP",
 		"-e",
 		fmt.Sprintf("ssh -p %d", h.Port),
@@ -44,30 +84,7 @@ func (h *host) Backup(targetDirectory targetDirectory) error {
 		fmt.Sprintf("--link-dest=%s", h.linkDest(targetDirectory)),
 		h.from(),
 		h.to(targetDirectory),
-	); err != nil {
-		return err
-	}
-
-	backupDate := time.Now()
-
-	if err := h.renameIncompleteToDate(targetDirectory, backupDate); err != nil {
-		return err
-	}
-
-	if err := h.deleteCurrentSymlink(targetDirectory); err != nil {
-		return err
-	}
-
-	if err := h.createCurrentSymlink(targetDirectory, backupDate); err != nil {
-		return err
-	}
-
-	if err := h.deleteEmpty(targetDirectory); err != nil {
-		return err
-	}
-
-	glog.V(1).Infof("backup completed")
-	return nil
+	)
 }
 
 func (h *host) renameIncompleteToDate(targetDirectory targetDirectory, date time.Time) error {
@@ -107,8 +124,27 @@ func (h *host) createCurrentDirectory(targetDirectory targetDirectory) error {
 	glog.V(2).Infof("create current completed")
 	return nil
 }
-func (h *host) todayHasAllreadyBackup(targetDirectory targetDirectory) bool {
-	return false
+
+func (h *host) todayHasAllreadyBackup(targetDirectory targetDirectory) (bool, error) {
+	hostDirectory := fmt.Sprintf("%s/%s", targetDirectory, h.Host)
+	dirs, err := ioutil.ReadDir(hostDirectory)
+	if err != nil {
+		glog.V(2).Infof("read directory %s failed: %v", targetDirectory, err)
+		return false, err
+	}
+	for _, dir := range dirs {
+		timeOfDir, err := time.Parse(constants.DATEFORMAT, dir.Name())
+		if err != nil {
+			glog.V(2).Infof("parse date of dir failed")
+			continue
+		}
+		if date.DayEqual(timeOfDir, time.Now()) {
+			glog.V(2).Infof("found backup for today")
+			return true, nil
+		}
+	}
+	glog.V(2).Infof("found no backup for today")
+	return false, nil
 }
 
 func (h *host) createToDirectory(targetDirectory targetDirectory) error {
@@ -134,6 +170,7 @@ func (h *host) current(targetDirectory targetDirectory) string {
 func (h *host) empty(targetDirectory targetDirectory) string {
 	return fmt.Sprintf("%s/%s/empty", targetDirectory, h.Host)
 }
+
 func (h *host) date(targetDirectory targetDirectory, date time.Time) string {
 	return fmt.Sprintf("%s/%s/%s", targetDirectory, h.Host, date.Format(constants.DATEFORMAT))
 }

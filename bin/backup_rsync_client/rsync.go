@@ -8,7 +8,7 @@ import (
 )
 
 func runRsync(args ...string) error {
-	glog.V(1).Infof("run: rsync %s", strings.Join(args, " "))
+	glog.V(2).Infof("run: rsync %s", strings.Join(args, " "))
 	cmd := exec.Command("rsync", args...)
 	if glog.V(4) {
 		cmd.Stderr = os.Stderr

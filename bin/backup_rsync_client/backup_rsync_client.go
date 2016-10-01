@@ -59,11 +59,11 @@ func do() error {
 	defer l.Unlock()
 
 	for {
-		glog.V(1).Infof("backup rsync started")
+		glog.V(1).Infof("backup started")
 		if err := backup(); err != nil {
 			return err
 		}
-		glog.V(1).Infof("backup completed")
+		glog.V(1).Infof("backup finished")
 
 		if *oneTimePtr {
 			return nil
@@ -78,7 +78,6 @@ func do() error {
 }
 
 func backup() error {
-	glog.Infof("backup started")
 	hosts, err := getHosts()
 	if err != nil {
 		return err
@@ -93,7 +92,6 @@ func backup() error {
 	if err := backupHosts(hosts, *targetDirectory); err != nil {
 		return err
 	}
-	glog.Infof("backup finished")
 	return nil
 }
 
@@ -107,11 +105,11 @@ func getTargetDirectory() (*targetDirectory, error) {
 
 func backupHosts(hosts []host, targetDirectory targetDirectory) error {
 	for _, host := range hosts {
-		glog.V(2).Infof("backup host started")
+		glog.V(1).Infof("backup %s started", host.Host)
 		if err := host.Backup(targetDirectory); err != nil {
 			return err
 		}
-		glog.V(2).Infof("backup host finished")
+		glog.V(1).Infof("backup %s finished", host.Host)
 	}
 	return nil
 }

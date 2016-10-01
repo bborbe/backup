@@ -5,6 +5,7 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/bborbe/backup/date"
 	backup_timeparser "github.com/bborbe/backup/timeparser"
 	"github.com/golang/glog"
 )
@@ -24,15 +25,11 @@ func getKeepToday(backups []Backup, now time.Time, timeParser backup_timeparser.
 		if err != nil {
 			return nil, err
 		}
-		if isToday(t, now) {
+		if date.DayEqual(t, now) {
 			result = append(result, b)
 		}
 	}
 	return result, nil
-}
-
-func isToday(t time.Time, now time.Time) bool {
-	return t.Year() == now.Year() && t.Month() == now.Month() && t.Day() == now.Day()
 }
 
 func ageLessThanDays(t time.Time, now time.Time, days int64) bool {

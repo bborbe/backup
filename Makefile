@@ -35,7 +35,7 @@ runbackuprsyncclient:
 	-user=bborbe \
 	-host=localhost \
 	-port=22 \
-	-dir=/opt/go1.7.1/ \
+	-dir=/tmp/data/ \
 	-exclude_from=/tmp/excludes \
 	-one-time
 open:
