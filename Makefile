@@ -1,11 +1,12 @@
 install:
-	GOBIN=$(GOPATH)/bin GO15VENDOREXPERIMENT=1 go install bin/backup_cleanup/backup_cleanup.go
-	GOBIN=$(GOPATH)/bin GO15VENDOREXPERIMENT=1 go install bin/backup_keep/backup_keep.go
-	GOBIN=$(GOPATH)/bin GO15VENDOREXPERIMENT=1 go install bin/backup_list/backup_list.go
-	GOBIN=$(GOPATH)/bin GO15VENDOREXPERIMENT=1 go install bin/backup_old/backup_old.go
-	GOBIN=$(GOPATH)/bin GO15VENDOREXPERIMENT=1 go install bin/backup_resume/backup_resume.go
-	GOBIN=$(GOPATH)/bin GO15VENDOREXPERIMENT=1 go install bin/backup_status_client/backup_status_client.go
-	GOBIN=$(GOPATH)/bin GO15VENDOREXPERIMENT=1 go install bin/backup_status_server/backup_status_server.go
+	GOBIN=$(GOPATH)/bin GO15VENDOREXPERIMENT=1 go install bin/backup_cleanup/*.go
+	GOBIN=$(GOPATH)/bin GO15VENDOREXPERIMENT=1 go install bin/backup_keep/*.go
+	GOBIN=$(GOPATH)/bin GO15VENDOREXPERIMENT=1 go install bin/backup_list/*.go
+	GOBIN=$(GOPATH)/bin GO15VENDOREXPERIMENT=1 go install bin/backup_old/*.go
+	GOBIN=$(GOPATH)/bin GO15VENDOREXPERIMENT=1 go install bin/backup_resume/*.go
+	GOBIN=$(GOPATH)/bin GO15VENDOREXPERIMENT=1 go install bin/backup_status_client/*.go
+	GOBIN=$(GOPATH)/bin GO15VENDOREXPERIMENT=1 go install bin/backup_status_server/*.go
+	GOBIN=$(GOPATH)/bin GO15VENDOREXPERIMENT=1 go install bin/backup_rsync_client/*.go
 test:
 	GO15VENDOREXPERIMENT=1 go test -cover `glide novendor`
 vet:

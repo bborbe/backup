@@ -99,3 +99,33 @@ func TestGetHostsByArgs(t *testing.T) {
 		t.Fatal(err)
 	}
 }
+
+func TestGetTargetDirectoryFailed(t *testing.T) {
+	target := "/backup_not_existing"
+	targetPtr = &target
+	dir, err := getTargetDirectory()
+	if err := AssertThat(err, NotNilValue()); err != nil {
+		t.Fatal(err)
+	}
+	if err := AssertThat(dir, NilValue()); err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestGetTargetDirectorySuccess(t *testing.T) {
+	target := os.TempDir()
+	targetPtr = &target
+	dir, err := getTargetDirectory()
+	if err := AssertThat(err, NilValue()); err != nil {
+		t.Fatal(err)
+	}
+	if err := AssertThat(dir, NotNilValue()); err != nil {
+		t.Fatal(err)
+	}
+	if err := AssertThat(dir.IsValid(), NilValue()); err != nil {
+		t.Fatal(err)
+	}
+	if err := AssertThat(dir.String(), Is(target)); err != nil {
+		t.Fatal(err)
+	}
+}

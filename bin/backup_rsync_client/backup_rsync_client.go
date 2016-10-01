@@ -62,11 +62,11 @@ func do() error {
 }
 
 func getTargetDirectory() (*targetDirectory, error) {
-	targetDirectory := targetDirectory(*targetPtr)
-	if err := targetDirectory.IsValid(); err != nil {
+	target := targetDirectory(*targetPtr)
+	if err := target.IsValid(); err != nil {
 		return nil, err
 	}
-	return &targetDirectory, nil
+	return &target, nil
 }
 
 func backupHosts(hosts []host, targetDirectory targetDirectory) error {
