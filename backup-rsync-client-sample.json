@@ -4,7 +4,7 @@
 		"user": "bborbe",
 		"host": "localhost",
 		"port": 22,
-		"dir": "/tmp",
+		"dir": "/data/",
 		"ExcludeFrom": ""
 	}
 ]

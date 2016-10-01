@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"runtime"
 
-	backup_config "github.com/bborbe/backup/config"
+	backup_config "github.com/bborbe/backup/constants"
 	backup_status_server "github.com/bborbe/backup/status_server"
 	flag "github.com/bborbe/flagenv"
 	"github.com/facebookgo/grace/gracehttp"

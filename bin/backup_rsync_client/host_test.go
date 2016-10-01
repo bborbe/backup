@@ -6,30 +6,81 @@ import (
 	. "github.com/bborbe/assert"
 )
 
-func TestFrom(t *testing.T) {
-	h := host{
+func getValidHost() host {
+	return host{
 		Active:      true,
 		User:        "backupuser",
 		Host:        "example.com",
 		Port:        1337,
-		Directory:   "/data",
+		Directory:   "/data/",
 		ExcludeFrom: "exclude_from",
 	}
-	if err := AssertThat(h.from(), Is("backupuser@example.com:/data")); err != nil {
+}
+
+func TestFrom(t *testing.T) {
+	h := getValidHost()
+	if err := AssertThat(h.from(), Is("backupuser@example.com:/data/")); err != nil {
 		t.Fatal(err)
 	}
 }
 
 func TestTo(t *testing.T) {
-	h := host{
-		Active:      true,
-		User:        "backupuser",
-		Host:        "example.com",
-		Port:        1337,
-		Directory:   "/data",
-		ExcludeFrom: "exclude_from",
+	h := getValidHost()
+	if err := AssertThat(h.to(targetDirectory("/backup")), Is("/backup/example.com/incomplete/data/")); err != nil {
+		t.Fatal(err)
 	}
-	if err := AssertThat(h.to(targetDirectory("/backup")), Is("/backup/example.com/incomplete/data")); err != nil {
+}
+
+func TestLinkDest(t *testing.T) {
+	h := getValidHost()
+	if err := AssertThat(h.linkDest(targetDirectory("/backup")), Is("/backup/example.com/current/data/")); err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestValidateSuccess(t *testing.T) {
+	h := getValidHost()
+	if err := AssertThat(h.Validate(), NilValue()); err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestValidateUserInvalid(t *testing.T) {
+	h := getValidHost()
+	h.User = ""
+	if err := AssertThat(h.Validate(), NotNilValue()); err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestValidateHostInvalid(t *testing.T) {
+	h := getValidHost()
+	h.Host = ""
+	if err := AssertThat(h.Validate(), NotNilValue()); err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestValidatePortInvalid(t *testing.T) {
+	h := getValidHost()
+	h.Port = 0
+	if err := AssertThat(h.Validate(), NotNilValue()); err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestValidateDirectoryInvalid(t *testing.T) {
+	h := getValidHost()
+	h.Directory = ""
+	if err := AssertThat(h.Validate(), NotNilValue()); err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestValidateDirectorySlashMissing(t *testing.T) {
+	h := getValidHost()
+	h.Directory = "/data"
+	if err := AssertThat(h.Validate(), NotNilValue()); err != nil {
 		t.Fatal(err)
 	}
 }

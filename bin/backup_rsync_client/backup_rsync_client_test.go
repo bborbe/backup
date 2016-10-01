@@ -20,7 +20,7 @@ func TestGetHostsByConfig(t *testing.T) {
 	host := "example.com"
 	excludeFrom := "exclude"
 	user := "backupuser"
-	directory := "/data"
+	directory := "/data/"
 	port := 1337
 
 	file, err := ioutil.TempFile("", "config")
@@ -66,7 +66,7 @@ func TestGetHostsByArgs(t *testing.T) {
 	host := "example.com"
 	excludeFrom := "exclude"
 	user := "backupuser"
-	directory := "/data"
+	directory := "/data/"
 	port := 1337
 	hostPtr = &host
 	excludeFromPtr = &excludeFrom

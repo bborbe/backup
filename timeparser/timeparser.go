@@ -1,6 +1,9 @@
 package timeparser
 
-import "time"
+import (
+	"github.com/bborbe/backup/constants"
+	"time"
+)
 
 type TimeParser interface {
 	TimeByName(name string) (time.Time, error)
@@ -17,5 +20,5 @@ func (t *timeParser) TimeByName(name string) (time.Time, error) {
 }
 
 func timeByName(name string) (time.Time, error) {
-	return time.Parse("2006-01-02T15:04:05", name)
+	return time.Parse(constants.DATEFORMAT, name)
 }

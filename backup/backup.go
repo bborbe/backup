@@ -8,6 +8,7 @@ import (
 	"sort"
 	"time"
 
+	"github.com/bborbe/backup/constants"
 	backup_host "github.com/bborbe/backup/host"
 	backup_timeparser "github.com/bborbe/backup/timeparser"
 	io_util "github.com/bborbe/io/util"
@@ -31,7 +32,7 @@ const INCOMPLETE = "incomplete"
 const CURRENT = "current"
 
 func ByTime(h backup_host.Host, t time.Time) Backup {
-	return ByName(h, t.Format("2006-01-02T15:04:05"))
+	return ByName(h, t.Format(constants.DATEFORMAT))
 }
 
 func ByName(h backup_host.Host, name string) Backup {

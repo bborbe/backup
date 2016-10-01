@@ -26,7 +26,7 @@ via config
 backup_rsync_client \
 -logtostderr \
 -v=2 \
--target=/tmp \
+-target=/backup/ \
 -config=backup-rsync-client-sample.json
 ```
 
@@ -40,7 +40,7 @@ backup_rsync_client \
 -user=bborbe \
 -host=localhost \
 -port=22 \
--dir=/tmp
+-dir=/backup/
 -exclude_from=/tmp/excludes
 
 ```

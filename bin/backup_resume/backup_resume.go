@@ -8,7 +8,7 @@ import (
 
 	"runtime"
 
-	backup_config "github.com/bborbe/backup/config"
+	backup_config "github.com/bborbe/backup/constants"
 	backup_service "github.com/bborbe/backup/service"
 	"github.com/golang/glog"
 )
