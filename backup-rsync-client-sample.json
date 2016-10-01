@@ -1,0 +1,10 @@
+[
+	{
+		"active": true,
+		"user": "bborbe",
+		"host": "localhost",
+		"port": 22,
+		"dir": "/tmp",
+		"ExcludeFrom": ""
+	}
+]

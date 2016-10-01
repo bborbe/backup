@@ -3,7 +3,7 @@ package main
 import (
 	"testing"
 
-	"flag"
+	"fmt"
 	. "github.com/bborbe/assert"
 	"github.com/golang/glog"
 	"io/ioutil"
@@ -16,16 +16,86 @@ func TestMain(m *testing.M) {
 	os.Exit(exit)
 }
 
-func TestDo(t *testing.T) {
+func TestGetHostsByConfig(t *testing.T) {
+	host := "example.com"
+	excludeFrom := "exclude"
+	user := "backupuser"
+	directory := "/data"
+	port := 1337
+
 	file, err := ioutil.TempFile("", "config")
-	defer os.Remove(file.Name())
+	filename := file.Name()
+	defer os.Remove(filename)
 	if err != nil {
 		t.Fatal("create temp file faileD")
 	}
-	file.WriteString(`[{}]`)
+	file.WriteString(fmt.Sprintf(`[{"host":"%s","port":%d,"dir":"%s","user":"%s","exclude_from":"%s","active":true}]`, host, port, directory, user, excludeFrom))
 	file.Close()
-	flag.Set(parameterConfigPath, file.Name())
-	if err := AssertThat(do(), NilValue()); err != nil {
+	configPathPtr = &filename
+
+	hosts, err := getHosts()
+
+	if err := AssertThat(err, NilValue()); err != nil {
+		t.Fatal(err)
+	}
+	if err := AssertThat(len(hosts), Is(1)); err != nil {
+		t.Fatal(err)
+	}
+	if err := AssertThat(hosts[0].Active, Is(true)); err != nil {
+		t.Fatal(err)
+	}
+	if err := AssertThat(hosts[0].User, Is(user)); err != nil {
+		t.Fatal(err)
+	}
+	if err := AssertThat(hosts[0].Host, Is(host)); err != nil {
+		t.Fatal(err)
+	}
+	if err := AssertThat(hosts[0].Port, Is(port)); err != nil {
+		t.Fatal(err)
+	}
+	if err := AssertThat(hosts[0].Directory, Is(directory)); err != nil {
+		t.Fatal(err)
+	}
+	if err := AssertThat(hosts[0].ExcludeFrom, Is(excludeFrom)); err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestGetHostsByArgs(t *testing.T) {
+	configPathPtr = nil
+	host := "example.com"
+	excludeFrom := "exclude"
+	user := "backupuser"
+	directory := "/data"
+	port := 1337
+	hostPtr = &host
+	excludeFromPtr = &excludeFrom
+	dirPtr = &directory
+	portPtr = &port
+	userPtr = &user
+	hosts, err := getHosts()
+	if err := AssertThat(err, NilValue()); err != nil {
+		t.Fatal(err)
+	}
+	if err := AssertThat(len(hosts), Is(1)); err != nil {
+		t.Fatal(err)
+	}
+	if err := AssertThat(hosts[0].Active, Is(true)); err != nil {
+		t.Fatal(err)
+	}
+	if err := AssertThat(hosts[0].User, Is(user)); err != nil {
+		t.Fatal(err)
+	}
+	if err := AssertThat(hosts[0].Host, Is(host)); err != nil {
+		t.Fatal(err)
+	}
+	if err := AssertThat(hosts[0].Port, Is(port)); err != nil {
+		t.Fatal(err)
+	}
+	if err := AssertThat(hosts[0].Directory, Is(directory)); err != nil {
+		t.Fatal(err)
+	}
+	if err := AssertThat(hosts[0].ExcludeFrom, Is(excludeFrom)); err != nil {
 		t.Fatal(err)
 	}
 }

@@ -16,6 +16,35 @@
 
 `go get github.com/bborbe/backup/bin/backup_status_server`
 
+## Backup Rsync Client
+
+`go get github.com/bborbe/backup/bin/backup_rsync_client`
+
+via config
+
+```
+backup_rsync_client \
+-logtostderr \
+-v=2 \
+-target=/tmp \
+-config=backup-rsync-client-sample.json
+```
+
+via args
+
+```
+backup_rsync_client \
+-logtostderr \
+-v=2 \
+-target=/tmp \
+-user=bborbe \
+-host=localhost \
+-port=22 \
+-dir=/tmp
+-exclude_from=/tmp/excludes
+
+```
+
 ## Continuous integration
 
 [Jenkins](https://www.benjamin-borbe.de/jenkins/job/Go-Backup/)
