@@ -13,6 +13,7 @@ func (c configPath) String() string {
 }
 
 func (c configPath) ParseHosts() ([]host, error) {
+	glog.V(2).Infof("parse hosts from config")
 	file, err := os.Open(c.String())
 	if err != nil {
 		glog.V(1).Infof("open file %v failed: %v", c, err)

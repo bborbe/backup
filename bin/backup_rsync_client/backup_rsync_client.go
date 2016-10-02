@@ -33,7 +33,7 @@ var (
 	hostPtr        = flag.String(parameterHost, "", "host")
 	portPtr        = flag.Int(parameterPort, 22, "port")
 	dirPtr         = flag.String(parameterDirectory, "", "dir")
-	excludeFromPtr = flag.String(parameterExcludeFrom, "", "exclude_from")
+	excludeFromPtr = flag.String(parameterExcludeFrom, "", "exclude from")
 	waitPtr        = flag.Duration(parameterWait, defaultWait, "wait")
 	oneTimePtr     = flag.Bool(parameterOneTime, false, "exit after first fetch")
 	lockPtr        = flag.String(parameterLock, defaultLockName, "lock")
@@ -52,6 +52,7 @@ func main() {
 }
 
 func do() error {
+	glog.V(2).Infof("do started")
 	l := lock.NewLock(*lockPtr)
 	if err := l.Lock(); err != nil {
 		return err
@@ -66,6 +67,7 @@ func do() error {
 		glog.V(1).Infof("backup finished")
 
 		if *oneTimePtr {
+			glog.V(2).Infof("one-time => exit")
 			return nil
 		}
 
@@ -73,7 +75,7 @@ func do() error {
 		time.Sleep(*waitPtr)
 		glog.V(2).Infof("sleep done")
 	}
-
+	glog.V(2).Infof("do finished")
 	return nil
 }
 
@@ -127,12 +129,15 @@ func validateHosts(hosts []host) error {
 }
 
 func getHosts() ([]host, error) {
+	glog.V(2).Infof("get hosts")
 	if configPathPtr != nil {
 		configPath := configPath(*configPathPtr)
 		if configPath.IsValue() {
+			glog.V(2).Infof("read config %s", configPath)
 			return configPath.ParseHosts()
 		}
 	}
+	glog.V(2).Infof("create hosts from args")
 	return []host{{
 		Active:      true,
 		User:        *userPtr,
