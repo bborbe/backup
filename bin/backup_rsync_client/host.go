@@ -20,13 +20,14 @@ type host struct {
 }
 
 func (h *host) Backup(targetDirectory targetDirectory) error {
+	glog.V(2).Infof("create backup of %s on target: %s", h.Host, targetDirectory)
 
 	if err := h.createCurrentDirectory(targetDirectory); err != nil {
 		glog.V(2).Infof("create current failed: %v", err)
 		return err
 	}
 
-	found, err := h.todayHasAllreadyBackup(targetDirectory)
+	found, err := h.todayHasAlreadyBackup(targetDirectory)
 	if err != nil {
 		glog.V(2).Infof("search for existing backups failed: %v", err)
 		return err
@@ -88,14 +89,17 @@ func (h *host) rsync(targetDirectory targetDirectory) error {
 }
 
 func (h *host) renameIncompleteToDate(targetDirectory targetDirectory, date time.Time) error {
+	glog.V(2).Infof("rename incomplete on target: %s", targetDirectory)
 	return os.Rename(h.incomplete(targetDirectory), h.date(targetDirectory, date))
 }
 
 func (h *host) deleteCurrentSymlink(targetDirectory targetDirectory) error {
+	glog.V(2).Infof("delete current symlink on target: %s", targetDirectory)
 	return os.Remove(h.current(targetDirectory))
 }
 
 func (h *host) createCurrentSymlink(targetDirectory targetDirectory, date time.Time) error {
+	glog.V(2).Infof("create current symlink on target: %s", targetDirectory)
 	if err := os.Symlink(h.date(targetDirectory, date), h.current(targetDirectory)); err != nil {
 		glog.V(2).Infof("create symlink to current failed: %v", err)
 		return err
@@ -104,11 +108,13 @@ func (h *host) createCurrentSymlink(targetDirectory targetDirectory, date time.T
 }
 
 func (h *host) deleteEmpty(targetDirectory targetDirectory) error {
+	glog.V(2).Infof("delete empty directory on target: %s", targetDirectory)
 	os.RemoveAll(h.empty(targetDirectory))
 	return nil
 }
 
 func (h *host) createCurrentDirectory(targetDirectory targetDirectory) error {
+	glog.V(2).Infof("create current directory on target: %s", targetDirectory)
 	_, err := os.Stat(h.current(targetDirectory))
 	if os.IsNotExist(err) {
 		glog.V(2).Infof("current not existing")
@@ -125,7 +131,8 @@ func (h *host) createCurrentDirectory(targetDirectory targetDirectory) error {
 	return nil
 }
 
-func (h *host) todayHasAllreadyBackup(targetDirectory targetDirectory) (bool, error) {
+func (h *host) todayHasAlreadyBackup(targetDirectory targetDirectory) (bool, error) {
+	glog.V(2).Infof("search if backup already exists on target: %s", targetDirectory)
 	hostDirectory := fmt.Sprintf("%s/%s", targetDirectory, h.Host)
 	dirs, err := ioutil.ReadDir(hostDirectory)
 	if err != nil {
@@ -148,6 +155,7 @@ func (h *host) todayHasAllreadyBackup(targetDirectory targetDirectory) (bool, er
 }
 
 func (h *host) createToDirectory(targetDirectory targetDirectory) error {
+	glog.V(2).Infof("create to directory on target: %s", targetDirectory)
 	return os.MkdirAll(h.to(targetDirectory), 0700)
 }
 
@@ -180,6 +188,7 @@ func (h *host) linkDest(targetDirectory targetDirectory) string {
 }
 
 func (h *host) Validate() error {
+	glog.V(2).Infof("validate host: %s", h.Host)
 	if len(h.User) == 0 {
 		return fmt.Errorf("user invalid")
 	}

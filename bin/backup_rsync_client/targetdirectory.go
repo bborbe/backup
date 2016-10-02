@@ -1,6 +1,8 @@
 package main
 
 import (
+	"fmt"
+	"github.com/golang/glog"
 	"os"
 )
 
@@ -11,6 +13,10 @@ func (t targetDirectory) String() string {
 }
 
 func (t targetDirectory) IsValid() error {
-	_, err := os.Stat(t.String())
-	return err
+	if _, err := os.Stat(t.String()); err != nil {
+		glog.V(2).Infof("target %s invalid: %v", t, err)
+		return fmt.Errorf("target %s invalid: %v", t, err)
+	}
+	glog.V(2).Infof("target %s valid", t)
+	return nil
 }
