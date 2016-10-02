@@ -58,11 +58,6 @@ func do() error {
 	}
 	defer l.Unlock()
 
-	if err := setSshKeyPermission(); err != nil {
-		glog.V(2).Infof("set ssh key permission failed: %v", err)
-		return err
-	}
-
 	for {
 		glog.V(1).Infof("backup started")
 		if err := backup(); err != nil {
@@ -150,8 +145,4 @@ func getHosts() ([]host, error) {
 		Directory:   *dirPtr,
 		ExcludeFrom: *excludeFromPtr,
 	}}, nil
-}
-
-func setSshKeyPermission() error {
-	return os.Chmod("/root/.ssh/id_rsa", 0600)
 }
