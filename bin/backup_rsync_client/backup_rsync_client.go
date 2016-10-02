@@ -82,6 +82,7 @@ func backup() error {
 	if err != nil {
 		return err
 	}
+	hosts = parseActive(hosts)
 	if err := validateHosts(hosts); err != nil {
 		return err
 	}
@@ -93,6 +94,17 @@ func backup() error {
 		return err
 	}
 	return nil
+}
+
+func parseActive(hosts []host) []host {
+	result := []host{}
+	for _, host := range hosts {
+		if host.Active {
+			result = append(result, host)
+		}
+	}
+	glog.V(2).Infof("%d of %d hosts are active", len(result), len(hosts))
+	return result
 }
 
 func getTargetDirectory() (*targetDirectory, error) {
