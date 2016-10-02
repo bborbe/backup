@@ -22,6 +22,10 @@
 			"target": "/opt/backup/bin/backup_status_server"
 		},
 		{
+			"source": "bin/backup_rsync_client",
+			"target": "/opt/backup/bin/backup_rsync_client"
+		},
+		{
 			"source": "bin/backup_keep",
 			"target": "/opt/backup/bin/backup_keep"
 		},
