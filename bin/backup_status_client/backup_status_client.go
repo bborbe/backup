@@ -1,7 +1,7 @@
 package main
 
 import (
-	"flag"
+	flag "github.com/bborbe/flagenv"
 
 	"net/http"
 	"runtime"
