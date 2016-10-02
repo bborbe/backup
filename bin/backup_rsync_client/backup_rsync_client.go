@@ -5,7 +5,6 @@ import (
 	flag "github.com/bborbe/flagenv"
 	"github.com/bborbe/lock"
 	"github.com/golang/glog"
-	"os"
 	"runtime"
 	"time"
 )
