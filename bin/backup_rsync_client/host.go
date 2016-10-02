@@ -100,7 +100,7 @@ func (h *host) deleteCurrentSymlink(targetDirectory targetDirectory) error {
 
 func (h *host) createCurrentSymlink(targetDirectory targetDirectory, date time.Time) error {
 	glog.V(2).Infof("create current symlink on target: %s", targetDirectory)
-	if err := os.Symlink(h.date(targetDirectory, date), h.current(targetDirectory)); err != nil {
+	if err := os.Symlink(date.Format(constants.DATEFORMAT), h.current(targetDirectory)); err != nil {
 		glog.V(2).Infof("create symlink to current failed: %v", err)
 		return err
 	}
@@ -122,7 +122,7 @@ func (h *host) createCurrentDirectory(targetDirectory targetDirectory) error {
 			glog.V(2).Infof("create empty directory failed: %v", err)
 			return err
 		}
-		if err := os.Symlink(h.empty(targetDirectory), h.current(targetDirectory)); err != nil {
+		if err := os.Symlink("empty", h.current(targetDirectory)); err != nil {
 			glog.V(2).Infof("create symlink from empty to current failed: %v", err)
 			return err
 		}
