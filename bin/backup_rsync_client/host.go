@@ -77,8 +77,9 @@ func (h *host) rsync(targetDirectory targetDirectory) error {
 	return runRsync(
 		"-azP",
 		"--no-p",
+		"--numeric-ids",
 		"-e",
-		fmt.Sprintf("ssh -o StrictHostKeyChecking=no -p %d", h.Port),
+		fmt.Sprintf("ssh -T -x -o StrictHostKeyChecking=no -p %d", h.Port),
 		"--delete",
 		"--delete-excluded",
 		fmt.Sprintf("--port=%d", h.Port),
