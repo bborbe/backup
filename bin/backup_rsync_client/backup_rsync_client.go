@@ -119,9 +119,10 @@ func backupHosts(hosts []host, targetDirectory targetDirectory) error {
 	for _, host := range hosts {
 		glog.V(1).Infof("backup %s started", host.Host)
 		if err := host.Backup(targetDirectory); err != nil {
-			return err
+			glog.Warningf("backup %s failed: %v", host.Host, err)
+		} else {
+			glog.V(1).Infof("backup %s finished", host.Host)
 		}
-		glog.V(1).Infof("backup %s finished", host.Host)
 	}
 	return nil
 }
