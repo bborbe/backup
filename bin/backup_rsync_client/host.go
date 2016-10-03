@@ -76,6 +76,7 @@ func (h *host) Backup(targetDirectory targetDirectory) error {
 func (h *host) rsync(targetDirectory targetDirectory) error {
 	return runRsync(
 		"-azP",
+		"--no-p",
 		"-e",
 		fmt.Sprintf("ssh -o StrictHostKeyChecking=no -p %d", h.Port),
 		"--delete",
