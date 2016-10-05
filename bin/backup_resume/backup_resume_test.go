@@ -6,11 +6,12 @@ import (
 
 	"bytes"
 
+	"os"
+
 	. "github.com/bborbe/assert"
 	backup_config "github.com/bborbe/backup/constants"
 	backup_service "github.com/bborbe/backup/service"
 	"github.com/golang/glog"
-	"os"
 )
 
 func TestMain(m *testing.M) {

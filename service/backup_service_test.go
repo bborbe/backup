@@ -3,11 +3,12 @@ package service
 import (
 	"testing"
 
+	"os"
+
 	. "github.com/bborbe/assert"
 	backup_dto "github.com/bborbe/backup/dto"
 	backup_testutil "github.com/bborbe/backup/testutil"
 	"github.com/golang/glog"
-	"os"
 )
 
 func TestMain(m *testing.M) {

@@ -2,8 +2,9 @@ package main
 
 import (
 	"encoding/json"
-	"github.com/golang/glog"
 	"os"
+
+	"github.com/golang/glog"
 )
 
 type configPath string

@@ -1,10 +1,11 @@
 package main
 
 import (
-	"github.com/golang/glog"
 	"os"
 	"os/exec"
 	"strings"
+
+	"github.com/golang/glog"
 )
 
 func runRsync(args ...string) error {

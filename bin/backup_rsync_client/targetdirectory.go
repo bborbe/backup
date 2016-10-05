@@ -2,8 +2,9 @@ package main
 
 import (
 	"fmt"
-	"github.com/golang/glog"
 	"os"
+
+	"github.com/golang/glog"
 )
 
 type targetDirectory string

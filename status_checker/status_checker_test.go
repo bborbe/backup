@@ -3,12 +3,13 @@ package status_checker
 import (
 	"testing"
 
+	"os"
+
 	. "github.com/bborbe/assert"
 	backup_dto "github.com/bborbe/backup/dto"
 	backup_service "github.com/bborbe/backup/service"
 	backup_timeparser "github.com/bborbe/backup/timeparser"
 	"github.com/golang/glog"
-	"os"
 )
 
 func TestMain(m *testing.M) {

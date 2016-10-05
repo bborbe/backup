@@ -2,12 +2,13 @@ package main
 
 import (
 	"fmt"
-	"github.com/bborbe/backup/constants"
-	"github.com/bborbe/backup/date"
-	"github.com/golang/glog"
 	"io/ioutil"
 	"os"
 	"time"
+
+	"github.com/bborbe/backup/constants"
+	"github.com/bborbe/backup/date"
+	"github.com/golang/glog"
 )
 
 type host struct {

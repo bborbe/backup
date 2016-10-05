@@ -5,9 +5,10 @@ import (
 
 	"net/http"
 
+	"os"
+
 	. "github.com/bborbe/assert"
 	"github.com/golang/glog"
-	"os"
 )
 
 func TestMain(m *testing.M) {

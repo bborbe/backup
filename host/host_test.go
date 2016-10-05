@@ -4,11 +4,12 @@ import (
 	"fmt"
 	"testing"
 
+	"os"
+
 	. "github.com/bborbe/assert"
 	backup_rootdir "github.com/bborbe/backup/rootdir"
 	backup_testutil "github.com/bborbe/backup/testutil"
 	"github.com/golang/glog"
-	"os"
 )
 
 func TestMain(m *testing.M) {

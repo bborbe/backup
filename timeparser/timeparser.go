@@ -1,8 +1,9 @@
 package timeparser
 
 import (
-	"github.com/bborbe/backup/constants"
 	"time"
+
+	"github.com/bborbe/backup/constants"
 )
 
 type TimeParser interface {

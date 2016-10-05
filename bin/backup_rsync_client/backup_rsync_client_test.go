@@ -4,10 +4,11 @@ import (
 	"testing"
 
 	"fmt"
-	. "github.com/bborbe/assert"
-	"github.com/golang/glog"
 	"io/ioutil"
 	"os"
+
+	. "github.com/bborbe/assert"
+	"github.com/golang/glog"
 )
 
 func TestMain(m *testing.M) {
