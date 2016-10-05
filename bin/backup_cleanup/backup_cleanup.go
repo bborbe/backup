@@ -43,7 +43,6 @@ func main() {
 }
 
 func do() error {
-	glog.V(2).Infof("do started")
 	l := lock.NewLock(*lockPtr)
 	if err := l.Lock(); err != nil {
 		return err
@@ -51,11 +50,11 @@ func do() error {
 	defer l.Unlock()
 
 	for {
-		glog.V(1).Infof("backup started")
+		glog.V(2).Infof("backup cleanup started")
 		if err := cleanup(); err != nil {
 			return err
 		}
-		glog.V(1).Infof("backup finished")
+		glog.V(2).Infof("backup cleanup finished")
 
 		if *oneTimePtr {
 			glog.V(2).Infof("one-time => exit")
@@ -66,7 +65,6 @@ func do() error {
 		time.Sleep(*waitPtr)
 		glog.V(2).Infof("sleep done")
 	}
-	glog.V(2).Infof("do finished")
 	return nil
 }
 
@@ -94,12 +92,12 @@ func cleanup() error {
 	}
 	sort.Sort(backup_dto.HostByName(hosts))
 	for _, host := range hosts {
+		glog.V(2).Infof("clean backups of host %s stared", host.GetName())
 		err := backupService.Cleanup(host)
 		if err != nil {
 			return err
 		}
 		glog.V(1).Infof("clean backups of host %s completed", host.GetName())
 	}
-	glog.V(2).Info("backup cleanup finished")
 	return nil
 }

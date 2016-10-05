@@ -132,17 +132,14 @@ func (s *backupService) Cleanup(hostDto backup_dto.Host) error {
 	if err != nil {
 		return err
 	}
-
 	h := backup_host.ByName(s.rootdir, hostDto.GetName())
-
 	glog.V(2).Infof("found %d backup to delete for host %s", len(backups), hostDto.GetName())
 	for _, backupDto := range backups {
 		b := backup_backup.ByName(h, backupDto.GetName())
-		glog.V(1).Infof("delete %s started", b.Path())
 		if err := b.Delete(); err != nil {
 			return err
 		}
-		glog.V(2).Infof("delete %s finished", b.Path())
+		glog.V(1).Infof("backup %s deleted", b.Path())
 	}
 	return nil
 }
