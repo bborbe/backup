@@ -42,9 +42,7 @@ func main() {
 	glog.CopyStandardLogTo("info")
 	flag.Parse()
 	runtime.GOMAXPROCS(runtime.NumCPU())
-
-	err := do()
-	if err != nil {
+	if err := do(); err != nil {
 		glog.Exit(err)
 	}
 }
