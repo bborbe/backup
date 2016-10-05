@@ -1,28 +1,34 @@
 package main
 
 import (
-	"flag"
 	"fmt"
-	"io"
-	"os"
-	"sort"
-
-	"runtime"
-
 	backup_config "github.com/bborbe/backup/constants"
 	backup_dto "github.com/bborbe/backup/dto"
 	backup_service "github.com/bborbe/backup/service"
+	flag "github.com/bborbe/flagenv"
 	"github.com/bborbe/lock"
 	"github.com/golang/glog"
+	"runtime"
+	"sort"
+	"time"
 )
 
 const (
-	LOCK_NAME = "/var/run/backup_clean.lock"
+	defaultWait      = time.Minute * 5
+	defaultLockName  = "/var/run/backup_cleanup.lock"
+	parameterLock    = "lock"
+	parameterHost    = "host"
+	parameterRootdir = "target"
+	parameterWait    = "wait"
+	parameterOneTime = "one-time"
 )
 
 var (
-	rootdirPtr = flag.String("rootdir", backup_config.DEFAULT_ROOT_DIR, "string")
-	hostPtr    = flag.String("host", backup_config.DEFAULT_HOST, "string")
+	rootdirPtr = flag.String(parameterRootdir, backup_config.DEFAULT_ROOT_DIR, "backup root directory")
+	hostPtr    = flag.String(parameterHost, backup_config.DEFAULT_HOST, "host to cleanup")
+	lockPtr    = flag.String(parameterLock, defaultLockName, "lock file")
+	waitPtr    = flag.Duration(parameterWait, defaultWait, "wait")
+	oneTimePtr = flag.Bool(parameterOneTime, false, "exit after first fetch")
 )
 
 func main() {
@@ -31,34 +37,56 @@ func main() {
 	flag.Parse()
 	runtime.GOMAXPROCS(runtime.NumCPU())
 
-	writer := os.Stdout
-	glog.V(2).Infof("use backup dir %s", *rootdirPtr)
-	backupService := backup_service.NewBackupService(*rootdirPtr)
-	err := do(writer, backupService, *rootdirPtr, *hostPtr, LOCK_NAME)
-	if err != nil {
+	if err := do(); err != nil {
 		glog.Exit(err)
 	}
 }
 
-func do(writer io.Writer, backupService backup_service.BackupService, rootdirName string, hostName string, lockName string) error {
-	var err error
-	var hosts []backup_dto.Host
-
-	l := lock.NewLock(lockName)
-	err = l.Lock()
-	if err != nil {
+func do() error {
+	glog.V(2).Infof("do started")
+	l := lock.NewLock(*lockPtr)
+	if err := l.Lock(); err != nil {
 		return err
 	}
 	defer l.Unlock()
-	glog.V(2).Info("start")
 
-	if hostName == backup_config.DEFAULT_HOST {
+	for {
+		glog.V(1).Infof("backup started")
+		if err := cleanup(); err != nil {
+			return err
+		}
+		glog.V(1).Infof("backup finished")
+
+		if *oneTimePtr {
+			glog.V(2).Infof("one-time => exit")
+			return nil
+		}
+
+		glog.V(2).Infof("wait %v", *waitPtr)
+		time.Sleep(*waitPtr)
+		glog.V(2).Infof("sleep done")
+	}
+	glog.V(2).Infof("do finished")
+	return nil
+}
+
+func cleanup() error {
+	glog.V(2).Info("backup cleanup started")
+	if len(*rootdirPtr) == 0 {
+		return fmt.Errorf("parameter %s missing", parameterRootdir)
+	}
+	glog.V(2).Infof("use backup dir %s", *rootdirPtr)
+	backupService := backup_service.NewBackupService(*rootdirPtr)
+
+	var hosts []backup_dto.Host
+	var err error
+	if *hostPtr == backup_config.DEFAULT_HOST {
 		hosts, err = backupService.ListHosts()
 		if err != nil {
 			return err
 		}
 	} else {
-		host, err := backupService.GetHost(hostName)
+		host, err := backupService.GetHost(*hostPtr)
 		if err != nil {
 			return err
 		}
@@ -70,8 +98,8 @@ func do(writer io.Writer, backupService backup_service.BackupService, rootdirNam
 		if err != nil {
 			return err
 		}
-		fmt.Fprintf(writer, "%s cleaned\n", host.GetName())
+		glog.V(1).Infof("clean backups of host %s completed", host.GetName())
 	}
-	glog.V(2).Info("done")
+	glog.V(2).Info("backup cleanup finished")
 	return nil
 }

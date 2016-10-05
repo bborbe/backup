@@ -14,12 +14,14 @@ import (
 )
 
 const (
-	NO_HOST = "-"
+	NO_HOST         = "-"
+	parameterTarget = "target"
+	parameterHost   = "host"
 )
 
 var (
-	rootdirPtr = flag.String("rootdir", backup_config.DEFAULT_ROOT_DIR, "string")
-	hostPtr    = flag.String("host", NO_HOST, "string")
+	rootdirPtr = flag.String(parameterTarget, backup_config.DEFAULT_ROOT_DIR, "string")
+	hostPtr    = flag.String(parameterHost, NO_HOST, "string")
 )
 
 func main() {

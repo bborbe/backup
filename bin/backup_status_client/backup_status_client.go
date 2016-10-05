@@ -13,15 +13,15 @@ import (
 )
 
 const (
-	DEFAULT_PORT     int = 8080
-	DEFAULT_SERVER       = "http://backup.pn.benjamin-borbe.de:7777"
-	PARAMETER_PORT       = "port"
-	PARAMETER_SERVER     = "server"
+	defaultPort     int = 8080
+	defaultServer       = "http://backup.pn.benjamin-borbe.de:7777"
+	parameterPort       = "port"
+	parameterServer     = "server"
 )
 
 var (
-	serverPtr     = flag.String(PARAMETER_SERVER, DEFAULT_SERVER, "backup status server address")
-	portnumberPtr = flag.Int(PARAMETER_PORT, DEFAULT_PORT, "server port")
+	serverPtr     = flag.String(parameterServer, defaultServer, "backup status server address")
+	portnumberPtr = flag.Int(parameterPort, defaultPort, "server port")
 )
 
 func main() {

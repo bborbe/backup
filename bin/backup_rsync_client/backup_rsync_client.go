@@ -2,12 +2,11 @@ package main
 
 import (
 	"fmt"
-	"runtime"
-	"time"
-
 	flag "github.com/bborbe/flagenv"
 	"github.com/bborbe/lock"
 	"github.com/golang/glog"
+	"runtime"
+	"time"
 )
 
 const (

@@ -12,14 +12,14 @@ import (
 )
 
 const (
-	DEFAULT_PORT   int = 8002
-	PARAMETER_ROOT     = "rootdir"
-	PARAMETER_PORT     = "port"
+	defaultPort     int = 8002
+	parameterTarget     = "target"
+	parameterPort       = "port"
 )
 
 var (
-	rootdirPtr    = flag.String(PARAMETER_ROOT, backup_config.DEFAULT_ROOT_DIR, "root directory for backups")
-	portnumberPtr = flag.Int(PARAMETER_PORT, DEFAULT_PORT, "server port")
+	rootdirPtr    = flag.String(parameterTarget, backup_config.DEFAULT_ROOT_DIR, "root directory for backups")
+	portnumberPtr = flag.Int(parameterPort, defaultPort, "server port")
 )
 
 func main() {

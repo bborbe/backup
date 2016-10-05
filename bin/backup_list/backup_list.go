@@ -15,9 +15,14 @@ import (
 	"github.com/golang/glog"
 )
 
+const (
+	parameterTarget = "target"
+	parameterHost   = "host"
+)
+
 var (
-	rootdirPtr = flag.String("rootdir", backup_config.DEFAULT_ROOT_DIR, "string")
-	hostPtr    = flag.String("host", backup_config.DEFAULT_HOST, "string")
+	rootdirPtr = flag.String(parameterTarget, backup_config.DEFAULT_ROOT_DIR, "backup directory")
+	hostPtr    = flag.String(parameterHost, backup_config.DEFAULT_HOST, "host")
 )
 
 func main() {

@@ -5,8 +5,9 @@ import (
 	"os/exec"
 	"strings"
 
-	"github.com/golang/glog"
 	"syscall"
+
+	"github.com/golang/glog"
 )
 
 func runRsync(args ...string) error {

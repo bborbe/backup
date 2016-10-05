@@ -16,7 +16,7 @@ func TestMain(m *testing.M) {
 }
 
 func TestResumeFail(t *testing.T) {
-	if err := AssertThat(DEFAULT_PORT, Is(DEFAULT_PORT)); err != nil {
+	if err := AssertThat(defaultPort, Is(defaultPort)); err != nil {
 		t.Fatal(err)
 	}
 }
