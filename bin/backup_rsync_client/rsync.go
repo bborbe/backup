@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/golang/glog"
+	"syscall"
 )
 
 func runRsync(args ...string) error {
@@ -20,6 +21,16 @@ func runRsync(args ...string) error {
 	}
 	glog.V(2).Infof("rsync started")
 	if err := cmd.Wait(); err != nil {
+		if msg, ok := err.(*exec.ExitError); ok {
+			glog.V(2).Infof("rsync closed with exit error")
+			if waitstatus, ok := msg.Sys().(syscall.WaitStatus); ok {
+				glog.V(2).Infof("rsync closed with exit error: %d", waitstatus.ExitStatus())
+				if waitstatus.ExitStatus() == 24 {
+					glog.V(2).Infof("rsync finished with vanished file error")
+					return nil
+				}
+			}
+		}
 		return err
 	}
 	glog.V(2).Infof("rsync finished")
