@@ -2,15 +2,16 @@ package main
 
 import (
 	"fmt"
+	"runtime"
+	"sort"
+	"time"
+
 	backup_config "github.com/bborbe/backup/constants"
 	backup_dto "github.com/bborbe/backup/dto"
 	backup_service "github.com/bborbe/backup/service"
 	flag "github.com/bborbe/flagenv"
 	"github.com/bborbe/lock"
 	"github.com/golang/glog"
-	"runtime"
-	"sort"
-	"time"
 )
 
 const (
