@@ -38,6 +38,8 @@ func (h *host) Backup(targetDirectory targetDirectory) error {
 		return nil
 	}
 
+	glog.V(1).Infof("backup %s started", h.Host)
+
 	if err := h.createToDirectory(targetDirectory); err != nil {
 		glog.V(2).Infof("create target directory failed: %v", err)
 		return err
@@ -70,7 +72,7 @@ func (h *host) Backup(targetDirectory targetDirectory) error {
 		return err
 	}
 
-	glog.V(2).Infof("backup completed")
+	glog.V(1).Infof("backup %s finished", h.Host)
 	return nil
 }
 
