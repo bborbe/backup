@@ -48,7 +48,11 @@ func do() error {
 	if err := l.Lock(); err != nil {
 		return err
 	}
-	defer l.Unlock()
+	defer func() {
+		if err := l.Unlock(); err != nil {
+			glog.Warningf("unlock failed: %v", err)
+		}
+	}()
 
 	for {
 		glog.V(1).Infof("backup cleanup started")
