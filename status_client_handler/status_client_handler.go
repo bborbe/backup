@@ -10,6 +10,7 @@ import (
 
 	backup_dto "github.com/bborbe/backup/dto"
 	"github.com/golang/glog"
+	"time"
 )
 
 type Download func(url string) (resp *http.Response, err error)
@@ -49,17 +50,22 @@ func (s *statusHandler) serveHTTP(responseWriter http.ResponseWriter, request *h
 	fmt.Fprint(responseWriter, "<html><body>")
 	fmt.Fprint(responseWriter, "<h1>Backup-Status</h1>")
 	fmt.Fprint(responseWriter, "<ul>")
+	now := time.Now()
 	for _, status := range statusList {
 		if status.Status {
-			fmt.Fprint(responseWriter, "<li style=\"color:green\">")
+			fmt.Fprint(responseWriter, "<li>")
+			fmt.Fprint(responseWriter, "<span style=\"color:green\">")
 			fmt.Fprint(responseWriter, status.Host)
-			fmt.Fprint(responseWriter, "</li>")
+			fmt.Fprint(responseWriter, "</span> (")
+			fmt.Fprint(responseWriter, status.LatestBackup.Age(now))
+			fmt.Fprint(responseWriter, ")</li>")
 		} else {
-			fmt.Fprint(responseWriter, "<li style=\"color:red\">")
+			fmt.Fprint(responseWriter, "<li>")
+			fmt.Fprint(responseWriter, "<span style=\"color:red\">")
 			fmt.Fprint(responseWriter, status.Host)
-			fmt.Fprint(responseWriter, " ")
+			fmt.Fprint(responseWriter, "</span> (")
 			fmt.Fprint(responseWriter, status.LatestBackup)
-			fmt.Fprint(responseWriter, "</li>")
+			fmt.Fprint(responseWriter, ")</li>")
 		}
 	}
 	fmt.Fprint(responseWriter, "</ul>")

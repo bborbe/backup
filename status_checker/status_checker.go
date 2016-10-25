@@ -77,7 +77,7 @@ func createStatusDto(host backup_dto.Host, backup backup_dto.Backup, status bool
 	statusDto.Status = status
 	statusDto.Host = host.GetName()
 	if backup != nil {
-		statusDto.LatestBackup = backup.GetName()
+		statusDto.LatestBackup = backup_dto.BackupDate(backup.GetName())
 	}
 	return statusDto
 }
