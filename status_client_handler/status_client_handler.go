@@ -45,7 +45,7 @@ func (s *statusHandler) serveHTTP(responseWriter http.ResponseWriter, request *h
 		glog.V(1).Infof("get status list from %v failed: %v", s.address, err)
 		return err
 	}
-	sort.Sort(backup_dto.StatusByName(statusList))
+	sort.Sort(backup_dto.StatusByDate(statusList))
 	responseWriter.Header().Set("Content-Type", "text/html")
 	fmt.Fprint(responseWriter, "<html><body>")
 	fmt.Fprint(responseWriter, "<h1>Backup-Status</h1>")

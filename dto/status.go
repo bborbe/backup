@@ -14,6 +14,18 @@ func (b BackupDate) Time() (time.Time, error) {
 	return time.Parse("2006-01-02T15:04:05", b.String())
 }
 
+func (b BackupDate) Less(date BackupDate) bool {
+	t1, err := b.Time()
+	if err != nil {
+		return false
+	}
+	t2, err := date.Time()
+	if err != nil {
+		return false
+	}
+	return t1.Before(t2)
+}
+
 func (b BackupDate) Age(now time.Time) string {
 	t, err := b.Time()
 	if err != nil {
