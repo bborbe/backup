@@ -42,6 +42,9 @@ type Status struct {
 
 func FormatDuration(duration time.Duration) string {
 	if hours := int(duration.Hours()); hours > 0 {
+		if hours > 24 {
+			return fmt.Sprintf("%dd", hours/24)
+		}
 		return fmt.Sprintf("%dh", hours)
 	}
 	if minutes := int(duration.Minutes()); minutes > 0 {
