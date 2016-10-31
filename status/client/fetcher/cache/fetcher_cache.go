@@ -1,12 +1,13 @@
 package cache
 
 import (
+	"sync"
+	"time"
+
 	backup_dto "github.com/bborbe/backup/dto"
 	"github.com/bborbe/backup/model"
 	"github.com/bborbe/backup/status/client/fetcher"
 	"github.com/golang/glog"
-	"sync"
-	"time"
 )
 
 type cache struct {
