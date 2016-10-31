@@ -21,7 +21,7 @@ import (
 
 const (
 	defaultPort                  int = 8080
-	defaultStatusServerAddress       = "http://backup.pn.benjamin-borbe.de:7777"
+	defaultStatusServerAddress       = "http://backup.pn.benjamin-borbe.de:1080"
 	parameterPort                    = "port"
 	parameterStatusServerAddress     = "server"
 	parameterCacheTTL                = "cache-ttl"
@@ -30,7 +30,7 @@ const (
 var (
 	statusServerAddressPtr = flag.String(parameterStatusServerAddress, defaultStatusServerAddress, "backup status server address")
 	portnumberPtr          = flag.Int(parameterPort, defaultPort, "server port")
-	cacheTTLPtr            = flag.Duration(parameterCacheTTL, 5*time.Minute, "cache ttl")
+	cacheTTLPtr            = flag.Duration(parameterCacheTTL, 30*time.Second, "cache ttl")
 )
 
 func main() {

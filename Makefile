@@ -23,6 +23,11 @@ runbackupstatusserver:
 	-v=2 \
 	-port=8080 \
 	-rootdir=/tmp
+runbackupstatusclient:
+	backup_status_client \
+	-logtostderr \
+	-v=2 \
+	-port=8080
 runbackuprsyncclient:
 	mkdir -p /tmp/data /tmp/backup
 	echo "Hello World" > /tmp/data/README.txt
