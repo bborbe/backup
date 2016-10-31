@@ -17,7 +17,7 @@ type statusChecker struct {
 	backupService backup_service.BackupService
 }
 
-func NewStatusChecker(backupService backup_service.BackupService) StatusChecker {
+func New(backupService backup_service.BackupService) StatusChecker {
 	s := new(statusChecker)
 	s.backupService = backupService
 	return s

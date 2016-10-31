@@ -9,8 +9,8 @@ import (
 	"runtime"
 
 	backup_dto "github.com/bborbe/backup/dto"
-	backup_status_handler "github.com/bborbe/backup/status_client_handler"
-	"github.com/bborbe/backup/status_fetcher"
+	backup_status_handler "github.com/bborbe/backup/status/client/handler"
+	backup_status_fetcher "github.com/bborbe/backup/status/client/fetcher"
 	http_client_builder "github.com/bborbe/http/client_builder"
 	"github.com/facebookgo/grace/gracehttp"
 	"github.com/golang/glog"
@@ -60,7 +60,7 @@ func createServer() (*http.Server, error) {
 	glog.Infof("port: %v server: %v", port, server)
 
 	httpClient := http_client_builder.New().WithoutProxy().Build()
-	statusFetcher := status_fetcher.New(httpClient.Get)
+	statusFetcher := backup_status_fetcher.New(httpClient.Get)
 	handler := backup_status_handler.New(func() ([]backup_dto.Status, error) {
 		return statusFetcher.StatusList(server)
 	})

@@ -20,7 +20,7 @@ func TestMain(m *testing.M) {
 
 func TestImplementsStatusChecker(t *testing.T) {
 	var backupService backup_service.BackupService
-	object := NewStatusChecker(backupService)
+	object := New(backupService)
 	var expected *StatusChecker
 	err := AssertThat(object, Implements(expected))
 	if err != nil {

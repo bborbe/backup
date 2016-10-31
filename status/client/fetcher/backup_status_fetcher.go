@@ -1,4 +1,4 @@
-package status_fetcher
+package fetcher
 
 import (
 	"encoding/json"
