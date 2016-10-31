@@ -10,20 +10,26 @@ import (
 	"github.com/golang/glog"
 )
 
+type BackupStatusFetcher interface {
+	StatusList() ([]backup_dto.Status, error)
+}
+
 type getUrl func(url string) (resp *http.Response, err error)
 
 type fetcher struct {
-	getUrl getUrl
+	getUrl  getUrl
+	address string
 }
 
-func New(getUrl getUrl) *fetcher {
+func New(getUrl getUrl, address string) *fetcher {
 	f := new(fetcher)
 	f.getUrl = getUrl
+	f.address = address
 	return f
 }
 
-func (f *fetcher) StatusList(address string) ([]backup_dto.Status, error) {
-	resp, err := f.getUrl(address)
+func (f *fetcher) StatusList() ([]backup_dto.Status, error) {
+	resp, err := f.getUrl(f.address)
 	if err != nil {
 		return nil, err
 	}

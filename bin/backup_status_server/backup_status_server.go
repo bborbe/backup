@@ -1,26 +1,27 @@
 package main
 
 import (
+	"fmt"
 	"net/http"
 	"runtime"
-	"fmt"
+
+	backup_config "github.com/bborbe/backup/constants"
 	backup_service "github.com/bborbe/backup/service"
 	backup_status_checker "github.com/bborbe/backup/status/server/checker"
 	backup_status_handler "github.com/bborbe/backup/status/server/handler"
-	backup_config "github.com/bborbe/backup/constants"
 	flag "github.com/bborbe/flagenv"
 	"github.com/facebookgo/grace/gracehttp"
 	"github.com/golang/glog"
 )
 
 const (
-	defaultPort int = 8002
-	parameterTarget = "target"
-	parameterPort = "port"
+	defaultPort     int = 8002
+	parameterTarget     = "target"
+	parameterPort       = "port"
 )
 
 var (
-	rootdirPtr = flag.String(parameterTarget, backup_config.DEFAULT_ROOT_DIR, "root directory for backups")
+	rootdirPtr    = flag.String(parameterTarget, backup_config.DEFAULT_ROOT_DIR, "root directory for backups")
 	portnumberPtr = flag.Int(parameterPort, defaultPort, "server port")
 )
 
@@ -41,8 +42,8 @@ func main() {
 }
 
 func do(
-port int,
-rootdir string,
+	port int,
+	rootdir string,
 ) error {
 	server, err := createServer(
 		port,

@@ -8,24 +8,29 @@ import (
 
 	"runtime"
 
-	backup_dto "github.com/bborbe/backup/dto"
-	backup_status_handler "github.com/bborbe/backup/status/client/handler"
+	"time"
+
+	"github.com/bborbe/backup/model"
 	backup_status_fetcher "github.com/bborbe/backup/status/client/fetcher"
+	"github.com/bborbe/backup/status/client/fetcher/cache"
+	backup_status_handler "github.com/bborbe/backup/status/client/handler"
 	http_client_builder "github.com/bborbe/http/client_builder"
 	"github.com/facebookgo/grace/gracehttp"
 	"github.com/golang/glog"
 )
 
 const (
-	defaultPort     int = 8080
-	defaultServer       = "http://backup.pn.benjamin-borbe.de:7777"
-	parameterPort       = "port"
-	parameterServer     = "server"
+	defaultPort                  int = 8080
+	defaultStatusServerAddress       = "http://backup.pn.benjamin-borbe.de:7777"
+	parameterPort                    = "port"
+	parameterStatusServerAddress     = "server"
+	parameterCacheTTL                = "cache-ttl"
 )
 
 var (
-	serverPtr     = flag.String(parameterServer, defaultServer, "backup status server address")
-	portnumberPtr = flag.Int(parameterPort, defaultPort, "server port")
+	statusServerAddressPtr = flag.String(parameterStatusServerAddress, defaultStatusServerAddress, "backup status server address")
+	portnumberPtr          = flag.Int(parameterPort, defaultPort, "server port")
+	cacheTTLPtr            = flag.Duration(parameterCacheTTL, 5*time.Minute, "cache ttl")
 )
 
 func main() {
@@ -53,16 +58,19 @@ func createServer() (*http.Server, error) {
 	if port <= 0 {
 		return nil, fmt.Errorf("parameter %s missing", parameterPort)
 	}
-	server := *serverPtr
-	if len(server) == 0 {
-		return nil, fmt.Errorf("parameter %s missing", parameterServer)
+	statusServerAddress := *statusServerAddressPtr
+	if len(statusServerAddress) == 0 {
+		return nil, fmt.Errorf("parameter %s missing", parameterStatusServerAddress)
 	}
-	glog.Infof("port: %v server: %v", port, server)
+	cacheTTL := model.CacheTTL(*cacheTTLPtr)
+	if cacheTTL.IsEmpty() {
+		return nil, fmt.Errorf("parameter %s missing", parameterCacheTTL)
+	}
 
 	httpClient := http_client_builder.New().WithoutProxy().Build()
-	statusFetcher := backup_status_fetcher.New(httpClient.Get)
-	handler := backup_status_handler.New(func() ([]backup_dto.Status, error) {
-		return statusFetcher.StatusList(server)
-	})
+	statusFetcher := backup_status_fetcher.New(httpClient.Get, statusServerAddress)
+	cachedStatusFetcher := cache.New(statusFetcher, cacheTTL)
+	handler := backup_status_handler.New(cachedStatusFetcher.StatusList)
+	glog.Infof("start server on port: %v with status api: %v", port, statusServerAddress)
 	return &http.Server{Addr: fmt.Sprintf(":%d", port), Handler: handler}, nil
 }
