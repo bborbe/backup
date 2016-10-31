@@ -4,7 +4,7 @@ import (
 	"github.com/bborbe/stringutil"
 )
 
-type StatusByName []*Status
+type StatusByName []Status
 
 func (v StatusByName) Len() int {
 	return len(v)
@@ -18,7 +18,7 @@ func (v StatusByName) Less(i, j int) bool {
 	return stringutil.StringLess(v[i].Host, v[j].Host)
 }
 
-type StatusByDate []*Status
+type StatusByDate []Status
 
 func (v StatusByDate) Len() int {
 	return len(v)

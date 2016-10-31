@@ -17,7 +17,7 @@ func TestMain(m *testing.M) {
 }
 
 func TestImplementsStatusHandler(t *testing.T) {
-	object := NewStatusHandler(nil, "")
+	object := New(nil)
 	var expected *http.Handler
 	err := AssertThat(object, Implements(expected))
 	if err != nil {
