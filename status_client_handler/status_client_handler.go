@@ -8,9 +8,10 @@ import (
 
 	"sort"
 
+	"time"
+
 	backup_dto "github.com/bborbe/backup/dto"
 	"github.com/golang/glog"
-	"time"
 )
 
 type Download func(url string) (resp *http.Response, err error)

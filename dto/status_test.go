@@ -1,9 +1,10 @@
 package dto
 
 import (
-	. "github.com/bborbe/assert"
 	"testing"
 	"time"
+
+	. "github.com/bborbe/assert"
 )
 
 func TestBackupDateTime(t *testing.T) {
