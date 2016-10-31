@@ -5,7 +5,7 @@ import (
 	"runtime"
 	"fmt"
 	backup_service "github.com/bborbe/backup/service"
-	backup_status_checker "github.com/bborbe/backup/status_checker"
+	backup_status_checker "github.com/bborbe/backup/status/server/checker"
 	backup_status_handler "github.com/bborbe/backup/status/server/handler"
 	backup_config "github.com/bborbe/backup/constants"
 	flag "github.com/bborbe/flagenv"
@@ -58,6 +58,6 @@ rootdir string,
 func createServer(port int, rootdir string) (*http.Server, error) {
 	backupService := backup_service.NewBackupService(rootdir)
 	statusChecker := backup_status_checker.New(backupService)
-	handler := backup_status_handler.NewStatusHandler(statusChecker)
+	handler := backup_status_handler.New(statusChecker)
 	return &http.Server{Addr: fmt.Sprintf(":%d", port), Handler: handler}, nil
 }

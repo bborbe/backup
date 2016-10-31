@@ -1,4 +1,4 @@
-package status_server_handler
+package handler
 
 import (
 	"errors"
@@ -9,7 +9,7 @@ import (
 
 	. "github.com/bborbe/assert"
 	backup_dto "github.com/bborbe/backup/dto"
-	backup_status_checker "github.com/bborbe/backup/status_checker"
+	backup_status_checker "github.com/bborbe/backup/status/server/checker"
 	server_mock "github.com/bborbe/http/mock"
 	"github.com/golang/glog"
 )
@@ -22,7 +22,7 @@ func TestMain(m *testing.M) {
 
 func TestImplementsStatusHandler(t *testing.T) {
 	var statusChecker backup_status_checker.StatusChecker
-	object := NewStatusHandler(statusChecker)
+	object := New(statusChecker)
 	var expected *http.Handler
 	if err := AssertThat(object, Implements(expected)); err != nil {
 		t.Fatal(err)
@@ -34,7 +34,7 @@ func TestStatusCheckerFailure(t *testing.T) {
 	var status []*backup_dto.Status
 	err := errors.New("baem!")
 	statusChecker := backup_status_checker.NewStatusCheckerMock(status, err)
-	handler := NewStatusHandler(statusChecker)
+	handler := New(statusChecker)
 	response := server_mock.NewHttpResponseWriterMock()
 	request, err := server_mock.NewHttpRequestMock("http://www.example.com")
 	if err != nil {
@@ -54,7 +54,7 @@ func TestStatusCheckerNil(t *testing.T) {
 	var status []*backup_dto.Status
 	var err error
 	statusChecker := backup_status_checker.NewStatusCheckerMock(status, err)
-	handler := NewStatusHandler(statusChecker)
+	handler := New(statusChecker)
 	response := server_mock.NewHttpResponseWriterMock()
 	request, err := server_mock.NewHttpRequestMock("http://www.example.com")
 	if err != nil {
@@ -77,7 +77,7 @@ func TestStatusCheckerOne(t *testing.T) {
 		createStatus(true, "fire.example.com"),
 	}
 	statusChecker := backup_status_checker.NewStatusCheckerMock(status, err)
-	handler := NewStatusHandler(statusChecker)
+	handler := New(statusChecker)
 	response := server_mock.NewHttpResponseWriterMock()
 	request, err := server_mock.NewHttpRequestMock("http://www.example.com")
 	if err != nil {
@@ -101,7 +101,7 @@ func TestStatusCheckerTwo(t *testing.T) {
 		createStatus(false, "burn.example.com"),
 	}
 	statusChecker := backup_status_checker.NewStatusCheckerMock(status, err)
-	handler := NewStatusHandler(statusChecker)
+	handler := New(statusChecker)
 	response := server_mock.NewHttpResponseWriterMock()
 	request, err := server_mock.NewHttpRequestMock("http://www.example.com")
 	if err != nil {

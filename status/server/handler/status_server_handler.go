@@ -1,27 +1,27 @@
-package status_server_handler
+package handler
 
 import (
 	"net/http"
 
 	backup_dto "github.com/bborbe/backup/dto"
-	backup_status_checker "github.com/bborbe/backup/status_checker"
+	backup_status_checker "github.com/bborbe/backup/status/server/checker"
 	error_handler "github.com/bborbe/http_handler/error"
 	json_handler "github.com/bborbe/http_handler/json"
 	"github.com/golang/glog"
 )
 
-type statusHandler struct {
+type handler struct {
 	statusChecker backup_status_checker.StatusChecker
 }
 
-func NewStatusHandler(statusChecker backup_status_checker.StatusChecker) http.Handler {
-	s := new(statusHandler)
-	s.statusChecker = statusChecker
-	return s
+func New(statusChecker backup_status_checker.StatusChecker) http.Handler {
+	h := new(handler)
+	h.statusChecker = statusChecker
+	return h
 }
 
-func (s *statusHandler) ServeHTTP(responseWriter http.ResponseWriter, request *http.Request) {
-	status, err := s.statusChecker.Check()
+func (h *handler) ServeHTTP(responseWriter http.ResponseWriter, request *http.Request) {
+	status, err := h.statusChecker.Check()
 	if err != nil {
 		glog.V(2).Infof("check status failed: %v", err)
 		e := error_handler.NewMessage(http.StatusInternalServerError, err.Error())
