@@ -1,28 +1,27 @@
 package main
 
 import (
-	"fmt"
 	"net/http"
 	"runtime"
 
 	backup_config "github.com/bborbe/backup/constants"
+	"github.com/bborbe/backup/model"
 	backup_service "github.com/bborbe/backup/service"
 	backup_status_checker "github.com/bborbe/backup/status/server/checker"
 	backup_status_handler "github.com/bborbe/backup/status/server/handler"
 	flag "github.com/bborbe/flagenv"
 	"github.com/facebookgo/grace/gracehttp"
 	"github.com/golang/glog"
-	"github.com/bborbe/backup/model"
 )
 
 const (
-	defaultPort int = 8002
-	parameterTarget = "target"
-	parameterPort = "port"
+	defaultPort     int = 8002
+	parameterTarget     = "target"
+	parameterPort       = "port"
 )
 
 var (
-	rootdirPtr = flag.String(parameterTarget, backup_config.DEFAULT_ROOT_DIR, "root directory for backups")
+	rootdirPtr    = flag.String(parameterTarget, backup_config.DEFAULT_ROOT_DIR, "root directory for backups")
 	portnumberPtr = flag.Int(parameterPort, defaultPort, "server port")
 )
 
@@ -54,5 +53,5 @@ func createServer() (*http.Server, error) {
 	statusChecker := backup_status_checker.New(backupService)
 	handler := backup_status_handler.New(statusChecker)
 	glog.V(2).Infof("create http server on %s", port.Address())
-	return &http.Server{Addr: fmt.Sprintf(":%d", port), Handler: handler}, nil
+	return &http.Server{Addr: port.Address(), Handler: handler}, nil
 }
