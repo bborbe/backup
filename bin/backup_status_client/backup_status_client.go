@@ -54,7 +54,7 @@ func do() error {
 }
 
 func createServer() (*http.Server, error) {
-	port := *portnumberPtr
+	port := model.Port(*portnumberPtr)
 	if port <= 0 {
 		return nil, fmt.Errorf("parameter %s missing", parameterPort)
 	}
@@ -71,6 +71,6 @@ func createServer() (*http.Server, error) {
 	statusFetcher := backup_status_fetcher.New(httpClient.Get, statusServerAddress)
 	cachedStatusFetcher := cache.New(statusFetcher, cacheTTL)
 	handler := backup_status_handler.New(cachedStatusFetcher.StatusList)
-	glog.Infof("start server on port: %v with status api: %v", port, statusServerAddress)
-	return &http.Server{Addr: fmt.Sprintf(":%d", port), Handler: handler}, nil
+	glog.Infof("start server on port: %v with status api: %v", port.Address(), statusServerAddress)
+	return &http.Server{Addr: port.Address(), Handler: handler}, nil
 }

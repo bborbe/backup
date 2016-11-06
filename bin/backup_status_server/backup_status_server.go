@@ -12,16 +12,17 @@ import (
 	flag "github.com/bborbe/flagenv"
 	"github.com/facebookgo/grace/gracehttp"
 	"github.com/golang/glog"
+	"github.com/bborbe/backup/model"
 )
 
 const (
-	defaultPort     int = 8002
-	parameterTarget     = "target"
-	parameterPort       = "port"
+	defaultPort int = 8002
+	parameterTarget = "target"
+	parameterPort = "port"
 )
 
 var (
-	rootdirPtr    = flag.String(parameterTarget, backup_config.DEFAULT_ROOT_DIR, "root directory for backups")
+	rootdirPtr = flag.String(parameterTarget, backup_config.DEFAULT_ROOT_DIR, "root directory for backups")
 	portnumberPtr = flag.Int(parameterPort, defaultPort, "server port")
 )
 
@@ -31,24 +32,14 @@ func main() {
 	flag.Parse()
 	runtime.GOMAXPROCS(runtime.NumCPU())
 
-	err := do(
-		*portnumberPtr,
-		*rootdirPtr,
-	)
-	if err != nil {
+	if err := do(); err != nil {
 		glog.Exit(err)
 	}
 
 }
 
-func do(
-	port int,
-	rootdir string,
-) error {
-	server, err := createServer(
-		port,
-		rootdir,
-	)
+func do() error {
+	server, err := createServer()
 	if err != nil {
 		return err
 	}
@@ -56,9 +47,12 @@ func do(
 	return gracehttp.Serve(server)
 }
 
-func createServer(port int, rootdir string) (*http.Server, error) {
+func createServer() (*http.Server, error) {
+	port := model.Port(*portnumberPtr)
+	rootdir := *rootdirPtr
 	backupService := backup_service.NewBackupService(rootdir)
 	statusChecker := backup_status_checker.New(backupService)
 	handler := backup_status_handler.New(statusChecker)
+	glog.V(2).Infof("create http server on %s", port.Address())
 	return &http.Server{Addr: fmt.Sprintf(":%d", port), Handler: handler}, nil
 }
