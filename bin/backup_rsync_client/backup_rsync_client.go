@@ -8,6 +8,8 @@ import (
 	flag "github.com/bborbe/flagenv"
 	"github.com/bborbe/lock"
 	"github.com/golang/glog"
+	"github.com/bborbe/cron"
+	"context"
 )
 
 const (
@@ -60,27 +62,15 @@ func do() error {
 		}
 	}()
 
-	for {
-		glog.V(1).Infof("backup started")
-		if err := backup(); err != nil {
-			return err
-		}
-		glog.V(1).Infof("backup finished")
-
-		if *oneTimePtr {
-			glog.V(2).Infof("one-time => exit")
-			return nil
-		}
-
-		glog.V(2).Infof("wait %v", *waitPtr)
-		time.Sleep(*waitPtr)
-		glog.V(2).Infof("sleep done")
-	}
-	glog.V(2).Infof("do finished")
-	return nil
+	cron := cron.New(
+		*oneTimePtr,
+		*waitPtr,
+		backup,
+	)
+	return cron.Run(context.Background())
 }
 
-func backup() error {
+func backup(ctx context.Context) error {
 	hosts, err := getHosts()
 	if err != nil {
 		return err

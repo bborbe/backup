@@ -12,23 +12,25 @@ import (
 	flag "github.com/bborbe/flagenv"
 	"github.com/bborbe/lock"
 	"github.com/golang/glog"
+	"github.com/bborbe/cron"
+	"context"
 )
 
 const (
-	defaultWait      = time.Minute * 5
-	defaultLockName  = "/var/run/backup_cleanup.lock"
-	parameterLock    = "lock"
-	parameterHost    = "host"
+	defaultWait = time.Minute * 5
+	defaultLockName = "/var/run/backup_cleanup.lock"
+	parameterLock = "lock"
+	parameterHost = "host"
 	parameterRootdir = "target"
-	parameterWait    = "wait"
+	parameterWait = "wait"
 	parameterOneTime = "one-time"
 )
 
 var (
 	rootdirPtr = flag.String(parameterRootdir, backup_config.DEFAULT_ROOT_DIR, "backup root directory")
-	hostPtr    = flag.String(parameterHost, backup_config.DEFAULT_HOST, "host to cleanup")
-	lockPtr    = flag.String(parameterLock, defaultLockName, "lock file")
-	waitPtr    = flag.Duration(parameterWait, defaultWait, "wait")
+	hostPtr = flag.String(parameterHost, backup_config.DEFAULT_HOST, "host to cleanup")
+	lockPtr = flag.String(parameterLock, defaultLockName, "lock file")
+	waitPtr = flag.Duration(parameterWait, defaultWait, "wait")
 	oneTimePtr = flag.Bool(parameterOneTime, false, "exit after first fetch")
 )
 
@@ -54,27 +56,17 @@ func do() error {
 		}
 	}()
 
-	for {
-		glog.V(1).Infof("backup cleanup started")
-		if err := cleanup(); err != nil {
-			return err
-		}
-		glog.V(1).Infof("backup cleanup finished")
-
-		if *oneTimePtr {
-			glog.V(2).Infof("one-time => exit")
-			return nil
-		}
-
-		glog.V(2).Infof("wait %v", *waitPtr)
-		time.Sleep(*waitPtr)
-		glog.V(2).Infof("sleep done")
-	}
-	return nil
+	cron := cron.New(
+		*oneTimePtr,
+		*waitPtr,
+		cleanup,
+	)
+	return cron.Run(context.Background())
 }
 
-func cleanup() error {
-	glog.V(2).Info("backup cleanup started")
+func cleanup(ctx context.Context) error {
+	glog.V(1).Info("backup cleanup started")
+	defer glog.V(1).Info("backup cleanup finished")
 	if len(*rootdirPtr) == 0 {
 		return fmt.Errorf("parameter %s missing", parameterRootdir)
 	}

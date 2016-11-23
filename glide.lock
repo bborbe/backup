@@ -1,15 +1,17 @@
-hash: 37d9675e339d2dceb8bd278a7c42d36c284d4af3c436eaeb33b57de6f5f77650
-updated: 2016-10-31T22:12:23.855225552+01:00
+hash: e13fabed03071dbdebeea04643c6fcd4f48ce751cf48f9c2930c40e575a86aed
+updated: 2016-11-23T16:16:48.890719444+01:00
 imports:
+- name: github.com/bborbe/cron
+  version: 7cda28ee402a1a7a1214a7c6e44baabce8622133
 - name: github.com/bborbe/flagenv
   version: 96aab95bb1341e7a7ccf9160e49792e2ad3b0e08
 - name: github.com/bborbe/http
-  version: 67f99d0ea700c6cc4baf9eb1a51b3b3d871d5b69
+  version: 4294467f3ee8720ff3fd0d0b5d3424010f09cccd
   subpackages:
   - client_builder
   - mock
 - name: github.com/bborbe/http_handler
-  version: a8cc0a75e0d5c4e69658f557bd2a9db29fedad4f
+  version: eaabd539fb300f804fb36a2b920e125e3851baa1
   subpackages:
   - error
   - json
