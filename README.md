@@ -50,7 +50,7 @@ backup_rsync_client \
 
 ## Continuous integration
 
-[Jenkins](https://www.benjamin-borbe.de/jenkins/job/Go-Backup/)
+[Jenkins](https://jenkins.benjamin-borbe.de/job/Go-Backup/)
 
 ## Copyright and license
 
