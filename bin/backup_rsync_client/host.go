@@ -15,6 +15,7 @@ type host struct {
 	Active      bool   `json:"active"`
 	User        string `json:"user"`
 	Host        string `json:"host"`
+	Ip          string `json:"ip"`
 	Port        int    `json:"port"`
 	Directory   string `json:"dir"`
 	ExcludeFrom string `json:"exclude_from"`
@@ -165,7 +166,14 @@ func (h *host) createToDirectory(targetDirectory targetDirectory) error {
 }
 
 func (h *host) from() string {
-	return fmt.Sprintf("%s@%s:%s", h.User, h.Host, h.Directory)
+	return fmt.Sprintf("%s@%s:%s", h.User, h.fromAddress(), h.Directory)
+}
+
+func (h *host) fromAddress() string {
+	if len(h.Ip) > 0 {
+		return h.Ip
+	}
+	return h.Host
 }
 
 func (h *host) to(targetDirectory targetDirectory) string {

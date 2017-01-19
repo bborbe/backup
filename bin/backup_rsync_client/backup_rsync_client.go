@@ -5,11 +5,11 @@ import (
 	"runtime"
 	"time"
 
+	"context"
+	"github.com/bborbe/cron"
 	flag "github.com/bborbe/flagenv"
 	"github.com/bborbe/lock"
 	"github.com/golang/glog"
-	"github.com/bborbe/cron"
-	"context"
 )
 
 const (
@@ -19,6 +19,7 @@ const (
 	parameterTarget      = "target"
 	parameterUser        = "user"
 	parameterHost        = "host"
+	parameterIp          = "ip"
 	parameterPort        = "port"
 	parameterDirectory   = "dir"
 	parameterExcludeFrom = "exclude_from"
@@ -32,6 +33,7 @@ var (
 	targetPtr      = flag.String(parameterTarget, "", "target")
 	userPtr        = flag.String(parameterUser, "", "user")
 	hostPtr        = flag.String(parameterHost, "", "host")
+	ipPtr          = flag.String(parameterIp, "", "ip")
 	portPtr        = flag.Int(parameterPort, 22, "port")
 	dirPtr         = flag.String(parameterDirectory, "", "dir")
 	excludeFromPtr = flag.String(parameterExcludeFrom, "", "exclude from")
@@ -146,6 +148,7 @@ func getHosts() ([]host, error) {
 		Active:      true,
 		User:        *userPtr,
 		Host:        *hostPtr,
+		Ip:          *ipPtr,
 		Port:        *portPtr,
 		Directory:   *dirPtr,
 		ExcludeFrom: *excludeFromPtr,

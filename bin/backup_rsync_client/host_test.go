@@ -24,6 +24,14 @@ func TestFrom(t *testing.T) {
 	}
 }
 
+func TestFromWithIp(t *testing.T) {
+	h := getValidHost()
+	h.Ip = "192.168.2.1"
+	if err := AssertThat(h.from(), Is("backupuser@192.168.2.1:/data/")); err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestTo(t *testing.T) {
 	h := getValidHost()
 	if err := AssertThat(h.to(targetDirectory("/backup")), Is("/backup/example.com/incomplete/data/")); err != nil {
