@@ -1,5 +1,7 @@
 # Backup
 
+Tools for backup via rsync.
+
 ## Install
 
 `go get github.com/bborbe/backup/bin/backup_cleanup`
