@@ -6,31 +6,31 @@ import (
 	"sort"
 	"time"
 
+	"context"
 	backup_config "github.com/bborbe/backup/constants"
 	backup_dto "github.com/bborbe/backup/dto"
 	backup_service "github.com/bborbe/backup/service"
+	"github.com/bborbe/cron"
 	flag "github.com/bborbe/flagenv"
 	"github.com/bborbe/lock"
 	"github.com/golang/glog"
-	"github.com/bborbe/cron"
-	"context"
 )
 
 const (
-	defaultWait = time.Minute * 5
-	defaultLockName = "/var/run/backup_cleanup.lock"
-	parameterLock = "lock"
-	parameterHost = "host"
+	defaultWait      = time.Minute * 5
+	defaultLockName  = "/var/run/backup_cleanup.lock"
+	parameterLock    = "lock"
+	parameterHost    = "host"
 	parameterRootdir = "target"
-	parameterWait = "wait"
+	parameterWait    = "wait"
 	parameterOneTime = "one-time"
 )
 
 var (
 	rootdirPtr = flag.String(parameterRootdir, backup_config.DEFAULT_ROOT_DIR, "backup root directory")
-	hostPtr = flag.String(parameterHost, backup_config.DEFAULT_HOST, "host to cleanup")
-	lockPtr = flag.String(parameterLock, defaultLockName, "lock file")
-	waitPtr = flag.Duration(parameterWait, defaultWait, "wait")
+	hostPtr    = flag.String(parameterHost, backup_config.DEFAULT_HOST, "host to cleanup")
+	lockPtr    = flag.String(parameterLock, defaultLockName, "lock file")
+	waitPtr    = flag.Duration(parameterWait, defaultWait, "wait")
 	oneTimePtr = flag.Bool(parameterOneTime, false, "exit after first fetch")
 )
 
@@ -56,12 +56,16 @@ func do() error {
 		}
 	}()
 
-	cron := cron.New(
-		*oneTimePtr,
-		*waitPtr,
-		cleanup,
-	)
-	return cron.Run(context.Background())
+	var c cron.Cron
+	if *oneTimePtr {
+		c = cron.NewOneTimeCron(cleanup)
+	} else {
+		c = cron.NewWaitCron(
+			*waitPtr,
+			cleanup,
+		)
+	}
+	return c.Run(context.Background())
 }
 
 func cleanup(ctx context.Context) error {

@@ -64,12 +64,16 @@ func do() error {
 		}
 	}()
 
-	cron := cron.New(
-		*oneTimePtr,
-		*waitPtr,
-		backup,
-	)
-	return cron.Run(context.Background())
+	var c cron.Cron
+	if *oneTimePtr {
+		c = cron.NewOneTimeCron(backup)
+	} else {
+		c = cron.NewWaitCron(
+			*waitPtr,
+			backup,
+		)
+	}
+	return c.Run(context.Background())
 }
 
 func backup(ctx context.Context) error {
