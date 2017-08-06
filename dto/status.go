@@ -55,3 +55,9 @@ func FormatDuration(duration time.Duration) string {
 	}
 	return duration.String()
 }
+
+type StatusByBackupDate []*Status
+
+func (v StatusByBackupDate) Len() int           { return len(v) }
+func (v StatusByBackupDate) Swap(i, j int)      { v[i], v[j] = v[j], v[i] }
+func (v StatusByBackupDate) Less(i, j int) bool { return v[i].LatestBackup.Less(v[j].LatestBackup) }

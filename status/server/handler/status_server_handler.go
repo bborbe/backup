@@ -3,6 +3,8 @@ package handler
 import (
 	"net/http"
 
+	"sort"
+
 	backup_dto "github.com/bborbe/backup/dto"
 	backup_status_checker "github.com/bborbe/backup/status/server/checker"
 	error_handler "github.com/bborbe/http_handler/error"
@@ -51,5 +53,6 @@ func filter(list []*backup_dto.Status, status string) []*backup_dto.Status {
 			result = append(result, s)
 		}
 	}
+	sort.Sort(backup_dto.StatusByBackupDate(result))
 	return result
 }
