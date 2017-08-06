@@ -10,7 +10,7 @@ import (
 )
 
 type StatusChecker interface {
-	Check() ([]*backup_dto.Status, error)
+	Check() ([]backup_dto.Status, error)
 }
 
 type statusChecker struct {
@@ -23,7 +23,7 @@ func New(backupService backup_service.BackupService) StatusChecker {
 	return s
 }
 
-func (s *statusChecker) Check() ([]*backup_dto.Status, error) {
+func (s *statusChecker) Check() ([]backup_dto.Status, error) {
 	hosts, err := s.backupService.ListHosts()
 	if err != nil {
 		glog.V(2).Infof("list hosts failed: %v", err)
@@ -32,14 +32,14 @@ func (s *statusChecker) Check() ([]*backup_dto.Status, error) {
 	return createStatusDtoForHosts(s.backupService, hosts)
 }
 
-func createStatusDtoForHosts(backupService backup_service.BackupService, hosts []backup_dto.Host) ([]*backup_dto.Status, error) {
-	result := make([]*backup_dto.Status, 0)
+func createStatusDtoForHosts(backupService backup_service.BackupService, hosts []backup_dto.Host) ([]backup_dto.Status, error) {
+	result := make([]backup_dto.Status, 0)
 	for _, host := range hosts {
 		status, err := createStatusDtoForHost(backupService, host)
 		if err != nil {
 			return nil, err
 		}
-		result = append(result, status)
+		result = append(result, *status)
 	}
 	return result, nil
 }

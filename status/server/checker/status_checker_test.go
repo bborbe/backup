@@ -71,7 +71,7 @@ func TestCreateStatusDtoForHostsEmptyHosts(t *testing.T) {
 		err           error
 		backupService backup_service.BackupService
 		hostDtos      []backup_dto.Host
-		statusDtos    []*backup_dto.Status
+		statusDtos    []backup_dto.Status
 	)
 	hostDtos = []backup_dto.Host{}
 	statusDtos, err = createStatusDtoForHosts(backupService, hostDtos)
@@ -89,7 +89,7 @@ func TestCreateStatusDtoForHostsOneHost(t *testing.T) {
 	var (
 		err        error
 		hostDtos   []backup_dto.Host
-		statusDtos []*backup_dto.Status
+		statusDtos []backup_dto.Status
 	)
 	hostName := "fire.example.com"
 	backupName := "2014-01-10T23:15:35"

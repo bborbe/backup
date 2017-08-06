@@ -2,7 +2,6 @@ package handler
 
 import (
 	"net/http"
-
 	"sort"
 
 	backup_dto "github.com/bborbe/backup/dto"
@@ -31,15 +30,16 @@ func (h *handler) ServeHTTP(responseWriter http.ResponseWriter, request *http.Re
 		return
 	}
 	status = filter(status, request.FormValue("status"))
+	sort.Sort(backup_dto.StatusByDate(status))
 	handler := json_handler.New(status)
 	handler.ServeHTTP(responseWriter, request)
 }
 
-func filter(list []*backup_dto.Status, status string) []*backup_dto.Status {
+func filter(list []backup_dto.Status, status string) []backup_dto.Status {
 	if list == nil {
 		return list
 	}
-	result := make([]*backup_dto.Status, 0)
+	result := make([]backup_dto.Status, 0)
 	for _, s := range list {
 		if "true" == status {
 			if s.Status {
@@ -53,6 +53,5 @@ func filter(list []*backup_dto.Status, status string) []*backup_dto.Status {
 			result = append(result, s)
 		}
 	}
-	sort.Sort(backup_dto.StatusByBackupDate(result))
 	return result
 }
