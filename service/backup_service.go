@@ -11,6 +11,7 @@ import (
 	backup_rootdir "github.com/bborbe/backup/rootdir"
 	io_util "github.com/bborbe/io/util"
 	"github.com/golang/glog"
+	"github.com/hashicorp/go-multierror"
 )
 
 type BackupService interface {
@@ -142,6 +143,20 @@ func (s *backupService) Cleanup(hostDto backup_dto.Host) error {
 		glog.V(1).Infof("backup %s deleted", b.Path())
 	}
 	return nil
+}
+
+func (s *backupService) CleanupMulti(hostDtos []backup_dto.Host) error {
+	var result error
+	for _, host := range hostDtos {
+		glog.V(1).Infof("clean backups of host %s stared", host.GetName())
+		if err := s.Cleanup(host); err != nil {
+			glog.V(1).Infof("clean backups of host %s failed: %v", host.GetName(), err)
+			result = multierror.Append(result, err)
+		} else {
+			glog.V(1).Infof("clean backups of host %s finished", host.GetName())
+		}
+	}
+	return result
 }
 
 func (s *backupService) ListKeepBackups(hostDto backup_dto.Host) ([]backup_dto.Backup, error) {

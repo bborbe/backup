@@ -18,5 +18,6 @@ import:
   subpackages:
   - gracehttp
 - package: github.com/golang/glog
+- package: github.com/hashicorp/go-multierror
 testImport:
 - package: github.com/bborbe/assert

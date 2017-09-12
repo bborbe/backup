@@ -1,8 +1,8 @@
-hash: 7f12b1c0183f45f94e5a987d852ecab4267a1b6929e17e7abd17bba01f983507
-updated: 2017-06-13T13:54:08.78753997+02:00
+hash: f61be929197210af0f380c71beba5f6bb5e765e2f8b71ad3a7b5de9fafe821f7
+updated: 2017-09-12T10:51:41.200429612+02:00
 imports:
 - name: github.com/bborbe/cron
-  version: 20d491ed207180aacf635b2006c0c293fd2ab9e1
+  version: 8006b7f28abefd9c42c5c0881b3975f9d5f9c9b4
 - name: github.com/bborbe/flagenv
   version: 4bf10dbe62f41ce40353a70225a84decfd16d3ac
 - name: github.com/bborbe/http
@@ -11,7 +11,7 @@ imports:
   - client_builder
   - mock
 - name: github.com/bborbe/http_handler
-  version: f37455a4839fe130897a0d375d1e7cdf60b06774
+  version: 6bc0de354fca9a13177217df55a32e4e2ba0715f
   subpackages:
   - error
   - json
@@ -36,6 +36,10 @@ imports:
   version: 1b76add642e42c6ffba7211ad7b3939ce654526e
 - name: github.com/golang/glog
   version: 23def4e6c14b4da8ac2ed8007337bc5eb5007998
+- name: github.com/hashicorp/errwrap
+  version: 7554cd9344cec97297fa6649b055a8c98c2a1e55
+- name: github.com/hashicorp/go-multierror
+  version: 83588e72410abfbe4df460eeb6f30841ae47d4c4
 - name: github.com/robfig/cron
   version: 736158dc09e10f1911ca3a1e1b01f11b566ce5db
 testImports:

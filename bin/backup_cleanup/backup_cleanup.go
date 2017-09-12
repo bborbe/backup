@@ -1,12 +1,11 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"runtime"
 	"sort"
 	"time"
-
-	"context"
 
 	backup_config "github.com/bborbe/backup/constants"
 	backup_dto "github.com/bborbe/backup/dto"
@@ -93,13 +92,5 @@ func cleanup(ctx context.Context) error {
 		hosts = []backup_dto.Host{host}
 	}
 	sort.Sort(backup_dto.HostByName(hosts))
-	for _, host := range hosts {
-		glog.V(1).Infof("clean backups of host %s stared", host.GetName())
-		err := backupService.Cleanup(host)
-		if err != nil {
-			return err
-		}
-		glog.V(1).Infof("clean backups of host %s finished", host.GetName())
-	}
-	return nil
+	return backupService.CleanupMulti(hosts)
 }
