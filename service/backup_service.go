@@ -138,6 +138,7 @@ func (s *backupService) Cleanup(hostDto backup_dto.Host) error {
 	var result error
 	for _, backupDto := range backups {
 		b := backup_backup.ByName(h, backupDto.GetName())
+		glog.V(1).Infof("deleted backup %s started", b.Path())
 		if err := b.Delete(); err != nil {
 			glog.V(1).Infof("deleted backup %s failed: %v", b.Path(), err)
 			result = multierror.Append(result, err)
