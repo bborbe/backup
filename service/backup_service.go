@@ -135,14 +135,17 @@ func (s *backupService) Cleanup(hostDto backup_dto.Host) error {
 	}
 	h := backup_host.ByName(s.rootdir, hostDto.GetName())
 	glog.V(2).Infof("found %d backup to delete for host %s", len(backups), hostDto.GetName())
+	var result error
 	for _, backupDto := range backups {
 		b := backup_backup.ByName(h, backupDto.GetName())
 		if err := b.Delete(); err != nil {
-			return err
+			glog.V(1).Infof("deleted backup %s failed: %v", b.Path(), err)
+			result = multierror.Append(result, err)
+		} else {
+			glog.V(1).Infof("deleted backup %s finished", b.Path())
 		}
-		glog.V(1).Infof("backup %s deleted", b.Path())
 	}
-	return nil
+	return result
 }
 
 func (s *backupService) CleanupMulti(hostDtos []backup_dto.Host) error {
