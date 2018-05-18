@@ -1,62 +1,22 @@
-all: test install
+default: test
+
 install:
-	GOBIN=$(GOPATH)/bin GO15VENDOREXPERIMENT=1 go install bin/backup_cleanup/*.go
-	GOBIN=$(GOPATH)/bin GO15VENDOREXPERIMENT=1 go install bin/backup_keep/*.go
-	GOBIN=$(GOPATH)/bin GO15VENDOREXPERIMENT=1 go install bin/backup_list/*.go
-	GOBIN=$(GOPATH)/bin GO15VENDOREXPERIMENT=1 go install bin/backup_old/*.go
-	GOBIN=$(GOPATH)/bin GO15VENDOREXPERIMENT=1 go install bin/backup_resume/*.go
-	GOBIN=$(GOPATH)/bin GO15VENDOREXPERIMENT=1 go install bin/backup_status_client/*.go
-	GOBIN=$(GOPATH)/bin GO15VENDOREXPERIMENT=1 go install bin/backup_status_server/*.go
-	GOBIN=$(GOPATH)/bin GO15VENDOREXPERIMENT=1 go install bin/backup_rsync_client/*.go
+	GOBIN=$(GOPATH)/bin GO15VENDOREXPERIMENT=1 go install cmd/backup-cleanup/*.go
+	GOBIN=$(GOPATH)/bin GO15VENDOREXPERIMENT=1 go install cmd/backup-keep/*.go
+	GOBIN=$(GOPATH)/bin GO15VENDOREXPERIMENT=1 go install cmd/backup-latest/*.go
+	GOBIN=$(GOPATH)/bin GO15VENDOREXPERIMENT=1 go install cmd/backup-list/*.go
+	GOBIN=$(GOPATH)/bin GO15VENDOREXPERIMENT=1 go install cmd/backup-old/*.go
+	GOBIN=$(GOPATH)/bin GO15VENDOREXPERIMENT=1 go install cmd/backup-resume/*.go
+	GOBIN=$(GOPATH)/bin GO15VENDOREXPERIMENT=1 go install cmd/backup-rsync-client/*.go
+	GOBIN=$(GOPATH)/bin GO15VENDOREXPERIMENT=1 go install cmd/backup-status-client/*.go
+	GOBIN=$(GOPATH)/bin GO15VENDOREXPERIMENT=1 go install cmd/backup-status-server/*.go
+
 test:
-	GO15VENDOREXPERIMENT=1 go test -cover `glide novendor`
-vet:
-	go tool vet .
-	go tool vet --shadow .
-lint:
-	golint -min_confidence 1 ./...
-errcheck:
-	errcheck -ignore '(Close|Write)' ./...
-check: lint vet errcheck
-runbackupstatusserver:
-	backup_status_server \
-	-logtostderr \
-	-v=2 \
-	-port=8080 \
-	-rootdir=/tmp
-runbackupstatusclient:
-	backup_status_client \
-	-logtostderr \
-	-v=2 \
-	-port=8080
-runbackuprsyncclient:
-	mkdir -p /tmp/data /tmp/backup
-	echo "Hello World" > /tmp/data/README.txt
-	echo "- /dev" > /tmp/excludes
-	backup_rsync_client \
-	-logtostderr \
-	-v=4 \
-	-lock=/tmp/backup_rsync_client.lock \
-	-target=/tmp/backup \
-	-user=bborbe \
-	-host=localhost \
-	-port=22 \
-	-dir=/tmp/data/ \
-	-exclude_from=/tmp/excludes \
-	-one-time
-open:
-	open http://localhost:8080/
-format:
-	find . -name "*.go" -exec gofmt -w "{}" \;
-	goimports -w=true .
-prepare:
-	go get -u golang.org/x/tools/cmd/goimports
-	go get -u github.com/Masterminds/glide
-	go get -u github.com/golang/lint/golint
-	go get -u github.com/kisielk/errcheck
-	glide install
-	npm install
-update:
-	glide up
-clean:
-	rm -rf vendor target
+	go test -cover -race $(shell go list ./... | grep -v /vendor/)
+
+goimports:
+	go get golang.org/x/tools/cmd/goimports
+
+format: goimports
+	find . -type f -name '*.go' -not -path './vendor/*' -exec gofmt -w "{}" +
+	find . -type f -name '*.go' -not -path './vendor/*' -exec goimports -w "{}" +
