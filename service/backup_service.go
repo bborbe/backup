@@ -152,7 +152,7 @@ func (s *backupService) Cleanup(hostDto backup_dto.Host) error {
 func (s *backupService) CleanupMulti(hostDtos []backup_dto.Host) error {
 	var result error
 	for _, host := range hostDtos {
-		glog.V(1).Infof("clean backups of host %s stared", host.GetName())
+		glog.V(1).Infof("clean backups of host %s started", host.GetName())
 		if err := s.Cleanup(host); err != nil {
 			glog.V(1).Infof("clean backups of host %s failed: %v", host.GetName(), err)
 			result = multierror.Append(result, err)
