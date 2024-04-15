@@ -5,11 +5,13 @@ RUN CGO_ENABLED=0 GOOS=linux go build -mod=vendor -ldflags "-s" -a -installsuffi
 CMD ["/bin/bash"]
 
 FROM alpine:3.19 as alpine
-RUN apk --no-cache add ca-certificates
-
-FROM scratch
+RUN apk --no-cache add \
+	ca-certificates \
+	rsync \
+	openssh-client \
+	tzdata \
+	&& rm -rf /var/cache/apk/*
 COPY --from=build /main /main
-COPY --from=alpine /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
 COPY --from=build /usr/local/go/lib/time/zoneinfo.zip /
 ENV ZONEINFO=/zoneinfo.zip
 ENTRYPOINT ["/main"]
