@@ -170,8 +170,8 @@ func createSpec() v1.CustomResourceDefinitionSpec {
 		Names: v1.CustomResourceDefinitionNames{
 			Kind:     "Target",
 			ListKind: "TargetList",
-			Plural:   "Targets",
-			Singular: "Target",
+			Plural:   "targets",
+			Singular: "target",
 		},
 		Scope: "Namespaced",
 		Versions: []v1.CustomResourceDefinitionVersion{

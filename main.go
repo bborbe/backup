@@ -32,7 +32,7 @@ type application struct {
 	SentryDSN      string `required:"true" arg:"sentry-dsn" env:"SENTRY_DSN" usage:"SentryDSN" display:"length"`
 	Listen         string `required:"true" arg:"listen" env:"LISTEN" usage:"address to listen to"`
 	Kubeconfig     string `required:"false" arg:"kubeconfig" env:"KUBECONFIG" usage:"Path to k8s config"`
-	CronExpression string `required:"false" arg:"cron-schedule-expression" env:"CRON_SCHEDULE_EXPRESSION" usage:"Cron schedule expression to determine when service is run" default:"@every 1m"`
+	CronExpression string `required:"true" arg:"cron-expression" env:"CRON_EXPRESSION" usage:"Cron expression to determine when service is run" default:"0 0 0 * * ?"`
 }
 
 func (a *application) Run(ctx context.Context, sentryClient libsentry.Client) error {
