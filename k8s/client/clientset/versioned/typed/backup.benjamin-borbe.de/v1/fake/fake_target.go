@@ -19,7 +19,7 @@ import (
 
 // FakeTargets implements TargetInterface
 type FakeTargets struct {
-	Fake *FakeMonitoringV1
+	Fake *FakeBackupV1
 	ns   string
 }
 

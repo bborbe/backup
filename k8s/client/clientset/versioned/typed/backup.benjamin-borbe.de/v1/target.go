@@ -45,7 +45,7 @@ type targets struct {
 }
 
 // newTargets returns a Targets
-func newTargets(c *MonitoringV1Client, namespace string) *targets {
+func newTargets(c *BackupV1Client, namespace string) *targets {
 	return &targets{
 		client: c.RESTClient(),
 		ns:     namespace,

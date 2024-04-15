@@ -9,17 +9,17 @@ import (
 	v1 "github.com/bborbe/backup/k8s/client/clientset/versioned/typed/backup.benjamin-borbe.de/v1"
 )
 
-type FakeMonitoringV1 struct {
+type FakeBackupV1 struct {
 	*testing.Fake
 }
 
-func (c *FakeMonitoringV1) Targets(namespace string) v1.TargetInterface {
+func (c *FakeBackupV1) Targets(namespace string) v1.TargetInterface {
 	return &FakeTargets{c, namespace}
 }
 
 // RESTClient returns a RESTClient that is used to communicate
 // with API server by this client implementation.
-func (c *FakeMonitoringV1) RESTClient() rest.Interface {
+func (c *FakeBackupV1) RESTClient() rest.Interface {
 	var ret *rest.RESTClient
 	return ret
 }

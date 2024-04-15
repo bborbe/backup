@@ -228,9 +228,9 @@ type SharedInformerFactory interface {
 	// client.
 	InformerFor(obj runtime.Object, newFunc internalinterfaces.NewInformerFunc) cache.SharedIndexInformer
 
-	Monitoring() backupbenjaminborbede.Interface
+	Backup() backupbenjaminborbede.Interface
 }
 
-func (f *sharedInformerFactory) Monitoring() backupbenjaminborbede.Interface {
+func (f *sharedInformerFactory) Backup() backupbenjaminborbede.Interface {
 	return backupbenjaminborbede.New(f, f.namespace, f.tweakListOptions)
 }

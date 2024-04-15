@@ -2,13 +2,36 @@ module github.com/bborbe/backup
 
 go 1.22.2
 
+exclude (
+	k8s.io/api v0.29.0
+	k8s.io/api v0.29.1
+	k8s.io/api v0.29.2
+	k8s.io/api v0.29.3
+	k8s.io/apiextensions-apiserver v0.29.0
+	k8s.io/apiextensions-apiserver v0.29.1
+	k8s.io/apiextensions-apiserver v0.29.2
+	k8s.io/apiextensions-apiserver v0.29.3
+	k8s.io/apimachinery v0.29.0
+	k8s.io/apimachinery v0.29.1
+	k8s.io/apimachinery v0.29.2
+	k8s.io/apimachinery v0.29.3
+	k8s.io/client-go v0.29.0
+	k8s.io/client-go v0.29.1
+	k8s.io/client-go v0.29.2
+	k8s.io/client-go v0.29.3
+	k8s.io/code-generator v0.29.0
+	k8s.io/code-generator v0.29.1
+	k8s.io/code-generator v0.29.2
+	k8s.io/code-generator v0.29.3
+)
+
 require (
 	github.com/bborbe/errors v1.2.0
 	github.com/bborbe/http v1.1.0
 	github.com/bborbe/log v1.0.0
 	github.com/bborbe/run v1.5.0
-	github.com/bborbe/sentry v0.0.0-20240415191044-216dafe6da2c
-	github.com/bborbe/service v0.0.0-20240415191656-bedfe82c446b
+	github.com/bborbe/sentry v1.0.0
+	github.com/bborbe/service v1.0.0
 	github.com/bborbe/validation v1.0.0
 	github.com/golang/glog v1.2.1
 	github.com/google/addlicense v1.1.1
@@ -21,10 +44,11 @@ require (
 	github.com/prometheus/client_golang v1.19.0
 	golang.org/x/lint v0.0.0-20210508222113-6edffad5e616
 	golang.org/x/vuln v1.0.4
-	k8s.io/apimachinery v0.29.3
-	k8s.io/client-go v0.29.3
-	k8s.io/code-generator v0.28.6
-	sigs.k8s.io/structured-merge-diff/v4 v4.4.1
+	k8s.io/apiextensions-apiserver v0.28.8
+	k8s.io/apimachinery v0.28.8
+	k8s.io/client-go v0.28.8
+	k8s.io/code-generator v0.28.8
+	sigs.k8s.io/structured-merge-diff/v4 v4.2.3
 )
 
 require (
@@ -35,7 +59,7 @@ require (
 	github.com/certifi/gocertifi v0.0.0-20210507211836-431795d63e8d // indirect
 	github.com/cespare/xxhash/v2 v2.2.0 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
-	github.com/emicklei/go-restful/v3 v3.11.0 // indirect
+	github.com/emicklei/go-restful/v3 v3.9.0 // indirect
 	github.com/evanphx/json-patch v4.12.0+incompatible // indirect
 	github.com/getsentry/raven-go v0.2.0 // indirect
 	github.com/getsentry/sentry-go v0.27.0 // indirect
@@ -51,6 +75,7 @@ require (
 	github.com/google/gofuzz v1.2.0 // indirect
 	github.com/google/pprof v0.0.0-20240320155624-b11c3daa6f07 // indirect
 	github.com/google/uuid v1.3.0 // indirect
+	github.com/imdario/mergo v0.3.6 // indirect
 	github.com/josharian/intern v1.0.0 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/mailru/easyjson v0.7.7 // indirect
@@ -76,11 +101,11 @@ require (
 	gopkg.in/inf.v0 v0.9.1 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
-	k8s.io/api v0.29.3 // indirect
-	k8s.io/gengo v0.0.0-20230829151522-9cce18d56c01 // indirect
-	k8s.io/klog/v2 v2.110.1 // indirect
-	k8s.io/kube-openapi v0.0.0-20231010175941-2dd684a91f00 // indirect
-	k8s.io/utils v0.0.0-20230726121419-3b25d923346b // indirect
+	k8s.io/api v0.28.8 // indirect
+	k8s.io/gengo v0.0.0-20220902162205-c0856e24416d // indirect
+	k8s.io/klog/v2 v2.100.1 // indirect
+	k8s.io/kube-openapi v0.0.0-20230717233707-2695361300d9 // indirect
+	k8s.io/utils v0.0.0-20230406110748-d93618cff8a2 // indirect
 	sigs.k8s.io/json v0.0.0-20221116044647-bc3834ca7abd // indirect
 	sigs.k8s.io/yaml v1.3.0 // indirect
 )

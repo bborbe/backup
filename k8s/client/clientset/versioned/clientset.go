@@ -10,23 +10,23 @@ import (
 	rest "k8s.io/client-go/rest"
 	flowcontrol "k8s.io/client-go/util/flowcontrol"
 
-	monitoringv1 "github.com/bborbe/backup/k8s/client/clientset/versioned/typed/backup.benjamin-borbe.de/v1"
+	backupv1 "github.com/bborbe/backup/k8s/client/clientset/versioned/typed/backup.benjamin-borbe.de/v1"
 )
 
 type Interface interface {
 	Discovery() discovery.DiscoveryInterface
-	MonitoringV1() monitoringv1.MonitoringV1Interface
+	BackupV1() backupv1.BackupV1Interface
 }
 
 // Clientset contains the clients for groups.
 type Clientset struct {
 	*discovery.DiscoveryClient
-	monitoringV1 *monitoringv1.MonitoringV1Client
+	backupV1 *backupv1.BackupV1Client
 }
 
-// MonitoringV1 retrieves the MonitoringV1Client
-func (c *Clientset) MonitoringV1() monitoringv1.MonitoringV1Interface {
-	return c.monitoringV1
+// BackupV1 retrieves the BackupV1Client
+func (c *Clientset) BackupV1() backupv1.BackupV1Interface {
+	return c.backupV1
 }
 
 // Discovery retrieves the DiscoveryClient
@@ -73,7 +73,7 @@ func NewForConfigAndClient(c *rest.Config, httpClient *http.Client) (*Clientset,
 
 	var cs Clientset
 	var err error
-	cs.monitoringV1, err = monitoringv1.NewForConfigAndClient(&configShallowCopy, httpClient)
+	cs.backupV1, err = backupv1.NewForConfigAndClient(&configShallowCopy, httpClient)
 	if err != nil {
 		return nil, err
 	}
@@ -98,7 +98,7 @@ func NewForConfigOrDie(c *rest.Config) *Clientset {
 // New creates a new Clientset for the given RESTClient.
 func New(c rest.Interface) *Clientset {
 	var cs Clientset
-	cs.monitoringV1 = monitoringv1.New(c)
+	cs.backupV1 = backupv1.New(c)
 
 	cs.DiscoveryClient = discovery.NewDiscoveryClient(c)
 	return &cs

@@ -13,7 +13,7 @@ import (
 // apply configuration type exists for the given GroupVersionKind.
 func ForKind(kind schema.GroupVersionKind) interface{} {
 	switch kind {
-	// Group=monitoring, Version=v1
+	// Group=backup, Version=v1
 	case v1.SchemeGroupVersion.WithKind("BackupSpec"):
 		return &backupbenjaminborbedev1.BackupSpecApplyConfiguration{}
 	case v1.SchemeGroupVersion.WithKind("Target"):

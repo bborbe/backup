@@ -10,8 +10,8 @@ import (
 	"k8s.io/client-go/testing"
 
 	clientset "github.com/bborbe/backup/k8s/client/clientset/versioned"
-	monitoringv1 "github.com/bborbe/backup/k8s/client/clientset/versioned/typed/backup.benjamin-borbe.de/v1"
-	fakemonitoringv1 "github.com/bborbe/backup/k8s/client/clientset/versioned/typed/backup.benjamin-borbe.de/v1/fake"
+	backupv1 "github.com/bborbe/backup/k8s/client/clientset/versioned/typed/backup.benjamin-borbe.de/v1"
+	fakebackupv1 "github.com/bborbe/backup/k8s/client/clientset/versioned/typed/backup.benjamin-borbe.de/v1/fake"
 )
 
 // NewSimpleClientset returns a clientset that will respond with the provided objects.
@@ -64,7 +64,7 @@ var (
 	_ testing.FakeClient  = &Clientset{}
 )
 
-// MonitoringV1 retrieves the MonitoringV1Client
-func (c *Clientset) MonitoringV1() monitoringv1.MonitoringV1Interface {
-	return &fakemonitoringv1.FakeMonitoringV1{Fake: &c.Fake}
+// BackupV1 retrieves the BackupV1Client
+func (c *Clientset) BackupV1() backupv1.BackupV1Interface {
+	return &fakebackupv1.FakeBackupV1{Fake: &c.Fake}
 }

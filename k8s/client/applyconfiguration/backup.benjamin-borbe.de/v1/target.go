@@ -23,7 +23,7 @@ func Target(name, namespace string) *TargetApplyConfiguration {
 	b.WithName(name)
 	b.WithNamespace(namespace)
 	b.WithKind("Target")
-	b.WithAPIVersion("monitoring/v1")
+	b.WithAPIVersion("backup/v1")
 	return b
 }
 

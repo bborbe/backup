@@ -11,24 +11,24 @@ import (
 	"github.com/bborbe/backup/k8s/client/clientset/versioned/scheme"
 )
 
-type MonitoringV1Interface interface {
+type BackupV1Interface interface {
 	RESTClient() rest.Interface
 	TargetsGetter
 }
 
-// MonitoringV1Client is used to interact with features provided by the monitoring group.
-type MonitoringV1Client struct {
+// BackupV1Client is used to interact with features provided by the backup group.
+type BackupV1Client struct {
 	restClient rest.Interface
 }
 
-func (c *MonitoringV1Client) Targets(namespace string) TargetInterface {
+func (c *BackupV1Client) Targets(namespace string) TargetInterface {
 	return newTargets(c, namespace)
 }
 
-// NewForConfig creates a new MonitoringV1Client for the given config.
+// NewForConfig creates a new BackupV1Client for the given config.
 // NewForConfig is equivalent to NewForConfigAndClient(c, httpClient),
 // where httpClient was generated with rest.HTTPClientFor(c).
-func NewForConfig(c *rest.Config) (*MonitoringV1Client, error) {
+func NewForConfig(c *rest.Config) (*BackupV1Client, error) {
 	config := *c
 	if err := setConfigDefaults(&config); err != nil {
 		return nil, err
@@ -40,9 +40,9 @@ func NewForConfig(c *rest.Config) (*MonitoringV1Client, error) {
 	return NewForConfigAndClient(&config, httpClient)
 }
 
-// NewForConfigAndClient creates a new MonitoringV1Client for the given config and http client.
+// NewForConfigAndClient creates a new BackupV1Client for the given config and http client.
 // Note the http client provided takes precedence over the configured transport values.
-func NewForConfigAndClient(c *rest.Config, h *http.Client) (*MonitoringV1Client, error) {
+func NewForConfigAndClient(c *rest.Config, h *http.Client) (*BackupV1Client, error) {
 	config := *c
 	if err := setConfigDefaults(&config); err != nil {
 		return nil, err
@@ -51,12 +51,12 @@ func NewForConfigAndClient(c *rest.Config, h *http.Client) (*MonitoringV1Client,
 	if err != nil {
 		return nil, err
 	}
-	return &MonitoringV1Client{client}, nil
+	return &BackupV1Client{client}, nil
 }
 
-// NewForConfigOrDie creates a new MonitoringV1Client for the given config and
+// NewForConfigOrDie creates a new BackupV1Client for the given config and
 // panics if there is an error in the config.
-func NewForConfigOrDie(c *rest.Config) *MonitoringV1Client {
+func NewForConfigOrDie(c *rest.Config) *BackupV1Client {
 	client, err := NewForConfig(c)
 	if err != nil {
 		panic(err)
@@ -64,9 +64,9 @@ func NewForConfigOrDie(c *rest.Config) *MonitoringV1Client {
 	return client
 }
 
-// New creates a new MonitoringV1Client for the given RESTClient.
-func New(c rest.Interface) *MonitoringV1Client {
-	return &MonitoringV1Client{c}
+// New creates a new BackupV1Client for the given RESTClient.
+func New(c rest.Interface) *BackupV1Client {
+	return &BackupV1Client{c}
 }
 
 func setConfigDefaults(config *rest.Config) error {
@@ -84,7 +84,7 @@ func setConfigDefaults(config *rest.Config) error {
 
 // RESTClient returns a RESTClient that is used to communicate
 // with API server by this client implementation.
-func (c *MonitoringV1Client) RESTClient() rest.Interface {
+func (c *BackupV1Client) RESTClient() rest.Interface {
 	if c == nil {
 		return nil
 	}
