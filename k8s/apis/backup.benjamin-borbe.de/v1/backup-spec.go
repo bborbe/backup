@@ -35,10 +35,11 @@ func (f BackupUser) String() string {
 
 // BackupSpec is the spec for a Foo resource
 type BackupSpec struct {
-	Host BackupHost `json:"host" yaml:"host"`
-	Port BackupPort `json:"port" yaml:"port"`
-	User BackupUser `json:"user" yaml:"user"`
-	Dirs BackupDirs `json:"dirs" yaml:"dirs"`
+	Host     BackupHost     `json:"host" yaml:"host"`
+	Port     BackupPort     `json:"port" yaml:"port"`
+	User     BackupUser     `json:"user" yaml:"user"`
+	Dirs     BackupDirs     `json:"dirs" yaml:"dirs"`
+	Excludes BackupExcludes `json:"excludes" yaml:"excludes"`
 }
 
 func (a BackupSpec) Equal(backup BackupSpec) bool {
@@ -52,6 +53,9 @@ func (a BackupSpec) Equal(backup BackupSpec) bool {
 		return false
 	}
 	if collection.Equal(a.Dirs.Sorted(), backup.Dirs.Sorted()) == false {
+		return false
+	}
+	if collection.Equal(a.Excludes.Sorted(), backup.Excludes.Sorted()) == false {
 		return false
 	}
 	return true

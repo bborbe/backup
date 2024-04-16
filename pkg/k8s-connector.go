@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/bborbe/errors"
+	"github.com/bborbe/k8s"
 	"github.com/golang/glog"
 	"k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1"
 	apiextensionsClient "k8s.io/apiextensions-apiserver/pkg/client/clientset/clientset"
@@ -32,18 +33,38 @@ type K8sConnector interface {
 	SetupCustomResourceDefinition(ctx context.Context) error
 	Listen(ctx context.Context, resourceEventHandler cache.ResourceEventHandler) error
 	Targets(ctx context.Context) (backupv1.Targets, error)
+	Target(ctx context.Context, name string) (*backupv1.Target, error)
 }
 
 func NewK8sConnector(
 	kubeconfig string,
+	namespace k8s.Namespace,
 ) K8sConnector {
 	return &k8sConnector{
 		kubeconfig: kubeconfig,
+		namespace:  namespace,
 	}
 }
 
 type k8sConnector struct {
 	kubeconfig string
+	namespace  k8s.Namespace
+}
+
+func (k *k8sConnector) Target(ctx context.Context, name string) (*backupv1.Target, error) {
+	config, err := k.createKubernetesConfig()
+	if err != nil {
+		return nil, errors.Wrap(ctx, err, "build k8s config failed")
+	}
+	clientset, err := versioned.NewForConfig(config)
+	if err != nil {
+		return nil, errors.Wrap(ctx, err, "build clientset failed")
+	}
+	target, err := clientset.BackupV1().Targets(k.namespace.String()).Get(ctx, name, metav1.GetOptions{})
+	if err != nil {
+		return nil, errors.Wrap(ctx, err, "list target failed")
+	}
+	return target, nil
 }
 
 func (k *k8sConnector) Targets(ctx context.Context) (backupv1.Targets, error) {
@@ -55,11 +76,11 @@ func (k *k8sConnector) Targets(ctx context.Context) (backupv1.Targets, error) {
 	if err != nil {
 		return nil, errors.Wrap(ctx, err, "build clientset failed")
 	}
-	topicList, err := clientset.BackupV1().Targets("").List(ctx, metav1.ListOptions{})
+	targetList, err := clientset.BackupV1().Targets(k.namespace.String()).List(ctx, metav1.ListOptions{})
 	if err != nil {
-		return nil, errors.Wrap(ctx, err, "list topic failed")
+		return nil, errors.Wrap(ctx, err, "list target failed")
 	}
-	return topicList.Items, nil
+	return targetList.Items, nil
 }
 
 func (k *k8sConnector) Listen(

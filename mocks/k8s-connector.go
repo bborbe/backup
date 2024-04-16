@@ -34,6 +34,20 @@ type K8sConnector struct {
 	setupCustomResourceDefinitionReturnsOnCall map[int]struct {
 		result1 error
 	}
+	TargetStub        func(context.Context, string) (*v1.Target, error)
+	targetMutex       sync.RWMutex
+	targetArgsForCall []struct {
+		arg1 context.Context
+		arg2 string
+	}
+	targetReturns struct {
+		result1 *v1.Target
+		result2 error
+	}
+	targetReturnsOnCall map[int]struct {
+		result1 *v1.Target
+		result2 error
+	}
 	TargetsStub        func(context.Context) (v1.Targets, error)
 	targetsMutex       sync.RWMutex
 	targetsArgsForCall []struct {
@@ -174,6 +188,71 @@ func (fake *K8sConnector) SetupCustomResourceDefinitionReturnsOnCall(i int, resu
 	}{result1}
 }
 
+func (fake *K8sConnector) Target(arg1 context.Context, arg2 string) (*v1.Target, error) {
+	fake.targetMutex.Lock()
+	ret, specificReturn := fake.targetReturnsOnCall[len(fake.targetArgsForCall)]
+	fake.targetArgsForCall = append(fake.targetArgsForCall, struct {
+		arg1 context.Context
+		arg2 string
+	}{arg1, arg2})
+	stub := fake.TargetStub
+	fakeReturns := fake.targetReturns
+	fake.recordInvocation("Target", []interface{}{arg1, arg2})
+	fake.targetMutex.Unlock()
+	if stub != nil {
+		return stub(arg1, arg2)
+	}
+	if specificReturn {
+		return ret.result1, ret.result2
+	}
+	return fakeReturns.result1, fakeReturns.result2
+}
+
+func (fake *K8sConnector) TargetCallCount() int {
+	fake.targetMutex.RLock()
+	defer fake.targetMutex.RUnlock()
+	return len(fake.targetArgsForCall)
+}
+
+func (fake *K8sConnector) TargetCalls(stub func(context.Context, string) (*v1.Target, error)) {
+	fake.targetMutex.Lock()
+	defer fake.targetMutex.Unlock()
+	fake.TargetStub = stub
+}
+
+func (fake *K8sConnector) TargetArgsForCall(i int) (context.Context, string) {
+	fake.targetMutex.RLock()
+	defer fake.targetMutex.RUnlock()
+	argsForCall := fake.targetArgsForCall[i]
+	return argsForCall.arg1, argsForCall.arg2
+}
+
+func (fake *K8sConnector) TargetReturns(result1 *v1.Target, result2 error) {
+	fake.targetMutex.Lock()
+	defer fake.targetMutex.Unlock()
+	fake.TargetStub = nil
+	fake.targetReturns = struct {
+		result1 *v1.Target
+		result2 error
+	}{result1, result2}
+}
+
+func (fake *K8sConnector) TargetReturnsOnCall(i int, result1 *v1.Target, result2 error) {
+	fake.targetMutex.Lock()
+	defer fake.targetMutex.Unlock()
+	fake.TargetStub = nil
+	if fake.targetReturnsOnCall == nil {
+		fake.targetReturnsOnCall = make(map[int]struct {
+			result1 *v1.Target
+			result2 error
+		})
+	}
+	fake.targetReturnsOnCall[i] = struct {
+		result1 *v1.Target
+		result2 error
+	}{result1, result2}
+}
+
 func (fake *K8sConnector) Targets(arg1 context.Context) (v1.Targets, error) {
 	fake.targetsMutex.Lock()
 	ret, specificReturn := fake.targetsReturnsOnCall[len(fake.targetsArgsForCall)]
@@ -245,6 +324,8 @@ func (fake *K8sConnector) Invocations() map[string][][]interface{} {
 	defer fake.listenMutex.RUnlock()
 	fake.setupCustomResourceDefinitionMutex.RLock()
 	defer fake.setupCustomResourceDefinitionMutex.RUnlock()
+	fake.targetMutex.RLock()
+	defer fake.targetMutex.RUnlock()
 	fake.targetsMutex.RLock()
 	defer fake.targetsMutex.RUnlock()
 	copiedInvocations := map[string][][]interface{}{}

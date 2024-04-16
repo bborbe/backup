@@ -21,9 +21,11 @@ type BackupExectuor interface {
 func NewBackupExectuor(
 	currentTimeGetter libtime.CurrentTimeGetter,
 	rsyncExectuor RsyncExectuor,
-	backupRootDirectory string,
+	backupRootDirectory BackupRootDirectory,
+	sshPrivateKey SSHPrivateKey,
 ) BackupExectuor {
 	return &backupExectuor{
+		sshPrivateKey:       sshPrivateKey,
 		currentTimeGetter:   currentTimeGetter,
 		backupRootDirectory: backupRootDirectory,
 		rsyncExectuor:       rsyncExectuor,
@@ -33,7 +35,8 @@ func NewBackupExectuor(
 type backupExectuor struct {
 	currentTimeGetter   libtime.CurrentTimeGetter
 	rsyncExectuor       RsyncExectuor
-	backupRootDirectory string
+	backupRootDirectory BackupRootDirectory
+	sshPrivateKey       SSHPrivateKey
 }
 
 func (b *backupExectuor) Backup(ctx context.Context, backupSpec v1.BackupSpec) error {
@@ -74,7 +77,6 @@ func (b *backupExectuor) Backup(ctx context.Context, backupSpec v1.BackupSpec) e
 	if err := b.removeEmpty(ctx, backupSpec); err != nil {
 		return errors.Wrapf(ctx, err, "remove empty failed")
 	}
-
 	return nil
 }
 
@@ -112,11 +114,22 @@ func (b *backupExectuor) createCurrentIfNotExists(ctx context.Context, backupSpe
 func (b *backupExectuor) runRsync(ctx context.Context, backupSpec v1.BackupSpec) error {
 	glog.V(3).Infof("rsync started")
 
+	excludePath := b.excludePath(backupSpec)
+	if err := os.WriteFile(excludePath, backupSpec.Excludes.Bytes(), 0644); err != nil {
+		return errors.Wrapf(ctx, err, "write exclude failed")
+	}
+
 	args := []string{
 		"-a",
+		"-m",
 		"--progress",
 		"--compress",
 		"--numeric-ids",
+		"--delete",
+		"--delete-excluded",
+		"-e",
+		fmt.Sprintf("ssh -T -x -o StrictHostKeyChecking=no -p %d -i %s", backupSpec.Port, b.sshPrivateKey),
+		fmt.Sprintf("--exclude-from=%s", excludePath),
 		fmt.Sprintf("--port=%d", backupSpec.Port),
 		fmt.Sprintf("--link-dest=%s", b.currentPath(backupSpec)),
 	}
@@ -183,7 +196,7 @@ func exists(path string) (bool, error) {
 
 func (b *backupExectuor) path(spec v1.BackupSpec, folderName string) string {
 	return path.Join(
-		b.backupRootDirectory,
+		b.backupRootDirectory.String(),
 		spec.Host.String(),
 		folderName,
 	)
@@ -215,4 +228,8 @@ func (b *backupExectuor) backupPath(backupSpec v1.BackupSpec) string {
 		backupSpec,
 		b.currentTimeGetter.Now().Format(time.DateOnly),
 	)
+}
+
+func (b *backupExectuor) excludePath(spec v1.BackupSpec) string {
+	return fmt.Sprintf("/tmp/%s.excludes", spec.Host)
 }
