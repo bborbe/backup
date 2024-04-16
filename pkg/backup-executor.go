@@ -118,12 +118,11 @@ func (b *backupExectuor) runRsync(ctx context.Context, backupSpec v1.BackupSpec)
 		"--compress",
 		"--numeric-ids",
 		fmt.Sprintf("--port=%d", backupSpec.Port),
+		fmt.Sprintf("--link-dest=%s", b.currentPath(backupSpec)),
 	}
-
 	for _, dir := range backupSpec.Dirs {
 		args = append(args, fmt.Sprintf("%s@%s:%s", backupSpec.User, backupSpec.Host, dir))
 	}
-
 	args = append(args, b.incompletePath(backupSpec))
 
 	if err := b.rsyncExectuor.Rsync(ctx, args...); err != nil {

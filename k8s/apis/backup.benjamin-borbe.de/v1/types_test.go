@@ -18,7 +18,7 @@ var _ = Describe("BackupSpec", func() {
 			Host: "localhost",
 			Port: 22,
 			User: "root",
-			Dirs: v1.BackupDirectories{"/tmp"},
+			Dirs: v1.BackupDirs{"/tmp"},
 		}
 		b = *a.DeepCopy()
 	})

@@ -39,7 +39,7 @@ func (a *application) Run(ctx context.Context, sentryClient libsentry.Client) er
 		Host: v1.BackupHost(a.BackupHost),
 		Port: v1.BackupPort(a.BackupPort),
 		User: v1.BackupUser(a.BackupUser),
-		Dirs: v1.ParseBackupDirectoriesFromString(a.BackupDirs),
+		Dirs: v1.ParseBackupDirsFromString(a.BackupDirs),
 	})
 	if err != nil {
 		return errors.Wrapf(ctx, err, "backup failed")

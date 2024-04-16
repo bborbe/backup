@@ -7,5 +7,5 @@ run:
 	-backup-host="hetzner-1.benjamin-borbe.de" \
 	-backup-user="root" \
 	-backup-port="22" \
-	-backup-dirs="/mnt/a,/mnt/b" \
+	-backup-dirs="/mnt/a,/mnt/a,/home/bborbe" \
 	-v=4

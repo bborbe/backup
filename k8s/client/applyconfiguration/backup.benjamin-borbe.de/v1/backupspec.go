@@ -9,10 +9,10 @@ import (
 // BackupSpecApplyConfiguration represents an declarative configuration of the BackupSpec type for use
 // with apply.
 type BackupSpecApplyConfiguration struct {
-	Host *v1.BackupHost        `json:"host,omitempty"`
-	Port *v1.BackupPort        `json:"port,omitempty"`
-	User *v1.BackupUser        `json:"user,omitempty"`
-	Dirs *v1.BackupDirectories `json:"dirs,omitempty"`
+	Host *v1.BackupHost `json:"host,omitempty"`
+	Port *v1.BackupPort `json:"port,omitempty"`
+	User *v1.BackupUser `json:"user,omitempty"`
+	Dirs *v1.BackupDirs `json:"dirs,omitempty"`
 }
 
 // BackupSpecApplyConfiguration constructs an declarative configuration of the BackupSpec type for use with
@@ -48,7 +48,7 @@ func (b *BackupSpecApplyConfiguration) WithUser(value v1.BackupUser) *BackupSpec
 // WithDirs sets the Dirs field in the declarative configuration to the given value
 // and returns the receiver, so that objects can be built by chaining "With" function invocations.
 // If called multiple times, the Dirs field is set to the value of the last call.
-func (b *BackupSpecApplyConfiguration) WithDirs(value v1.BackupDirectories) *BackupSpecApplyConfiguration {
+func (b *BackupSpecApplyConfiguration) WithDirs(value v1.BackupDirs) *BackupSpecApplyConfiguration {
 	b.Dirs = &value
 	return b
 }
