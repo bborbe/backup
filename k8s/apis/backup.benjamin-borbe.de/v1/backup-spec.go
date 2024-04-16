@@ -57,6 +57,14 @@ func (a BackupDirectories) Less(i, j int) bool {
 }
 func (a BackupDirectories) Swap(i, j int) { a[i], a[j] = a[j], a[i] }
 
+func (a BackupDirectories) Strings() []string {
+	result := make([]string, len(a))
+	for i, aa := range a {
+		result[i] = aa.String()
+	}
+	return result
+}
+
 type BackupDirectory string
 
 func (f BackupDirectory) String() string {

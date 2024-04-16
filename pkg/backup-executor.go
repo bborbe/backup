@@ -2,6 +2,7 @@ package pkg
 
 import (
 	"context"
+	"fmt"
 	"os"
 	"path"
 	"time"
@@ -35,37 +36,18 @@ type backupExectuor struct {
 	backupRootDirectory string
 }
 
-//func (b *backupArchiver) rsync(ctx context.Context) error {
-//	rsyncCommand := rsync.New(
-//		"--rsync-path",
-//		"sudo rsync",
-//		"-a",
-//		"--progress",
-//		"--compress",
-//		"--numeric-ids",
-//		"-e",
-//		fmt.Sprintf("ssh -T -x -o StrictHostKeyChecking=no -p %d -i %s", b.remotePort, b.privatePath.String()),
-//		"--delete",
-//		"--delete-excluded",
-//		fmt.Sprintf("--port=%d", b.remotePort),
-//		fmt.Sprintf("--link-dest=%s%s", b.remoteCurrentPath(), b.backupSourceDirectory.String()),
-//		fmt.Sprintf("%s%s", b.backupSourceBaseDirectory, b.backupSourceDirectory.String()),
-//		fmt.Sprintf("%s@%s:%s", b.remoteUser, b.remoteHost, b.remoteIncompletePath()+b.backupSourceDirectory.String()),
-//	)
-//	return rsyncCommand.Run(ctx)
-//}
-
 func (b *backupExectuor) Backup(ctx context.Context, backupSpec v1.BackupSpec) error {
 	if err := backupSpec.Validate(ctx); err != nil {
 		return errors.Wrapf(ctx, err, "valid backup faild")
 	}
 
-	exists, err := b.backupExists(ctx, backupSpec)
+	backupPath := b.backupPath(backupSpec)
+	exists, err := exists(backupPath)
 	if err != nil {
-		return errors.Wrapf(ctx, err, "check backup exists failed")
+		return errors.Wrapf(ctx, err, "exists failed")
 	}
 	if exists {
-		glog.V(2).Infof("backup already exists")
+		glog.V(2).Infof("backup %s already exists", backupPath)
 		return nil
 	}
 
@@ -94,14 +76,6 @@ func (b *backupExectuor) Backup(ctx context.Context, backupSpec v1.BackupSpec) e
 	}
 
 	return nil
-}
-
-func (b *backupExectuor) backupExists(ctx context.Context, backupSpec v1.BackupSpec) (bool, error) {
-	exists, err := exists(b.backupPath(backupSpec))
-	if err != nil {
-		return false, errors.Wrapf(ctx, err, "exists failed")
-	}
-	return exists, nil
 }
 
 func (b *backupExectuor) createIncompleteIfNotExists(ctx context.Context, backupSpec v1.BackupSpec) error {
@@ -137,6 +111,25 @@ func (b *backupExectuor) createCurrentIfNotExists(ctx context.Context, backupSpe
 
 func (b *backupExectuor) runRsync(ctx context.Context, backupSpec v1.BackupSpec) error {
 	glog.V(3).Infof("rsync started")
+
+	args := []string{
+		"-a",
+		"--progress",
+		"--compress",
+		"--numeric-ids",
+		fmt.Sprintf("--port=%d", backupSpec.Port),
+	}
+
+	for _, dir := range backupSpec.Dirs {
+		args = append(args, fmt.Sprintf("%s@%s:%s", backupSpec.User, backupSpec.Host, dir))
+	}
+
+	args = append(args, b.incompletePath(backupSpec))
+
+	if err := b.rsyncExectuor.Rsync(ctx, args...); err != nil {
+		return errors.Wrapf(ctx, err, "rsync failed")
+	}
+
 	glog.V(3).Infof("rsync completed")
 	return nil
 }
