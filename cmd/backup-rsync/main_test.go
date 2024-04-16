@@ -15,7 +15,7 @@ import (
 var _ = Describe("Disk Status", func() {
 	It("Compiles", func() {
 		var err error
-		_, err = gexec.Build("github.com/bborbe/backup")
+		_, err = gexec.Build("github.com/bborbe/backup/cmd/backup-rsync")
 		Expect(err).NotTo(HaveOccurred())
 	})
 })

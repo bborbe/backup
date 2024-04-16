@@ -15,15 +15,10 @@ var _ = Describe("BackupSpec", func() {
 	var a, b v1.BackupSpec
 	BeforeEach(func() {
 		a = v1.BackupSpec{
-			Name: "my-backup",
-			Annotations: map[string]string{
-				"a": "b",
-			},
-			Expression: "true",
-			For:        "1h",
-			Labels: map[string]string{
-				"c": "d",
-			},
+			Host: "localhost",
+			Port: 22,
+			User: "root",
+			Dirs: v1.BackupDirectories{"/tmp"},
 		}
 		b = *a.DeepCopy()
 	})
@@ -39,39 +34,7 @@ var _ = Describe("BackupSpec", func() {
 		})
 		Context("Name not equal", func() {
 			BeforeEach(func() {
-				b.Name = "banana"
-			})
-			It("is not equal", func() {
-				Expect(result).To(BeFalse())
-			})
-		})
-		Context("For not equal", func() {
-			BeforeEach(func() {
-				b.For = "2h"
-			})
-			It("is not equal", func() {
-				Expect(result).To(BeFalse())
-			})
-		})
-		Context("Expression not equal", func() {
-			BeforeEach(func() {
-				b.Expression = "false"
-			})
-			It("is not equal", func() {
-				Expect(result).To(BeFalse())
-			})
-		})
-		Context("Labels not equal", func() {
-			BeforeEach(func() {
-				b.Labels["newlabel"] = "banana"
-			})
-			It("is not equal", func() {
-				Expect(result).To(BeFalse())
-			})
-		})
-		Context("Annotations not equal", func() {
-			BeforeEach(func() {
-				b.Annotations["newanno"] = "banana"
+				b.Host = "banana"
 			})
 			It("is not equal", func() {
 				Expect(result).To(BeFalse())

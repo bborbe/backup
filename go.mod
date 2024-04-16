@@ -26,12 +26,14 @@ exclude (
 )
 
 require (
+	github.com/bborbe/collection v1.3.1
 	github.com/bborbe/errors v1.2.0
 	github.com/bborbe/http v1.1.0
 	github.com/bborbe/log v1.0.0
 	github.com/bborbe/run v1.5.0
 	github.com/bborbe/sentry v1.0.0
 	github.com/bborbe/service v1.0.0
+	github.com/bborbe/time v1.1.1
 	github.com/bborbe/validation v1.0.0
 	github.com/golang/glog v1.2.1
 	github.com/google/addlicense v1.1.1
@@ -53,7 +55,6 @@ require (
 
 require (
 	github.com/bborbe/argument/v2 v2.0.4 // indirect
-	github.com/bborbe/time v1.1.1 // indirect
 	github.com/beorn7/perks v1.0.1 // indirect
 	github.com/bmatcuk/doublestar/v4 v4.6.1 // indirect
 	github.com/certifi/gocertifi v0.0.0-20210507211836-431795d63e8d // indirect

@@ -5,6 +5,7 @@ import (
 
 	"github.com/bborbe/errors"
 	"github.com/bborbe/run"
+	libtime "github.com/bborbe/time"
 )
 
 func CreateSetupResourceDefinition(
@@ -20,4 +21,15 @@ func CreateSetupResourceDefinition(
 		<-ctx.Done()
 		return nil
 	}
+}
+
+func CreateBackupExectuor(
+	currentTimeGetter libtime.CurrentTimeGetter,
+	backupRootDirectory string,
+) BackupExectuor {
+	return NewBackupExectuor(
+		currentTimeGetter,
+		NewRsyncExectuor(),
+		backupRootDirectory,
+	)
 }

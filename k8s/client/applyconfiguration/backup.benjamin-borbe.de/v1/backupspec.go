@@ -2,14 +2,17 @@
 
 package v1
 
+import (
+	v1 "github.com/bborbe/backup/k8s/apis/backup.benjamin-borbe.de/v1"
+)
+
 // BackupSpecApplyConfiguration represents an declarative configuration of the BackupSpec type for use
 // with apply.
 type BackupSpecApplyConfiguration struct {
-	Name        *string           `json:"name,omitempty"`
-	Annotations map[string]string `json:"annotations,omitempty"`
-	Expression  *string           `json:"expression,omitempty"`
-	For         *string           `json:"for,omitempty"`
-	Labels      map[string]string `json:"labels,omitempty"`
+	Host *v1.BackupHost        `json:"host,omitempty"`
+	Port *v1.BackupPort        `json:"port,omitempty"`
+	User *v1.BackupUser        `json:"user,omitempty"`
+	Dirs *v1.BackupDirectories `json:"dirs,omitempty"`
 }
 
 // BackupSpecApplyConfiguration constructs an declarative configuration of the BackupSpec type for use with
@@ -18,54 +21,34 @@ func BackupSpec() *BackupSpecApplyConfiguration {
 	return &BackupSpecApplyConfiguration{}
 }
 
-// WithName sets the Name field in the declarative configuration to the given value
+// WithHost sets the Host field in the declarative configuration to the given value
 // and returns the receiver, so that objects can be built by chaining "With" function invocations.
-// If called multiple times, the Name field is set to the value of the last call.
-func (b *BackupSpecApplyConfiguration) WithName(value string) *BackupSpecApplyConfiguration {
-	b.Name = &value
+// If called multiple times, the Host field is set to the value of the last call.
+func (b *BackupSpecApplyConfiguration) WithHost(value v1.BackupHost) *BackupSpecApplyConfiguration {
+	b.Host = &value
 	return b
 }
 
-// WithAnnotations puts the entries into the Annotations field in the declarative configuration
-// and returns the receiver, so that objects can be build by chaining "With" function invocations.
-// If called multiple times, the entries provided by each call will be put on the Annotations field,
-// overwriting an existing map entries in Annotations field with the same key.
-func (b *BackupSpecApplyConfiguration) WithAnnotations(entries map[string]string) *BackupSpecApplyConfiguration {
-	if b.Annotations == nil && len(entries) > 0 {
-		b.Annotations = make(map[string]string, len(entries))
-	}
-	for k, v := range entries {
-		b.Annotations[k] = v
-	}
-	return b
-}
-
-// WithExpression sets the Expression field in the declarative configuration to the given value
+// WithPort sets the Port field in the declarative configuration to the given value
 // and returns the receiver, so that objects can be built by chaining "With" function invocations.
-// If called multiple times, the Expression field is set to the value of the last call.
-func (b *BackupSpecApplyConfiguration) WithExpression(value string) *BackupSpecApplyConfiguration {
-	b.Expression = &value
+// If called multiple times, the Port field is set to the value of the last call.
+func (b *BackupSpecApplyConfiguration) WithPort(value v1.BackupPort) *BackupSpecApplyConfiguration {
+	b.Port = &value
 	return b
 }
 
-// WithFor sets the For field in the declarative configuration to the given value
+// WithUser sets the User field in the declarative configuration to the given value
 // and returns the receiver, so that objects can be built by chaining "With" function invocations.
-// If called multiple times, the For field is set to the value of the last call.
-func (b *BackupSpecApplyConfiguration) WithFor(value string) *BackupSpecApplyConfiguration {
-	b.For = &value
+// If called multiple times, the User field is set to the value of the last call.
+func (b *BackupSpecApplyConfiguration) WithUser(value v1.BackupUser) *BackupSpecApplyConfiguration {
+	b.User = &value
 	return b
 }
 
-// WithLabels puts the entries into the Labels field in the declarative configuration
-// and returns the receiver, so that objects can be build by chaining "With" function invocations.
-// If called multiple times, the entries provided by each call will be put on the Labels field,
-// overwriting an existing map entries in Labels field with the same key.
-func (b *BackupSpecApplyConfiguration) WithLabels(entries map[string]string) *BackupSpecApplyConfiguration {
-	if b.Labels == nil && len(entries) > 0 {
-		b.Labels = make(map[string]string, len(entries))
-	}
-	for k, v := range entries {
-		b.Labels[k] = v
-	}
+// WithDirs sets the Dirs field in the declarative configuration to the given value
+// and returns the receiver, so that objects can be built by chaining "With" function invocations.
+// If called multiple times, the Dirs field is set to the value of the last call.
+func (b *BackupSpecApplyConfiguration) WithDirs(value v1.BackupDirectories) *BackupSpecApplyConfiguration {
+	b.Dirs = &value
 	return b
 }
