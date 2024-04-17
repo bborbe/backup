@@ -1,0 +1,91 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backup
+  namespace: '{{ "NAMESPACE" | env }}'
+  annotations:
+    keel.sh/policy: force
+    keel.sh/trigger: poll
+    keel.sh/match-tag: "true"
+    keel.sh/pollSchedule: "@every 1m"
+    random: '{{ "RANDOM" | env }}'
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: backup
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      annotations:
+        prometheus.io/path: /metrics
+        prometheus.io/port: "9090"
+        prometheus.io/scheme: http
+        prometheus.io/scrape: "true"
+        random: '{{ "RANDOM" | env }}'
+      labels:
+        app: backup
+    spec:
+      containers:
+        - name: service
+          env:
+            - name: LISTEN
+              value: ':9090'
+            - name: NAMESPACE
+              value: '{{ "NAMESPACE" | env }}'
+            - name: SENTRY_DSN
+              valueFrom:
+                secretKeyRef:
+                  key: sentry-dsn
+                  name: backup
+            - name: BACKUP_ROOT_DIR
+              value: '/backup'
+            - name: SSH_KEY
+              value: '/secret/id_backup'
+          image: 'docker.io/bborbe/backup:{{ "VERSION" | env }}'
+          imagePullPolicy: Always
+          livenessProbe:
+            failureThreshold: 5
+            httpGet:
+              path: /healthz
+              port: 9090
+              scheme: HTTP
+            initialDelaySeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 5
+          ports:
+            - containerPort: 9090
+              name: http
+          readinessProbe:
+            httpGet:
+              path: /readiness
+              port: 9090
+              scheme: HTTP
+            initialDelaySeconds: 5
+            timeoutSeconds: 5
+          resources:
+            limits:
+              cpu: 1000m
+              memory: 500Mi
+            requests:
+              cpu: 20m
+              memory: 20Mi
+          volumeMounts:
+            - mountPath: /backup
+              name: backup
+            - mountPath: /secret
+              name: secret
+              readOnly: true
+      serviceAccountName: backup
+      volumes:
+        - name: backup
+          hostPath:
+            path: /backup
+        - name: secret
+          secret:
+            secretName: backup
+            items:
+              - key: id_backup
+                path: id_backup
+                mode: 384
