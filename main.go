@@ -34,7 +34,7 @@ type application struct {
 	SentryDSN      string `required:"true" arg:"sentry-dsn" env:"SENTRY_DSN" usage:"SentryDSN" display:"length"`
 	Listen         string `required:"true" arg:"listen" env:"LISTEN" usage:"address to listen to"`
 	Kubeconfig     string `required:"false" arg:"kubeconfig" env:"KUBECONFIG" usage:"Path to k8s config"`
-	CronExpression string `required:"true" arg:"cron-expression" env:"CRON_EXPRESSION" usage:"Cron expression to determine when service is run" default:"0 0 0 * * ?"`
+	CronExpression string `required:"true" arg:"cron-expression" env:"CRON_EXPRESSION" usage:"Cron expression to determine when service is run" default:"@every 1h"`
 	BackupRootDir  string `required:"true" arg:"backup-root-dir" env:"BACKUP_ROOT_DIR" usage:"Directory all backups are stored"`
 	SSHPrivateKey  string `required:"true" arg:"ssh-key" env:"SSH_KEY" usage:"path to ssh private key"`
 	Namespace      string `required:"true" arg:"namespace" env:"NAMESPACE" usage:"kubernetes namespace"`
@@ -42,14 +42,17 @@ type application struct {
 
 func (a *application) Run(ctx context.Context, sentryClient libsentry.Client) error {
 	currentTime := libtime.NewCurrentTime()
-
 	trigger := run.NewTrigger()
-
 	return service.Run(
 		ctx,
 		a.createSetupResourceDefinition(trigger),
+		run.Triggered(a.createCron(sentryClient, currentTime), trigger.Done()),
 		a.createHttpServer(currentTime),
 	)
+}
+
+func (a *application) createCron(sentryClient libsentry.Client, currentTimeGetter libtime.CurrentTimeGetter) run.Func {
+	return pkg.CreateBackupCron(sentryClient, currentTimeGetter, a.Kubeconfig, pkg.BackupRootDirectory(a.BackupRootDir), pkg.SSHPrivateKey(a.SSHPrivateKey), k8s.Namespace(a.Namespace), a.CronExpression)
 }
 
 func (a *application) createSetupResourceDefinition(trigger run.Trigger) func(ctx context.Context) error {
@@ -110,7 +113,7 @@ func (a *application) createHttpServer(
 		))
 
 		router.Path("/trigger").Handler(libhttp.NewBackgroundRunHandler(ctx,
-			pkg.CreateBackupCron(
+			pkg.CreateBackupAction(
 				currentTimeGetter,
 				a.Kubeconfig,
 				pkg.BackupRootDirectory(a.BackupRootDir),

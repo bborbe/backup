@@ -8,14 +8,10 @@ import (
 	"github.com/golang/glog"
 )
 
-type BackupCron interface {
-	Run(ctx context.Context) error
-}
-
-func NewBackupCron(
+func NewBackupAction(
 	k8sConnector K8sConnector,
 	backupExectuor BackupExectuor,
-) BackupCron {
+) run.Runnable {
 	return run.Func(func(ctx context.Context) error {
 		glog.V(2).Infof("backup cron started")
 		targets, err := k8sConnector.Targets(ctx)

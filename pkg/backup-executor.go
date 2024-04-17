@@ -104,7 +104,7 @@ func (b *backupExectuor) createCurrentIfNotExists(ctx context.Context, backupSpe
 		return errors.Wrapf(ctx, err, "create incomplete directory failed")
 	}
 	glog.V(3).Infof("create empty directory completed")
-	if err := os.Symlink(emptyPath, currentPath); err != nil {
+	if err := os.Symlink("empty", currentPath); err != nil {
 		return errors.Wrapf(ctx, err, "create symlink from empty to current failed")
 	}
 	glog.V(3).Infof("create current directory completed")
@@ -157,11 +157,10 @@ func (b *backupExectuor) renameIncomplete(ctx context.Context, backupSpec v1.Bac
 
 func (b *backupExectuor) updateCurrentSymlink(ctx context.Context, backupSpec v1.BackupSpec) error {
 	currentPath := b.currentPath(backupSpec)
-	backupPath := b.backupPath(backupSpec)
 	if err := os.Remove(currentPath); err != nil {
 		return errors.Wrapf(ctx, err, "remove current path failed")
 	}
-	if err := os.Symlink(backupPath, currentPath); err != nil {
+	if err := os.Symlink(b.currentTimeGetter.Now().Format(time.DateOnly), currentPath); err != nil {
 		return errors.Wrapf(ctx, err, "create symlink from empty to current failed")
 	}
 	glog.V(3).Infof("create current directory completed")

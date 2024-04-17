@@ -3,20 +3,48 @@ package pkg
 import (
 	"context"
 
+	"github.com/bborbe/cron"
 	"github.com/bborbe/errors"
 	"github.com/bborbe/k8s"
 	"github.com/bborbe/run"
+	libsentry "github.com/bborbe/sentry"
 	libtime "github.com/bborbe/time"
 )
 
 func CreateBackupCron(
+	sentryClient libsentry.Client,
 	currentTimeGetter libtime.CurrentTimeGetter,
 	kubeConfig string,
 	backupRootDirectory BackupRootDirectory,
 	sshKeyPath SSHPrivateKey,
 	namespace k8s.Namespace,
-) BackupCron {
-	return NewBackupCron(
+	cronExpression string,
+) run.Func {
+	return func(ctx context.Context) error {
+		return cron.NewExpressionCron(
+			cronExpression,
+			libsentry.NewSkipErrorAndReport(
+				sentryClient,
+				CreateBackupAction(
+					currentTimeGetter,
+					kubeConfig,
+					backupRootDirectory,
+					sshKeyPath,
+					namespace,
+				),
+			),
+		).Run(ctx)
+	}
+}
+
+func CreateBackupAction(
+	currentTimeGetter libtime.CurrentTimeGetter,
+	kubeConfig string,
+	backupRootDirectory BackupRootDirectory,
+	sshKeyPath SSHPrivateKey,
+	namespace k8s.Namespace,
+) run.Runnable {
+	return NewBackupAction(
 		NewK8sConnector(
 			kubeConfig,
 			namespace,
