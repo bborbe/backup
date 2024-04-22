@@ -6,6 +6,7 @@ package main
 
 import (
 	"context"
+	v1 "github.com/bborbe/backup/k8s/apis/backup.benjamin-borbe.de/v1"
 	"net/http"
 	"os"
 	"time"
@@ -52,7 +53,7 @@ func (a *application) Run(ctx context.Context, sentryClient libsentry.Client) er
 }
 
 func (a *application) createCron(sentryClient libsentry.Client, currentTimeGetter libtime.CurrentTimeGetter) run.Func {
-	return pkg.CreateBackupCron(sentryClient, currentTimeGetter, a.Kubeconfig, pkg.BackupRootDirectory(a.BackupRootDir), pkg.SSHPrivateKey(a.SSHPrivateKey), k8s.Namespace(a.Namespace), a.CronExpression)
+	return pkg.CreateBackupCron(sentryClient, currentTimeGetter, a.Kubeconfig, pkg.Path(a.BackupRootDir), pkg.SSHPrivateKey(a.SSHPrivateKey), k8s.Namespace(a.Namespace), a.CronExpression)
 }
 
 func (a *application) createSetupResourceDefinition(trigger run.Trigger) func(ctx context.Context) error {
@@ -71,6 +72,45 @@ func (a *application) createHttpServer(
 		router.Path("/readiness").Handler(libhttp.NewPrintHandler("OK"))
 		router.Path("/metrics").Handler(promhttp.Handler())
 		router.Path("/setloglevel/{level}").Handler(log.NewSetLoglevelHandler(ctx, log.NewLogLevelSetter(2, 5*time.Minute)))
+
+		router.Path("/status").Handler(libhttp.NewErrorHandler(
+			libhttp.NewJsonHandler(
+				libhttp.JsonHandlerFunc(func(ctx context.Context, req *http.Request) (interface{}, error) {
+					k8sConnector := pkg.NewK8sConnector(
+						a.Kubeconfig,
+						k8s.Namespace(a.Namespace),
+					)
+					targets, err := k8sConnector.Targets(ctx)
+					if err != nil {
+						return nil, errors.Wrapf(ctx, err, "list targets failed")
+					}
+					result := map[v1.BackupHost]string{}
+					for _, target := range targets {
+						host := target.Spec.Host
+						backupDir := pkg.Path(a.BackupRootDir).Join(host.String())
+						glog.V(4).Infof("search for backups in %s", backupDir)
+						entries, err := os.ReadDir(backupDir.String())
+						if err != nil {
+							return nil, errors.Wrapf(ctx, err, "list failed")
+						}
+						glog.V(4).Infof("found %d entries in %s", len(entries), backupDir)
+						var latestBackup *time.Time
+						for _, entry := range entries {
+							backupTime, err := time.Parse(time.DateOnly, entry.Name())
+							if err != nil {
+								glog.V(4).Infof("name(%s) is not valid  => skip", entry.Name())
+								continue
+							}
+							if latestBackup == nil || backupTime.After(*latestBackup) {
+								latestBackup = &backupTime
+								result[host] = backupTime.Format(time.DateOnly)
+							}
+						}
+					}
+					return result, nil
+				}),
+			),
+		))
 
 		router.Path("/list").Handler(libhttp.NewErrorHandler(
 			libhttp.NewJsonHandler(
@@ -101,7 +141,7 @@ func (a *application) createHttpServer(
 				}
 				backupExectuor := pkg.CreateBackupExectuor(
 					currentTimeGetter,
-					pkg.BackupRootDirectory(a.BackupRootDir),
+					pkg.Path(a.BackupRootDir),
 					pkg.SSHPrivateKey(a.SSHPrivateKey),
 				)
 				if err := backupExectuor.Backup(ctx, target.Spec); err != nil {
@@ -116,7 +156,7 @@ func (a *application) createHttpServer(
 			pkg.CreateBackupAction(
 				currentTimeGetter,
 				a.Kubeconfig,
-				pkg.BackupRootDirectory(a.BackupRootDir),
+				pkg.Path(a.BackupRootDir),
 				pkg.SSHPrivateKey(a.SSHPrivateKey),
 				k8s.Namespace(a.Namespace),
 			).Run,

@@ -43,7 +43,7 @@ spec:
               value: '/backup'
             - name: SSH_KEY
               value: '/secret/id_backup'
-          image: 'docker.io/bborbe/backup:{{ "VERSION" | env }}'
+          image: 'docker.io/bborbe/backup:{{"BRANCH" | env}}'
           imagePullPolicy: Always
           livenessProbe:
             failureThreshold: 5

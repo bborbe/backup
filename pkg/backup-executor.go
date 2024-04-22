@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"os"
-	"path"
 	"time"
 
 	"github.com/bborbe/errors"
@@ -21,7 +20,7 @@ type BackupExectuor interface {
 func NewBackupExectuor(
 	currentTimeGetter libtime.CurrentTimeGetter,
 	rsyncExectuor RsyncExectuor,
-	backupRootDirectory BackupRootDirectory,
+	backupRootDirectory Path,
 	sshPrivateKey SSHPrivateKey,
 ) BackupExectuor {
 	return &backupExectuor{
@@ -35,7 +34,7 @@ func NewBackupExectuor(
 type backupExectuor struct {
 	currentTimeGetter   libtime.CurrentTimeGetter
 	rsyncExectuor       RsyncExectuor
-	backupRootDirectory BackupRootDirectory
+	backupRootDirectory Path
 	sshPrivateKey       SSHPrivateKey
 }
 
@@ -45,7 +44,7 @@ func (b *backupExectuor) Backup(ctx context.Context, backupSpec v1.BackupSpec) e
 	}
 
 	backupPath := b.backupPath(backupSpec)
-	exists, err := exists(backupPath)
+	exists, err := backupPath.Exists(ctx)
 	if err != nil {
 		return errors.Wrapf(ctx, err, "exists failed")
 	}
@@ -82,7 +81,7 @@ func (b *backupExectuor) Backup(ctx context.Context, backupSpec v1.BackupSpec) e
 
 func (b *backupExectuor) createIncompleteIfNotExists(ctx context.Context, backupSpec v1.BackupSpec) error {
 	incompletePath := b.incompletePath(backupSpec)
-	if err := os.MkdirAll(incompletePath, os.ModePerm); err != nil {
+	if err := os.MkdirAll(incompletePath.String(), os.ModePerm); err != nil {
 		return errors.Wrapf(ctx, err, "create incomplete directory failed")
 	}
 	glog.V(3).Infof("create incomplete directory completed")
@@ -92,7 +91,7 @@ func (b *backupExectuor) createIncompleteIfNotExists(ctx context.Context, backup
 func (b *backupExectuor) createCurrentIfNotExists(ctx context.Context, backupSpec v1.BackupSpec) error {
 	currentPath := b.currentPath(backupSpec)
 	emptyPath := b.emptyPath(backupSpec)
-	currentExists, err := exists(currentPath)
+	currentExists, err := currentPath.Exists(ctx)
 	if err != nil {
 		return errors.Wrapf(ctx, err, "check current exsits failed")
 	}
@@ -100,11 +99,11 @@ func (b *backupExectuor) createCurrentIfNotExists(ctx context.Context, backupSpe
 		glog.V(3).Infof("current directory already exists")
 		return nil
 	}
-	if err := os.MkdirAll(emptyPath, os.ModePerm); err != nil {
+	if err := os.MkdirAll(emptyPath.String(), os.ModePerm); err != nil {
 		return errors.Wrapf(ctx, err, "create incomplete directory failed")
 	}
 	glog.V(3).Infof("create empty directory completed")
-	if err := os.Symlink("empty", currentPath); err != nil {
+	if err := os.Symlink("empty", currentPath.String()); err != nil {
 		return errors.Wrapf(ctx, err, "create symlink from empty to current failed")
 	}
 	glog.V(3).Infof("create current directory completed")
@@ -115,7 +114,7 @@ func (b *backupExectuor) runRsync(ctx context.Context, backupSpec v1.BackupSpec)
 	glog.V(3).Infof("rsync started")
 
 	excludePath := b.excludePath(backupSpec)
-	if err := os.WriteFile(excludePath, backupSpec.Excludes.Bytes(), 0644); err != nil {
+	if err := os.WriteFile(excludePath.String(), backupSpec.Excludes.Bytes(), 0644); err != nil {
 		return errors.Wrapf(ctx, err, "write exclude failed")
 	}
 
@@ -136,7 +135,7 @@ func (b *backupExectuor) runRsync(ctx context.Context, backupSpec v1.BackupSpec)
 	for _, dir := range backupSpec.Dirs {
 		args = append(args, fmt.Sprintf("%s@%s:%s", backupSpec.User, backupSpec.Host, dir))
 	}
-	args = append(args, b.incompletePath(backupSpec))
+	args = append(args, b.incompletePath(backupSpec).String())
 
 	if err := b.rsyncExectuor.Rsync(ctx, args...); err != nil {
 		return errors.Wrapf(ctx, err, "rsync failed")
@@ -149,7 +148,7 @@ func (b *backupExectuor) runRsync(ctx context.Context, backupSpec v1.BackupSpec)
 func (b *backupExectuor) renameIncomplete(ctx context.Context, backupSpec v1.BackupSpec) error {
 	incompletePath := b.incompletePath(backupSpec)
 	backupPath := b.backupPath(backupSpec)
-	if err := os.Rename(incompletePath, backupPath); err != nil {
+	if err := incompletePath.Rename(ctx, backupPath); err != nil {
 		return errors.Wrapf(ctx, err, "rename incomplete to backup failed")
 	}
 	return nil
@@ -157,10 +156,10 @@ func (b *backupExectuor) renameIncomplete(ctx context.Context, backupSpec v1.Bac
 
 func (b *backupExectuor) updateCurrentSymlink(ctx context.Context, backupSpec v1.BackupSpec) error {
 	currentPath := b.currentPath(backupSpec)
-	if err := os.Remove(currentPath); err != nil {
+	if err := currentPath.Remove(ctx); err != nil {
 		return errors.Wrapf(ctx, err, "remove current path failed")
 	}
-	if err := os.Symlink(b.currentTimeGetter.Now().Format(time.DateOnly), currentPath); err != nil {
+	if err := os.Symlink(b.currentTimeGetter.Now().Format(time.DateOnly), currentPath.String()); err != nil {
 		return errors.Wrapf(ctx, err, "create symlink from empty to current failed")
 	}
 	glog.V(3).Infof("create current directory completed")
@@ -169,66 +168,36 @@ func (b *backupExectuor) updateCurrentSymlink(ctx context.Context, backupSpec v1
 
 func (b *backupExectuor) removeEmpty(ctx context.Context, backupSpec v1.BackupSpec) error {
 	emptyPath := b.emptyPath(backupSpec)
-	exists, err := exists(emptyPath)
+	exists, err := emptyPath.Exists(ctx)
 	if err != nil {
 		return errors.Wrapf(ctx, err, "check empty exists failed")
 	}
 	if exists == false {
 		return nil
 	}
-	if err := os.Remove(emptyPath); err != nil {
+	if err := emptyPath.Remove(ctx); err != nil {
 		return errors.Wrapf(ctx, err, "remove empty failed")
 	}
 	glog.V(3).Infof("remove empty completed")
 	return nil
 }
 
-func exists(path string) (bool, error) {
-	if _, err := os.Stat(path); err != nil {
-		if os.IsNotExist(err) {
-			return false, nil
-		}
-		return false, err
-	}
-	return true, nil
+func (b *backupExectuor) emptyPath(backupSpec v1.BackupSpec) Path {
+	return b.backupRootDirectory.Join(backupSpec.Host.String(), "empty")
 }
 
-func (b *backupExectuor) path(spec v1.BackupSpec, folderName string) string {
-	return path.Join(
-		b.backupRootDirectory.String(),
-		spec.Host.String(),
-		folderName,
-	)
+func (b *backupExectuor) incompletePath(backupSpec v1.BackupSpec) Path {
+	return b.backupRootDirectory.Join(backupSpec.Host.String(), "incomplete")
 }
 
-func (b *backupExectuor) emptyPath(backupSpec v1.BackupSpec) string {
-	return b.path(
-		backupSpec,
-		"empty",
-	)
+func (b *backupExectuor) currentPath(backupSpec v1.BackupSpec) Path {
+	return b.backupRootDirectory.Join(backupSpec.Host.String(), "current")
 }
 
-func (b *backupExectuor) incompletePath(backupSpec v1.BackupSpec) string {
-	return b.path(
-		backupSpec,
-		"incomplete",
-	)
+func (b *backupExectuor) backupPath(backupSpec v1.BackupSpec) Path {
+	return b.backupRootDirectory.Join(backupSpec.Host.String(), b.currentTimeGetter.Now().Format(time.DateOnly))
 }
 
-func (b *backupExectuor) currentPath(backupSpec v1.BackupSpec) string {
-	return b.path(
-		backupSpec,
-		"current",
-	)
-}
-
-func (b *backupExectuor) backupPath(backupSpec v1.BackupSpec) string {
-	return b.path(
-		backupSpec,
-		b.currentTimeGetter.Now().Format(time.DateOnly),
-	)
-}
-
-func (b *backupExectuor) excludePath(spec v1.BackupSpec) string {
-	return fmt.Sprintf("/tmp/%s.excludes", spec.Host)
+func (b *backupExectuor) excludePath(spec v1.BackupSpec) Path {
+	return Path(fmt.Sprintf("/tmp/%s.excludes", spec.Host))
 }

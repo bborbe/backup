@@ -38,7 +38,7 @@ func (a *application) Run(ctx context.Context, sentryClient libsentry.Client) er
 	currentTime := libtime.NewCurrentTime()
 	backupExectuor := pkg.CreateBackupExectuor(
 		currentTime,
-		pkg.BackupRootDirectory(a.BackupRootDir),
+		pkg.Path(a.BackupRootDir),
 		pkg.SSHPrivateKey(a.SSHPrivateKey),
 	)
 	err := backupExectuor.Backup(ctx, v1.BackupSpec{

@@ -15,7 +15,7 @@ func CreateBackupCron(
 	sentryClient libsentry.Client,
 	currentTimeGetter libtime.CurrentTimeGetter,
 	kubeConfig string,
-	backupRootDirectory BackupRootDirectory,
+	backupRootDirectory Path,
 	sshKeyPath SSHPrivateKey,
 	namespace k8s.Namespace,
 	cronExpression string,
@@ -40,7 +40,7 @@ func CreateBackupCron(
 func CreateBackupAction(
 	currentTimeGetter libtime.CurrentTimeGetter,
 	kubeConfig string,
-	backupRootDirectory BackupRootDirectory,
+	backupRootDirectory Path,
 	sshKeyPath SSHPrivateKey,
 	namespace k8s.Namespace,
 ) run.Runnable {
@@ -78,7 +78,7 @@ func CreateSetupResourceDefinition(
 
 func CreateBackupExectuor(
 	currentTimeGetter libtime.CurrentTimeGetter,
-	backupRootDirectory BackupRootDirectory,
+	backupRootDirectory Path,
 	sshPrivateKey SSHPrivateKey,
 ) BackupExectuor {
 	return NewBackupExectuor(
