@@ -4,7 +4,9 @@ Tools for backup via rsync.
 
 ## List
 
+http://backup.hell.hm.benjamin-borbe.de/setloglevel/4
 http://backup.hell.hm.benjamin-borbe.de/list
+http://backup.hell.hm.benjamin-borbe.de/trigger
 
 ## Build
 
