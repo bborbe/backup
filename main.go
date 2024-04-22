@@ -6,7 +6,6 @@ package main
 
 import (
 	"context"
-	v1 "github.com/bborbe/backup/k8s/apis/backup.benjamin-borbe.de/v1"
 	"net/http"
 	"os"
 	"time"
@@ -23,6 +22,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 
+	v1 "github.com/bborbe/backup/k8s/apis/backup.benjamin-borbe.de/v1"
 	"github.com/bborbe/backup/pkg"
 )
 
@@ -48,7 +48,7 @@ func (a *application) Run(ctx context.Context, sentryClient libsentry.Client) er
 		ctx,
 		a.createSetupResourceDefinition(trigger),
 		run.Triggered(a.createCron(sentryClient, currentTime), trigger.Done()),
-		a.createHttpServer(currentTime),
+		a.createHttpServer(sentryClient, currentTime),
 	)
 }
 
@@ -61,6 +61,7 @@ func (a *application) createSetupResourceDefinition(trigger run.Trigger) func(ct
 }
 
 func (a *application) createHttpServer(
+	sentryClient libsentry.Client,
 	currentTimeGetter libtime.CurrentTimeGetter,
 ) run.Func {
 	return func(ctx context.Context) error {
@@ -154,6 +155,7 @@ func (a *application) createHttpServer(
 
 		router.Path("/trigger").Handler(libhttp.NewBackgroundRunHandler(ctx,
 			pkg.CreateBackupAction(
+				sentryClient,
 				currentTimeGetter,
 				a.Kubeconfig,
 				pkg.Path(a.BackupRootDir),

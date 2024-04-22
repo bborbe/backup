@@ -2,9 +2,10 @@ package pkg
 
 import (
 	"context"
-	"github.com/bborbe/errors"
 	"os"
 	"path"
+
+	"github.com/bborbe/errors"
 )
 
 type Paths []Path

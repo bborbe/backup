@@ -26,6 +26,7 @@ func CreateBackupCron(
 			libsentry.NewSkipErrorAndReport(
 				sentryClient,
 				CreateBackupAction(
+					sentryClient,
 					currentTimeGetter,
 					kubeConfig,
 					backupRootDirectory,
@@ -38,6 +39,7 @@ func CreateBackupCron(
 }
 
 func CreateBackupAction(
+	sentryClient libsentry.Client,
 	currentTimeGetter libtime.CurrentTimeGetter,
 	kubeConfig string,
 	backupRootDirectory Path,
@@ -45,6 +47,7 @@ func CreateBackupAction(
 	namespace k8s.Namespace,
 ) run.Runnable {
 	return NewBackupAction(
+		sentryClient,
 		NewK8sConnector(
 			kubeConfig,
 			namespace,

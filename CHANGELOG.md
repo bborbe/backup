@@ -10,6 +10,10 @@ Please choose versions by [Semantic Versioning](http://semver.org/).
 
 All notable changes to this project will be documented in this file.
 
+## 3.2.0
+
+- Sentry alert on failed backups
+
 ## 3.1.0
 
 - Add status endpoint 

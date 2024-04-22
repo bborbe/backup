@@ -42,6 +42,7 @@ require (
 	github.com/bborbe/service v1.0.0
 	github.com/bborbe/time v1.2.0
 	github.com/bborbe/validation v1.0.0
+	github.com/getsentry/sentry-go v0.27.0
 	github.com/golang/glog v1.2.1
 	github.com/google/addlicense v1.1.1
 	github.com/gorilla/mux v1.8.1
@@ -70,7 +71,6 @@ require (
 	github.com/emicklei/go-restful/v3 v3.12.0 // indirect
 	github.com/evanphx/json-patch v5.9.0+incompatible // indirect
 	github.com/getsentry/raven-go v0.2.0 // indirect
-	github.com/getsentry/sentry-go v0.27.0 // indirect
 	github.com/go-logr/logr v1.4.1 // indirect
 	github.com/go-openapi/jsonpointer v0.21.0 // indirect
 	github.com/go-openapi/jsonreference v0.21.0 // indirect
