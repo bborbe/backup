@@ -5,7 +5,7 @@ Tools for backup via rsync.
 ## Build
 
 ```
-VERSION=develop make build upload
+BRANCH=develop make build upload
 ```
 
 ## Keel
