@@ -17,10 +17,14 @@ func NewSkipErrorAndReport(sentryClient Client, action run.Runnable) run.Func {
 	return func(ctx context.Context) error {
 		if err := action.Run(ctx); err != nil {
 			data := errors.DataFromError(err)
-			sentryClient.CaptureException(err, &sentry.EventHint{
-				Context: ctx,
-				Data:    data,
-			}, nil)
+			sentryClient.CaptureException(
+				err,
+				&sentry.EventHint{
+					Context: ctx,
+					Data:    data,
+				},
+				sentry.NewScope(),
+			)
 			glog.Warningf("run action failed: %v %+v", err, data)
 		}
 		return nil

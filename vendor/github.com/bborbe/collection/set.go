@@ -13,6 +13,7 @@ type Set[T comparable] interface {
 	Remove(element T)
 	Contains(element T) bool
 	Slice() []T
+	Length() int
 }
 
 func NewSet[T comparable]() Set[T] {
@@ -57,4 +58,11 @@ func (s *set[T]) Slice() []T {
 		result = append(result, k)
 	}
 	return result
+}
+
+func (s *set[T]) Length() int {
+	s.mux.Lock()
+	defer s.mux.Unlock()
+
+	return len(s.data)
 }

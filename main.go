@@ -28,11 +28,12 @@ import (
 
 func main() {
 	app := &application{}
-	os.Exit(service.Main(context.Background(), app, &app.SentryDSN))
+	os.Exit(service.Main(context.Background(), app, &app.SentryDSN, &app.SentryProxy))
 }
 
 type application struct {
 	SentryDSN      string `required:"true" arg:"sentry-dsn" env:"SENTRY_DSN" usage:"SentryDSN" display:"length"`
+	SentryProxy    string `required:"false" arg:"sentry-proxy" env:"SENTRY_PROXY" usage:"Sentry Proxy"`
 	Listen         string `required:"true" arg:"listen" env:"LISTEN" usage:"address to listen to"`
 	Kubeconfig     string `required:"false" arg:"kubeconfig" env:"KUBECONFIG" usage:"Path to k8s config"`
 	CronExpression string `required:"true" arg:"cron-expression" env:"CRON_EXPRESSION" usage:"Cron expression to determine when service is run" default:"@every 1h"`

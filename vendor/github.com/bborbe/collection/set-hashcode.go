@@ -17,6 +17,7 @@ type SetHashCode[T HasHashCode] interface {
 	Remove(element T)
 	Contains(element T) bool
 	Slice() []T
+	Length() int
 }
 
 func NewSetHashCode[T HasHashCode]() SetHashCode[T] {
@@ -61,4 +62,11 @@ func (s *setHashCode[T]) Slice() []T {
 		result = append(result, v)
 	}
 	return result
+}
+
+func (s *setHashCode[T]) Length() int {
+	s.mux.Lock()
+	defer s.mux.Unlock()
+
+	return len(s.data)
 }

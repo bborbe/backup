@@ -7,14 +7,16 @@ package service
 import (
 	"context"
 	"flag"
+	"net/http"
 	"os"
 	"os/signal"
 	"runtime"
 	"syscall"
 	"time"
 
-	argument "github.com/bborbe/argument/v2"
+	"github.com/bborbe/argument/v2"
 	libsentry "github.com/bborbe/sentry"
+	"github.com/getsentry/sentry-go"
 	"github.com/golang/glog"
 )
 
@@ -27,7 +29,8 @@ func Main(
 	ctx context.Context,
 	app Application,
 	sentryDSN *string,
-	fns ...OptionFn,
+	sentryProxy *string,
+	fns ...OptionsFn,
 ) int {
 	defer glog.Flush()
 	glog.CopyStandardLogTo("info")
@@ -43,24 +46,41 @@ func Main(
 		return 4
 	}
 
+	options := NewOptions(fns...)
+
 	if sentryDSN == nil {
 		glog.Errorf("sentryDSN args missing")
 		return 3
 	}
+	httpTransport := http.DefaultTransport
+	if sentryProxy != nil {
+		httpTransport = libsentry.NewProxyRoundTripper(
+			httpTransport,
+			*sentryProxy,
+		)
+		glog.V(2).Infof("use sentryProxy %s", *sentryProxy)
+	}
 	sentryClient, err := libsentry.NewClient(
 		ctx,
-		libsentry.DSN(*sentryDSN),
+		sentry.ClientOptions{
+			Dsn:              *sentryDSN,
+			TracesSampleRate: 1.0,
+			HTTPTransport:    httpTransport,
+		},
+		options.ExcludeErrors...,
 	)
 	if err != nil {
 		glog.Errorf("setting up Sentry failed: %+v", err)
 		return 2
 	}
-	defer sentryClient.Close()
+	defer func() {
+		_ = sentryClient.Flush(2 * time.Second)
+		_ = sentryClient.Close()
+	}()
 
 	service := NewService(
 		sentryClient,
 		app,
-		fns...,
 	)
 
 	glog.V(0).Infof("application started")

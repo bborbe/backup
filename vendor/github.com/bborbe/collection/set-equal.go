@@ -17,6 +17,7 @@ type SetEqual[T HasEqual[T]] interface {
 	Remove(element T)
 	Contains(element T) bool
 	Slice() []T
+	Length() int
 }
 
 func NewSetEqual[T HasEqual[T]]() SetEqual[T] {
@@ -73,4 +74,11 @@ func (s *setEqual[T]) Slice() []T {
 	s.mux.Lock()
 	defer s.mux.Unlock()
 	return Copy(s.data)
+}
+
+func (s *setEqual[T]) Length() int {
+	s.mux.Lock()
+	defer s.mux.Unlock()
+
+	return len(s.data)
 }

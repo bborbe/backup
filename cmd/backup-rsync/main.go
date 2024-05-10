@@ -20,11 +20,12 @@ import (
 
 func main() {
 	app := &application{}
-	os.Exit(service.Main(context.Background(), app, &app.SentryDSN))
+	os.Exit(service.Main(context.Background(), app, &app.SentryDSN, &app.SentryProxy))
 }
 
 type application struct {
 	SentryDSN      string `required:"true" arg:"sentry-dsn" env:"SENTRY_DSN" usage:"SentryDSN" display:"length"`
+	SentryProxy    string `required:"false" arg:"sentry-proxy" env:"SENTRY_PROXY" usage:"Sentry Proxy"`
 	BackupRootDir  string `required:"true" arg:"backup-root-dir" env:"BACKUP_ROOT_DIR" usage:"Directory all backups are stored"`
 	BackupHost     string `required:"true" arg:"backup-host" env:"BACKUP_HOST" usage:"host used to connect to client to backup"`
 	BackupPort     int    `required:"true" arg:"backup-port" env:"BACKUP_PORT" usage:"port used to connect to client to backup" default:"22"`

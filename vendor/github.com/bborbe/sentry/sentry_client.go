@@ -14,38 +14,45 @@ import (
 	"github.com/golang/glog"
 )
 
-type DSN string
-
-func (f DSN) String() string {
-	return string(f)
-}
-
 //counterfeiter:generate -o mocks/sentry-client.go --fake-name SentryClient . Client
 type Client interface {
 	CaptureMessage(message string, hint *sentry.EventHint, scope sentry.EventModifier) *sentry.EventID
 	CaptureException(exception error, hint *sentry.EventHint, scope sentry.EventModifier) *sentry.EventID
+	Flush(timeout stdtime.Duration) bool
 	io.Closer
 }
 
-func NewClient(ctx context.Context, dsn DSN) (Client, error) {
-	newClient, err := sentry.NewClient(sentry.ClientOptions{
-		Dsn: dsn.String(),
-		// Set TracesSampleRate to 1.0 to capture 100%
-		// of transactions for performance monitoring.
-		// We recommend adjusting this value in production,
-		TracesSampleRate: 1.0,
-	})
+func NewClient(ctx context.Context, clientOptions sentry.ClientOptions, excludeErrors ...ExcludeError) (Client, error) {
+	newClient, err := sentry.NewClient(clientOptions)
 	if err != nil {
 		return nil, errors.Wrapf(ctx, err, "create sentry client failed")
 	}
-
+	newClient.AddEventProcessor(func(event *sentry.Event, hint *sentry.EventHint) *sentry.Event {
+		if hint.Context != nil {
+			for k, v := range errors.DataFromContext(hint.Context) {
+				event.Tags[k] = v
+			}
+		}
+		if hint.OriginalException != nil {
+			for k, v := range errors.DataFromError(hint.OriginalException) {
+				event.Tags[k] = v
+			}
+		}
+		return event
+	})
 	return &client{
-		client: newClient,
+		client:        newClient,
+		excludeErrors: excludeErrors,
 	}, nil
 }
 
 type client struct {
-	client *sentry.Client
+	client        *sentry.Client
+	excludeErrors ExcludeErrors
+}
+
+func (c *client) Flush(timeout stdtime.Duration) bool {
+	return c.client.Flush(timeout)
 }
 
 func (c *client) CaptureMessage(message string, hint *sentry.EventHint, scope sentry.EventModifier) *sentry.EventID {
@@ -55,9 +62,18 @@ func (c *client) CaptureMessage(message string, hint *sentry.EventHint, scope se
 }
 
 func (c *client) CaptureException(err error, hint *sentry.EventHint, scope sentry.EventModifier) *sentry.EventID {
-	if errors.Is(err, context.Canceled) || errors.Is(err, context.DeadlineExceeded) {
-		glog.V(2).Infof("skip error: %v", err)
+	if c.excludeErrors.IsExcluded(err) {
+		glog.V(4).Infof("capture error %v is excluded => skip", err)
 		return nil
+	}
+	if scope == nil {
+		scope = sentry.NewScope()
+	}
+	if hint == nil {
+		hint = &sentry.EventHint{}
+	}
+	if hint.OriginalException == nil {
+		hint.OriginalException = err
 	}
 	eventID := c.client.CaptureException(err, hint, scope)
 	glog.V(2).Infof("capture sentry execption with id %s: %v", *eventID, err)
