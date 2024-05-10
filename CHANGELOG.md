@@ -10,6 +10,10 @@ Please choose versions by [Semantic Versioning](http://semver.org/).
 
 All notable changes to this project will be documented in this file.
 
+## 3.2.2
+
+- update golang
+
 ## 3.2.1
 
 - go mod update
