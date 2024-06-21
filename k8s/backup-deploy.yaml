@@ -44,7 +44,7 @@ spec:
             - name: SSH_KEY
               value: '/secret/id_backup'
             - name: CRON_EXPRESSION
-              value: '0 30 0 * * ?'
+              value: '30 * * * 6-7 ?' # every 30min on weekends
           image: 'docker.io/bborbe/backup:{{"BRANCH" | env}}'
           imagePullPolicy: Always
           livenessProbe:
