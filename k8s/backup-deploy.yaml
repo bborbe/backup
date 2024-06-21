@@ -43,6 +43,8 @@ spec:
               value: '/backup'
             - name: SSH_KEY
               value: '/secret/id_backup'
+            - name: CRON_EXPRESSION
+              value: '0 30 0 * * ?'
           image: 'docker.io/bborbe/backup:{{"BRANCH" | env}}'
           imagePullPolicy: Always
           livenessProbe:
