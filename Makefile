@@ -60,3 +60,11 @@ generatek8s:
 	github.com/bborbe/backup/k8s/client github.com/bborbe/backup/k8s/apis \
 	backup.benjamin-borbe.de:v1
 	cp -R ${GOPATH}/src/github.com/bborbe/backup/k8s .
+
+deps:
+	go install github.com/bborbe/teamvault-utils/cmd/teamvault-config-parser@latest
+	go install github.com/bborbe/teamvault-utils/cmd/teamvault-file@latest
+	go install github.com/bborbe/teamvault-utils/cmd/teamvault-url@latest
+	go install github.com/bborbe/teamvault-utils/cmd/teamvault-username@latest
+	go install github.com/bborbe/teamvault-utils/cmd/teamvault-password@latest
+	go install github.com/onsi/ginkgo/v2/ginkgo@latest
