@@ -27,6 +27,16 @@ spec:
       labels:
         app: backup
     spec:
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchExpressions:
+                  - key: app
+                    operator: In
+                    values:
+                      - backup
+              topologyKey: kubernetes.io/hostname
       containers:
         - name: service
           env:
@@ -44,7 +54,7 @@ spec:
             - name: SSH_KEY
               value: '/secret/id_backup'
             - name: CRON_EXPRESSION
-              value: '30 * * * 6-7 ?' # every 30min on weekends
+              value: '@every 1h'
           image: 'docker.io/bborbe/backup:{{"BRANCH" | env}}'
           imagePullPolicy: Always
           livenessProbe:
@@ -69,10 +79,10 @@ spec:
           resources:
             limits:
               cpu: 1000m
-              memory: 500Mi
+              memory: 1000Mi
             requests:
               cpu: 20m
-              memory: 20Mi
+              memory: 200Mi
           volumeMounts:
             - mountPath: /backup
               name: backup

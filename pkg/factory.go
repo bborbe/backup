@@ -21,18 +21,20 @@ func CreateBackupCron(
 	cronExpression string,
 ) run.Func {
 	return func(ctx context.Context) error {
+		backupAction := CreateBackupAction(
+			sentryClient,
+			currentTimeGetter,
+			kubeConfig,
+			backupRootDirectory,
+			sshKeyPath,
+			namespace,
+		)
+		parallelSkipper := run.NewParallelSkipper()
 		return cron.NewExpressionCron(
 			cronExpression,
 			libsentry.NewSkipErrorAndReport(
 				sentryClient,
-				CreateBackupAction(
-					sentryClient,
-					currentTimeGetter,
-					kubeConfig,
-					backupRootDirectory,
-					sshKeyPath,
-					namespace,
-				),
+				parallelSkipper.SkipParallel(backupAction.Run),
 			),
 		).Run(ctx)
 	}
