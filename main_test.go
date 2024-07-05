@@ -12,7 +12,7 @@ import (
 	"github.com/onsi/gomega/gexec"
 )
 
-var _ = Describe("Disk Status", func() {
+var _ = Describe("Backup", func() {
 	It("Compiles", func() {
 		var err error
 		_, err = gexec.Build("github.com/bborbe/backup")
