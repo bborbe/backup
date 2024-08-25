@@ -63,7 +63,7 @@ func (s *configmapDeployer) Deploy(ctx context.Context, configmap v1.ConfigMap) 
 func (s *configmapDeployer) Undeploy(ctx context.Context, namespace Namespace, name string) error {
 	_, err := s.clientset.CoreV1().ConfigMaps(namespace.String()).Get(ctx, name, metav1.GetOptions{})
 	if err != nil {
-		glog.V(3).Infof("configmap '%s' not found => skip", name)
+		glog.V(4).Infof("configmap '%s' not found => skip", name)
 		return nil
 	}
 	if err := s.clientset.CoreV1().ConfigMaps(namespace.String()).Delete(ctx, name, metav1.DeleteOptions{}); err != nil {

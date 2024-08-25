@@ -49,7 +49,7 @@ func (s *jobDeployer) Deploy(ctx context.Context, job batchv1.Job) error {
 func (s *jobDeployer) Undeploy(ctx context.Context, namespace Namespace, name string) error {
 	glog.V(3).Infof("delete %s started", name)
 	if _, err := s.clientset.BatchV1().Jobs(namespace.String()).Get(ctx, name, metav1.GetOptions{}); err != nil {
-		glog.V(3).Infof("job '%s' not found => skip", name)
+		glog.V(4).Infof("job '%s' not found => skip", name)
 		return nil
 	}
 	if err := s.clientset.BatchV1().Jobs(namespace.String()).Delete(ctx, name, metav1.DeleteOptions{

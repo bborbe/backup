@@ -48,13 +48,12 @@ func (s *deploymentDeployer) Deploy(ctx context.Context, deployment appsv1.Deplo
 	}
 	glog.V(3).Infof("deployment %s updated successful", deployment.Name)
 	return nil
-
 }
 
 func (s *deploymentDeployer) Undeploy(ctx context.Context, namespace Namespace, name string) error {
 	_, err := s.clientset.AppsV1().Deployments(namespace.String()).Get(ctx, name, metav1.GetOptions{})
 	if err != nil {
-		glog.V(3).Infof("deployment '%s' not found => skip", name)
+		glog.V(4).Infof("deployment '%s' not found => skip", name)
 		return nil
 	}
 	if err := s.clientset.AppsV1().Deployments(namespace.String()).Delete(ctx, name, metav1.DeleteOptions{}); err != nil {

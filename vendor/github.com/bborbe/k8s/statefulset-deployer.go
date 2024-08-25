@@ -54,7 +54,7 @@ func (s *statefulSetDeployer) Deploy(ctx context.Context, statefulSet appsv1.Sta
 func (s *statefulSetDeployer) Undeploy(ctx context.Context, namespace Namespace, name string) error {
 	_, err := s.clientset.AppsV1().StatefulSets(namespace.String()).Get(ctx, name, metav1.GetOptions{})
 	if err != nil {
-		glog.V(3).Infof("statefulSet '%s' not found => skip", name)
+		glog.V(4).Infof("statefulSet '%s' not found => skip", name)
 		return nil
 	}
 	if err := s.clientset.AppsV1().StatefulSets(namespace.String()).Delete(ctx, name, metav1.DeleteOptions{}); err != nil {

@@ -6,6 +6,7 @@ package k8s
 
 import (
 	"context"
+	"reflect"
 
 	"github.com/bborbe/errors"
 	"github.com/golang/glog"
@@ -33,13 +34,17 @@ type ingressDeployer struct {
 }
 
 func (s *ingressDeployer) Deploy(ctx context.Context, ingress v1.Ingress) error {
-	_, err := s.clientset.NetworkingV1().Ingresses(ingress.Namespace).Get(ctx, ingress.Name, metav1.GetOptions{})
+	currentIngress, err := s.clientset.NetworkingV1().Ingresses(ingress.Namespace).Get(ctx, ingress.Name, metav1.GetOptions{})
 	if err != nil {
 		_, err = s.clientset.NetworkingV1().Ingresses(ingress.Namespace).Create(ctx, &ingress, metav1.CreateOptions{})
 		if err != nil {
 			return errors.Wrap(ctx, err, "create ingress failed")
 		}
 		glog.V(3).Infof("ingress %s created successful", ingress.Name)
+		return nil
+	}
+	if IngressEqual(ingress, *currentIngress) {
+		glog.V(3).Infof("ingress %s already update to date => skip", ingress.Name)
 		return nil
 	}
 	_, err = s.clientset.NetworkingV1().Ingresses(ingress.Namespace).Update(ctx, &ingress, metav1.UpdateOptions{})
@@ -54,7 +59,7 @@ func (s *ingressDeployer) Deploy(ctx context.Context, ingress v1.Ingress) error 
 func (s *ingressDeployer) Undeploy(ctx context.Context, namespace Namespace, name string) error {
 	_, err := s.clientset.NetworkingV1().Ingresses(namespace.String()).Get(ctx, name, metav1.GetOptions{})
 	if err != nil {
-		glog.V(3).Infof("ingress '%s' not found => skip", name)
+		glog.V(4).Infof("ingress '%s' not found => skip", name)
 		return nil
 	}
 	if err := s.clientset.NetworkingV1().Ingresses(namespace.String()).Delete(ctx, name, metav1.DeleteOptions{}); err != nil {
@@ -62,4 +67,20 @@ func (s *ingressDeployer) Undeploy(ctx context.Context, namespace Namespace, nam
 	}
 	glog.V(3).Infof("delete %s completed", name)
 	return nil
+}
+
+func IngressEqual(a, b v1.Ingress) bool {
+	if reflect.DeepEqual(a.ObjectMeta.Labels, b.ObjectMeta.Labels) == false {
+		glog.V(3).Infof("ObjectMeta.Labels not equal %#v %#v", a.ObjectMeta.Labels, b.ObjectMeta.Labels)
+		return false
+	}
+	if reflect.DeepEqual(a.ObjectMeta.Annotations, b.ObjectMeta.Annotations) == false {
+		glog.V(3).Infof("ObjectMeta.Annotations not equal %#v %#v", a.ObjectMeta.Annotations, b.ObjectMeta.Annotations)
+		return false
+	}
+	if reflect.DeepEqual(a.Spec, b.Spec) == false {
+		glog.V(3).Infof("Spec not equal %#v %#v", a.Spec, b.Spec)
+		return false
+	}
+	return true
 }

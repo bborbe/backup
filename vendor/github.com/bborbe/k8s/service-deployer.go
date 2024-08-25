@@ -54,7 +54,7 @@ func (s *serviceDeployer) Deploy(ctx context.Context, service v1.Service) error 
 func (s *serviceDeployer) Undeploy(ctx context.Context, namespace Namespace, name string) error {
 	_, err := s.clientset.CoreV1().Services(namespace.String()).Get(ctx, name, metav1.GetOptions{})
 	if err != nil {
-		glog.V(3).Infof("service '%s' not found => skip", name)
+		glog.V(4).Infof("service '%s' not found => skip", name)
 		return nil
 	}
 	if err := s.clientset.CoreV1().Services(namespace.String()).Delete(ctx, name, metav1.DeleteOptions{}); err != nil {
