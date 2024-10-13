@@ -18,7 +18,7 @@ type IngressBuilder interface {
 	Build(ctx context.Context) (*v1.Ingress, error)
 	SetObjectMetaBuilder(objectMetaBuilder ObjectMetaBuilder) IngressBuilder
 	SetHost(host string) IngressBuilder
-	SetServiceName(serviceName string) IngressBuilder
+	SetServiceName(serviceName Name) IngressBuilder
 	SetPath(path string) IngressBuilder
 	SetIngressClassName(ingressClassName string) IngressBuilder
 }
@@ -33,7 +33,7 @@ func NewIngressBuilder() IngressBuilder {
 }
 
 type ingressBuilder struct {
-	serviceName       string
+	serviceName       Name
 	host              string
 	ingressClassName  string
 	serverPortName    string
@@ -47,7 +47,7 @@ func (i *ingressBuilder) SetHost(host string) IngressBuilder {
 	return i
 }
 
-func (i *ingressBuilder) SetServiceName(serviceName string) IngressBuilder {
+func (i *ingressBuilder) SetServiceName(serviceName Name) IngressBuilder {
 	i.serviceName = serviceName
 	return i
 }
@@ -78,11 +78,11 @@ func (i *ingressBuilder) SetIngressClassName(ingressClassName string) IngressBui
 
 func (i *ingressBuilder) Validate(ctx context.Context) error {
 	return validation.All{
-		validation.Name("Host", NotEmptyString(i.host)),
-		validation.Name("IngressClassName", NotEmptyString(i.ingressClassName)),
-		validation.Name("Path", NotEmptyString(i.path)),
-		validation.Name("ServerPortName", NotEmptyString(i.serverPortName)),
-		validation.Name("ServiceName", NotEmptyString(i.serviceName)),
+		validation.Name("Host", validation.NotEmptyString(i.host)),
+		validation.Name("IngressClassName", validation.NotEmptyString(i.ingressClassName)),
+		validation.Name("Path", validation.NotEmptyString(i.path)),
+		validation.Name("ServerPortName", validation.NotEmptyString(i.serverPortName)),
+		validation.Name("ServiceName", i.serviceName),
 		validation.Name("ObjectMetaBuilder", validation.NotNilAndValid(i.objectMetaBuilder)),
 	}.Validate(ctx)
 }
@@ -116,7 +116,7 @@ func (i *ingressBuilder) Build(ctx context.Context) (*v1.Ingress, error) {
 									PathType: &i.pathType,
 									Backend: v1.IngressBackend{
 										Service: &v1.IngressServiceBackend{
-											Name: i.serviceName,
+											Name: i.serviceName.String(),
 											Port: v1.ServiceBackendPort{
 												Name: i.serverPortName,
 											},

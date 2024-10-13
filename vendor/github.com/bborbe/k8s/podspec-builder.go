@@ -19,6 +19,7 @@ type PodSpecBuilder interface {
 	SetContainers(containers []corev1.Container) PodSpecBuilder
 	SetVolumes(volumes []corev1.Volume) PodSpecBuilder
 	SetRestartPolicy(restartPolicy corev1.RestartPolicy) PodSpecBuilder
+	SetAffinity(affinity corev1.Affinity) PodSpecBuilder
 }
 
 func NewPodSpecBuilder() PodSpecBuilder {
@@ -33,10 +34,16 @@ type podSpecBuilder struct {
 	containers    []corev1.Container
 	volumes       []corev1.Volume
 	restartPolicy corev1.RestartPolicy
+	affinity      *corev1.Affinity
 }
 
 func (p *podSpecBuilder) SetRestartPolicy(restartPolicy corev1.RestartPolicy) PodSpecBuilder {
 	p.restartPolicy = restartPolicy
+	return p
+}
+
+func (p *podSpecBuilder) SetAffinity(affinity corev1.Affinity) PodSpecBuilder {
+	p.affinity = &affinity
 	return p
 }
 
@@ -67,5 +74,6 @@ func (p *podSpecBuilder) Build(ctx context.Context) (*corev1.PodSpec, error) {
 				Name: "docker",
 			},
 		},
+		Affinity: p.affinity,
 	}, nil
 }

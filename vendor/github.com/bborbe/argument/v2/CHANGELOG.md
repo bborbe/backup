@@ -8,6 +8,11 @@ Please choose versions by [Semantic Versioning](http://semver.org/).
 * MINOR version when you add functionality in a backwards-compatible manner, and
 * PATCH version when you make backwards-compatible bug fixes.
 
+## v2.1.0
+
+- fix libtime.ParseDuration
+- go mod update
+
 ## v2.0.5
 
 - go mod update

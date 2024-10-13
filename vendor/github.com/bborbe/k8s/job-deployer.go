@@ -19,7 +19,7 @@ var foreground = metav1.DeletePropagationForeground
 //counterfeiter:generate -o mocks/k8s-job-deployer.go --fake-name K8sJobDeployer . JobDeployer
 type JobDeployer interface {
 	Deploy(ctx context.Context, job batchv1.Job) error
-	Undeploy(ctx context.Context, namespace Namespace, name string) error
+	Undeploy(ctx context.Context, namespace Namespace, name Name) error
 }
 
 func NewJobDeployer(
@@ -36,7 +36,7 @@ type jobDeployer struct {
 
 func (s *jobDeployer) Deploy(ctx context.Context, job batchv1.Job) error {
 	glog.V(3).Infof("deploy %s started", job.Name)
-	if err := s.Undeploy(ctx, Namespace(job.Namespace), job.Name); err != nil {
+	if err := s.Undeploy(ctx, Namespace(job.Namespace), Name(job.Name)); err != nil {
 		return errors.Wrap(ctx, err, "undeploy failed")
 	}
 	if _, err := s.clientset.BatchV1().Jobs(job.Namespace).Create(ctx, &job, metav1.CreateOptions{}); err != nil {
@@ -46,13 +46,13 @@ func (s *jobDeployer) Deploy(ctx context.Context, job batchv1.Job) error {
 	return nil
 }
 
-func (s *jobDeployer) Undeploy(ctx context.Context, namespace Namespace, name string) error {
+func (s *jobDeployer) Undeploy(ctx context.Context, namespace Namespace, name Name) error {
 	glog.V(3).Infof("delete %s started", name)
-	if _, err := s.clientset.BatchV1().Jobs(namespace.String()).Get(ctx, name, metav1.GetOptions{}); err != nil {
+	if _, err := s.clientset.BatchV1().Jobs(namespace.String()).Get(ctx, name.String(), metav1.GetOptions{}); err != nil {
 		glog.V(4).Infof("job '%s' not found => skip", name)
 		return nil
 	}
-	if err := s.clientset.BatchV1().Jobs(namespace.String()).Delete(ctx, name, metav1.DeleteOptions{
+	if err := s.clientset.BatchV1().Jobs(namespace.String()).Delete(ctx, name.String(), metav1.DeleteOptions{
 		PropagationPolicy: &foreground,
 	}); err != nil {
 		return err

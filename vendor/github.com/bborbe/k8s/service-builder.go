@@ -17,7 +17,7 @@ import (
 type ServiceBuilder interface {
 	Build(ctx context.Context) (*corev1.Service, error)
 	SetObjectMetaBuilder(objectMetaBuilder ObjectMetaBuilder) ServiceBuilder
-	SetName(name string) ServiceBuilder
+	SetName(name Name) ServiceBuilder
 	SetServicePortName(servicePortName string) ServiceBuilder
 	SetServicePortNumber(servicePortNumber int32) ServiceBuilder
 }
@@ -30,7 +30,7 @@ func NewServiceBuilder() ServiceBuilder {
 }
 
 type serviceBuilder struct {
-	name              string
+	name              Name
 	objectMetaBuilder ObjectMetaBuilder
 	servicePortNumber int32
 	servicePortName   string
@@ -41,7 +41,7 @@ func (s *serviceBuilder) SetObjectMetaBuilder(objectMetaBuilder ObjectMetaBuilde
 	return s
 }
 
-func (s *serviceBuilder) SetName(name string) ServiceBuilder {
+func (s *serviceBuilder) SetName(name Name) ServiceBuilder {
 	s.name = name
 	return s
 }
@@ -58,7 +58,7 @@ func (s *serviceBuilder) SetServicePortName(servicePortName string) ServiceBuild
 
 func (s *serviceBuilder) Validate(ctx context.Context) error {
 	return validation.All{
-		validation.Name("Name", NotEmptyString(s.name)),
+		validation.Name("Name", validation.NotEmptyString(s.name)),
 		validation.Name("ObjectMetaBuilder", validation.NotNilAndValid(s.objectMetaBuilder)),
 	}.Validate(ctx)
 }
@@ -87,7 +87,7 @@ func (s *serviceBuilder) Build(ctx context.Context) (*corev1.Service, error) {
 				},
 			},
 			Selector: map[string]string{
-				"app": s.name,
+				"app": s.name.String(),
 			},
 		},
 	}, nil

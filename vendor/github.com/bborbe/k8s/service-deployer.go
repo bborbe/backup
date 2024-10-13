@@ -17,7 +17,7 @@ import (
 //counterfeiter:generate -o mocks/k8s-service-deployer.go --fake-name K8sServiceDeployer . ServiceDeployer
 type ServiceDeployer interface {
 	Deploy(ctx context.Context, service v1.Service) error
-	Undeploy(ctx context.Context, namespace Namespace, name string) error
+	Undeploy(ctx context.Context, namespace Namespace, name Name) error
 }
 
 func NewServiceDeployer(
@@ -51,13 +51,13 @@ func (s *serviceDeployer) Deploy(ctx context.Context, service v1.Service) error 
 	return nil
 }
 
-func (s *serviceDeployer) Undeploy(ctx context.Context, namespace Namespace, name string) error {
-	_, err := s.clientset.CoreV1().Services(namespace.String()).Get(ctx, name, metav1.GetOptions{})
+func (s *serviceDeployer) Undeploy(ctx context.Context, namespace Namespace, name Name) error {
+	_, err := s.clientset.CoreV1().Services(namespace.String()).Get(ctx, name.String(), metav1.GetOptions{})
 	if err != nil {
 		glog.V(4).Infof("service '%s' not found => skip", name)
 		return nil
 	}
-	if err := s.clientset.CoreV1().Services(namespace.String()).Delete(ctx, name, metav1.DeleteOptions{}); err != nil {
+	if err := s.clientset.CoreV1().Services(namespace.String()).Delete(ctx, name.String(), metav1.DeleteOptions{}); err != nil {
 		return err
 	}
 	glog.V(3).Infof("delete %s completed", name)

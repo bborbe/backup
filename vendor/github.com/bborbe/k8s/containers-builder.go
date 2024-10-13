@@ -40,7 +40,7 @@ func (c *containersBuilder) SetContainerBuilder(containerBuilders []ContainerBui
 
 func (c *containersBuilder) Validate(ctx context.Context) error {
 	return validation.All{
-		validation.Name("ContainerBuilders", NotEmptySlice(c.containerBuilders)),
+		validation.Name("ContainerBuilders", validation.NotEmptySlice(c.containerBuilders)),
 	}.Validate(ctx)
 }
 

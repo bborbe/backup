@@ -16,7 +16,7 @@ import (
 type ObjectMetaBuilder interface {
 	Build(ctx context.Context) (*metav1.ObjectMeta, error)
 	SetGenerateName(generateName string) ObjectMetaBuilder
-	SetName(name string) ObjectMetaBuilder
+	SetName(name Name) ObjectMetaBuilder
 	SetNamespace(namespace Namespace) ObjectMetaBuilder
 	SetComponent(component string) ObjectMetaBuilder
 	AddLabel(key, value string) ObjectMetaBuilder
@@ -35,7 +35,7 @@ func NewObjectMetaBuilder() ObjectMetaBuilder {
 
 type objectMetaBuilder struct {
 	component    string
-	name         string
+	name         Name
 	namespace    Namespace
 	annotations  map[string]string
 	labels       map[string]string
@@ -63,7 +63,7 @@ func (o *objectMetaBuilder) SetGenerateName(generateName string) ObjectMetaBuild
 	return o
 }
 
-func (o *objectMetaBuilder) SetName(name string) ObjectMetaBuilder {
+func (o *objectMetaBuilder) SetName(name Name) ObjectMetaBuilder {
 	o.name = name
 	return o
 }
@@ -81,8 +81,8 @@ func (o *objectMetaBuilder) SetComponent(component string) ObjectMetaBuilder {
 
 func (o *objectMetaBuilder) Validate(ctx context.Context) error {
 	return validation.All{
-		validation.Name("Name", NotEmptyString(o.name)),
-		validation.Name("Namespace", NotEmptyString(o.namespace)),
+		validation.Name("Name", o.name),
+		validation.Name("Namespace", validation.NotEmptyString(o.namespace)),
 	}.Validate(ctx)
 }
 
@@ -91,7 +91,7 @@ func (o *objectMetaBuilder) Build(ctx context.Context) (*metav1.ObjectMeta, erro
 		return nil, errors.Wrapf(ctx, err, "validate objectMetaBuilder failed")
 	}
 	return &metav1.ObjectMeta{
-		Name:         o.name,
+		Name:         o.name.String(),
 		GenerateName: o.generateName,
 		Namespace:    o.namespace.String(),
 		Labels:       o.labels,

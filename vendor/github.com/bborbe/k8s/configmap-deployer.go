@@ -16,9 +16,9 @@ import (
 
 //counterfeiter:generate -o mocks/k8s-configmap-deployer.go --fake-name K8sConfigMapDeployer . ConfigMapDeployer
 type ConfigMapDeployer interface {
-	Get(ctx context.Context, namespace Namespace, name string) (*v1.ConfigMap, error)
+	Get(ctx context.Context, namespace Namespace, name Name) (*v1.ConfigMap, error)
 	Deploy(ctx context.Context, configmap v1.ConfigMap) error
-	Undeploy(ctx context.Context, namespace Namespace, name string) error
+	Undeploy(ctx context.Context, namespace Namespace, name Name) error
 }
 
 func NewConfigMapDeployer(
@@ -33,8 +33,8 @@ type configmapDeployer struct {
 	clientset k8s_kubernetes.Interface
 }
 
-func (s *configmapDeployer) Get(ctx context.Context, namespace Namespace, name string) (*v1.ConfigMap, error) {
-	cm, err := s.clientset.CoreV1().ConfigMaps(namespace.String()).Get(ctx, name, metav1.GetOptions{})
+func (s *configmapDeployer) Get(ctx context.Context, namespace Namespace, name Name) (*v1.ConfigMap, error) {
+	cm, err := s.clientset.CoreV1().ConfigMaps(namespace.String()).Get(ctx, name.String(), metav1.GetOptions{})
 	if err != nil {
 		return nil, errors.Wrap(ctx, err, "get failed")
 	}
@@ -60,13 +60,13 @@ func (s *configmapDeployer) Deploy(ctx context.Context, configmap v1.ConfigMap) 
 	return nil
 }
 
-func (s *configmapDeployer) Undeploy(ctx context.Context, namespace Namespace, name string) error {
-	_, err := s.clientset.CoreV1().ConfigMaps(namespace.String()).Get(ctx, name, metav1.GetOptions{})
+func (s *configmapDeployer) Undeploy(ctx context.Context, namespace Namespace, name Name) error {
+	_, err := s.clientset.CoreV1().ConfigMaps(namespace.String()).Get(ctx, name.String(), metav1.GetOptions{})
 	if err != nil {
 		glog.V(4).Infof("configmap '%s' not found => skip", name)
 		return nil
 	}
-	if err := s.clientset.CoreV1().ConfigMaps(namespace.String()).Delete(ctx, name, metav1.DeleteOptions{}); err != nil {
+	if err := s.clientset.CoreV1().ConfigMaps(namespace.String()).Delete(ctx, name.String(), metav1.DeleteOptions{}); err != nil {
 		return err
 	}
 	glog.V(3).Infof("delete %s completed", name)

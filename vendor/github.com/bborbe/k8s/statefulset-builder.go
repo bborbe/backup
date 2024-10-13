@@ -21,7 +21,7 @@ type StatefulSetBuilder interface {
 	SetObjectMetaBuilder(objectMetaBuilder ObjectMetaBuilder) StatefulSetBuilder
 	SetContainersBuilder(containersBuilder ContainersBuilder) StatefulSetBuilder
 	AddLabel(key, value string) StatefulSetBuilder
-	SetName(name string) StatefulSetBuilder
+	SetName(name Name) StatefulSetBuilder
 	SetReplicas(replicas int32) StatefulSetBuilder
 	SetDatadirSize(size string) StatefulSetBuilder
 	SetStorageClass(storageClass string) StatefulSetBuilder
@@ -42,7 +42,7 @@ func NewStatefulSetBuilder() StatefulSetBuilder {
 
 type statefulSetBuilder struct {
 	labels            map[string]string
-	name              string
+	name              Name
 	replicas          int32
 	datadirSize       string
 	storageClass      string
@@ -82,9 +82,9 @@ func (s *statefulSetBuilder) SetObjectMetaBuilder(objectMetaBuilder ObjectMetaBu
 	return s
 }
 
-func (s *statefulSetBuilder) SetName(name string) StatefulSetBuilder {
+func (s *statefulSetBuilder) SetName(name Name) StatefulSetBuilder {
 	s.name = name
-	return s.AddLabel("app", name)
+	return s.AddLabel("app", name.String())
 }
 
 func (s *statefulSetBuilder) SetReplicas(replicas int32) StatefulSetBuilder {
@@ -99,7 +99,7 @@ func (s *statefulSetBuilder) AddLabel(key, value string) StatefulSetBuilder {
 
 func (s *statefulSetBuilder) Validate(ctx context.Context) error {
 	return validation.All{
-		validation.Name("Name", NotEmptyString(s.name)),
+		validation.Name("Name", validation.NotEmptyString(s.name)),
 		validation.Name("ObjectMetaBuilder", validation.NotNilAndValid(s.objectMetaBuilder)),
 		validation.Name("ContainersBuilder", validation.NotNilAndValid(s.containersBuilder)),
 	}.Validate(ctx)
@@ -130,10 +130,10 @@ func (s *statefulSetBuilder) Build(ctx context.Context) (*appsv1.StatefulSet, er
 			Replicas: &s.replicas,
 			Selector: &metav1.LabelSelector{
 				MatchLabels: map[string]string{
-					"app": s.name,
+					"app": s.name.String(),
 				},
 			},
-			ServiceName: s.name,
+			ServiceName: s.name.String(),
 			Template: corev1.PodTemplateSpec{
 				ObjectMeta: metav1.ObjectMeta{
 					Annotations: map[string]string{
@@ -168,7 +168,7 @@ func (s *statefulSetBuilder) Build(ctx context.Context) (*appsv1.StatefulSet, er
 						AccessModes: []corev1.PersistentVolumeAccessMode{
 							corev1.ReadWriteOnce,
 						},
-						Resources: corev1.ResourceRequirements{
+						Resources: corev1.VolumeResourceRequirements{
 							Requests: map[corev1.ResourceName]resource.Quantity{
 								"storage": resource.MustParse(s.datadirSize),
 							},

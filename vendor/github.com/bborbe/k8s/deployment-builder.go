@@ -20,7 +20,7 @@ type DeploymentBuilder interface {
 	Build(ctx context.Context) (*appsv1.Deployment, error)
 	SetObjectMetaBuilder(objectMetaBuilder ObjectMetaBuilder) DeploymentBuilder
 	SetContainersBuilder(containersBuilder ContainersBuilder) DeploymentBuilder
-	SetName(name string) DeploymentBuilder
+	SetName(name Name) DeploymentBuilder
 	SetReplicas(replicas int32) DeploymentBuilder
 	SetComponent(component string) DeploymentBuilder
 	SetServiceAccountName(serviceAccountName string) DeploymentBuilder
@@ -37,7 +37,7 @@ func NewDeploymentBuilder() DeploymentBuilder {
 
 type deploymentBuilder struct {
 	component          string
-	name               string
+	name               Name
 	objectMetaBuilder  ObjectMetaBuilder
 	replicas           int32
 	serviceAccountName string
@@ -76,7 +76,7 @@ func (d *deploymentBuilder) SetObjectMetaBuilder(objectMetaBuilder ObjectMetaBui
 	return d
 }
 
-func (d *deploymentBuilder) SetName(name string) DeploymentBuilder {
+func (d *deploymentBuilder) SetName(name Name) DeploymentBuilder {
 	d.name = name
 	return d
 }
@@ -125,7 +125,7 @@ func (d *deploymentBuilder) Build(ctx context.Context) (*appsv1.Deployment, erro
 			Replicas: &d.replicas,
 			Selector: &metav1.LabelSelector{
 				MatchLabels: map[string]string{
-					"app": d.name,
+					"app": d.name.String(),
 				},
 			},
 			Strategy: appsv1.DeploymentStrategy{
@@ -145,7 +145,7 @@ func (d *deploymentBuilder) Build(ctx context.Context) (*appsv1.Deployment, erro
 					},
 					Labels: map[string]string{
 						"component": d.component,
-						"app":       d.name,
+						"app":       d.name.String(),
 					},
 				},
 				Spec: corev1.PodSpec{
