@@ -8,8 +8,19 @@ Tools for backup via rsync.
 ssh-add ~/.ssh/id_ed25519_personal
 ssh -A fire-k3s-dev.hm.benjamin-borbe.de
 sudo -E -s
-cd /var/lib/rancher/k3s/storage/pvc-37f07c6e-8358-4202-abb8-334b8d21e86b_dev_datadir-frontend-candle-0
-rsync --progress --rsync-path="sudo rsync" bborbe@hell.hm.benjamin-borbe.de:/backup/fire-k3s-dev.hm.benjamin-borbe.de/current/var/lib/rancher/k3s/storage/pvc-37f07c6e-8358-4202-abb8-334b8d21e86b_dev_datadir-frontend-candle-0/bolt.db .
+cd /var/lib/rancher/k3s/storage
+DIR=pvc-0cb8996e-18b1-48ae-b959-c9c3cea1f8e8_dev_datadir-core-signal-finder-dwx-gold-0 \
+rsync -av --progress --rsync-path="sudo rsync" "bborbe@hell.hm.benjamin-borbe.de:/backup/$(hostname -f)/current/var/lib/rancher/k3s/storage/${DIR}" .
+```
+
+```
+ssh-add ~/.ssh/id_ed25519_personal
+ssh -A fire-k3s-dev.hm.benjamin-borbe.de
+sudo -E -s
+cd /var/lib/rancher/k3s/storage
+for DIR in $(ls -1d *-core-discord-*); do
+rsync -av --progress --rsync-path="sudo rsync" "bborbe@hell.hm.benjamin-borbe.de:/backup/$(hostname -f)/current/var/lib/rancher/k3s/storage/${DIR}" .
+done
 ```
 
 ## Build
