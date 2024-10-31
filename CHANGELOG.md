@@ -10,6 +10,11 @@ Please choose versions by [Semantic Versioning](http://semver.org/).
 
 All notable changes to this project will be documented in this file.
 
+## 3.3.2
+
+- go mod update
+- backup hourly on sunday
+
 ## 3.3.1
 
 - go mod update
