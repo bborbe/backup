@@ -4,11 +4,13 @@ go 1.23.2
 
 replace github.com/imdario/mergo => github.com/imdario/mergo v0.3.16
 
+exclude sigs.k8s.io/structured-merge-diff/v4 v4.4.2
+
 require (
 	github.com/bborbe/collection v1.7.0
-	github.com/bborbe/cron v1.1.0
+	github.com/bborbe/cron v1.2.0
 	github.com/bborbe/errors v1.3.0
-	github.com/bborbe/http v1.5.1
+	github.com/bborbe/http v1.5.6
 	github.com/bborbe/k8s v1.3.3
 	github.com/bborbe/log v1.0.0
 	github.com/bborbe/run v1.5.3
@@ -23,8 +25,8 @@ require (
 	github.com/incu6us/goimports-reviser v0.1.6
 	github.com/kisielk/errcheck v1.8.0
 	github.com/maxbrunsfeld/counterfeiter/v6 v6.10.0
-	github.com/onsi/ginkgo/v2 v2.20.2
-	github.com/onsi/gomega v1.34.2
+	github.com/onsi/ginkgo/v2 v2.21.0
+	github.com/onsi/gomega v1.35.1
 	github.com/prometheus/client_golang v1.20.5
 	golang.org/x/lint v0.0.0-20210508222113-6edffad5e616
 	golang.org/x/vuln v1.1.3
@@ -57,7 +59,7 @@ require (
 	github.com/google/gnostic-models v0.6.8 // indirect
 	github.com/google/go-cmp v0.6.0 // indirect
 	github.com/google/gofuzz v1.2.0 // indirect
-	github.com/google/pprof v0.0.0-20241023014458-598669927662 // indirect
+	github.com/google/pprof v0.0.0-20241101162523-b92577c0c142 // indirect
 	github.com/google/uuid v1.6.0 // indirect
 	github.com/imdario/mergo v0.3.16 // indirect
 	github.com/josharian/intern v1.0.0 // indirect
@@ -79,7 +81,7 @@ require (
 	golang.org/x/oauth2 v0.23.0 // indirect
 	golang.org/x/sync v0.8.0 // indirect
 	golang.org/x/sys v0.26.0 // indirect
-	golang.org/x/telemetry v0.0.0-20241017030730-50079b310951 // indirect
+	golang.org/x/telemetry v0.0.0-20241028140143-9c0d19e65ba0 // indirect
 	golang.org/x/term v0.25.0 // indirect
 	golang.org/x/text v0.19.0 // indirect
 	golang.org/x/time v0.7.0 // indirect

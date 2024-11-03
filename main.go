@@ -6,6 +6,7 @@ package main
 
 import (
 	"context"
+	libcron "github.com/bborbe/cron"
 	"net/http"
 	"os"
 	"time"
@@ -54,7 +55,7 @@ func (a *application) Run(ctx context.Context, sentryClient libsentry.Client) er
 }
 
 func (a *application) createCron(sentryClient libsentry.Client, currentTimeGetter libtime.CurrentTimeGetter) run.Func {
-	return pkg.CreateBackupCron(sentryClient, currentTimeGetter, a.Kubeconfig, pkg.Path(a.BackupRootDir), pkg.SSHPrivateKey(a.SSHPrivateKey), k8s.Namespace(a.Namespace), a.CronExpression)
+	return pkg.CreateBackupCron(sentryClient, currentTimeGetter, a.Kubeconfig, pkg.Path(a.BackupRootDir), pkg.SSHPrivateKey(a.SSHPrivateKey), k8s.Namespace(a.Namespace), libcron.Expression(a.CronExpression))
 }
 
 func (a *application) createSetupResourceDefinition(trigger run.Trigger) func(ctx context.Context) error {

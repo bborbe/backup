@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/bborbe/cron"
+	libcron "github.com/bborbe/cron"
 	"github.com/bborbe/errors"
 	"github.com/bborbe/k8s"
 	"github.com/bborbe/run"
@@ -18,7 +19,7 @@ func CreateBackupCron(
 	backupRootDirectory Path,
 	sshKeyPath SSHPrivateKey,
 	namespace k8s.Namespace,
-	cronExpression string,
+	cronExpression libcron.Expression,
 ) run.Func {
 	return func(ctx context.Context) error {
 		backupAction := CreateBackupAction(
