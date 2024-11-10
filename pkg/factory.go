@@ -14,20 +14,16 @@ import (
 
 func CreateBackupCron(
 	sentryClient libsentry.Client,
-	currentTimeGetter libtime.CurrentTimeGetter,
+	backupExectuor BackupExectuor,
 	kubeConfig string,
-	backupRootDirectory Path,
-	sshKeyPath SSHPrivateKey,
 	namespace k8s.Namespace,
 	cronExpression libcron.Expression,
 ) run.Func {
 	return func(ctx context.Context) error {
 		backupAction := CreateBackupAction(
 			sentryClient,
-			currentTimeGetter,
+			backupExectuor,
 			kubeConfig,
-			backupRootDirectory,
-			sshKeyPath,
 			namespace,
 		)
 		parallelSkipper := run.NewParallelSkipper()
@@ -43,10 +39,8 @@ func CreateBackupCron(
 
 func CreateBackupAction(
 	sentryClient libsentry.Client,
-	currentTimeGetter libtime.CurrentTimeGetter,
+	backupExectuor BackupExectuor,
 	kubeConfig string,
-	backupRootDirectory Path,
-	sshKeyPath SSHPrivateKey,
 	namespace k8s.Namespace,
 ) run.Runnable {
 	return NewBackupAction(
@@ -55,11 +49,7 @@ func CreateBackupAction(
 			kubeConfig,
 			namespace,
 		),
-		CreateBackupExectuor(
-			currentTimeGetter,
-			backupRootDirectory,
-			sshKeyPath,
-		),
+		backupExectuor,
 	)
 }
 
@@ -87,10 +77,12 @@ func CreateBackupExectuor(
 	backupRootDirectory Path,
 	sshPrivateKey SSHPrivateKey,
 ) BackupExectuor {
-	return NewBackupExectuor(
-		currentTimeGetter,
-		NewRsyncExectuor(),
-		backupRootDirectory,
-		sshPrivateKey,
+	return NewBackupExectuorOnlyOnce(
+		NewBackupExectuor(
+			currentTimeGetter,
+			NewRsyncExectuor(),
+			backupRootDirectory,
+			sshPrivateKey,
+		),
 	)
 }

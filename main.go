@@ -6,11 +6,11 @@ package main
 
 import (
 	"context"
-	libcron "github.com/bborbe/cron"
 	"net/http"
 	"os"
 	"time"
 
+	libcron "github.com/bborbe/cron"
 	"github.com/bborbe/errors"
 	libhttp "github.com/bborbe/http"
 	"github.com/bborbe/k8s"
@@ -45,17 +45,25 @@ type application struct {
 
 func (a *application) Run(ctx context.Context, sentryClient libsentry.Client) error {
 	currentTime := libtime.NewCurrentTime()
+
+	backupExectuor := pkg.CreateBackupExectuor(
+		currentTime,
+		pkg.Path(a.BackupRootDir),
+		pkg.SSHPrivateKey(a.SSHPrivateKey),
+	)
+
 	trigger := run.NewTrigger()
+
 	return service.Run(
 		ctx,
 		a.createSetupResourceDefinition(trigger),
-		run.Triggered(a.createCron(sentryClient, currentTime), trigger.Done()),
-		a.createHttpServer(sentryClient, currentTime),
+		run.Triggered(a.createCron(sentryClient, backupExectuor), trigger.Done()),
+		a.createHttpServer(sentryClient, currentTime, backupExectuor),
 	)
 }
 
-func (a *application) createCron(sentryClient libsentry.Client, currentTimeGetter libtime.CurrentTimeGetter) run.Func {
-	return pkg.CreateBackupCron(sentryClient, currentTimeGetter, a.Kubeconfig, pkg.Path(a.BackupRootDir), pkg.SSHPrivateKey(a.SSHPrivateKey), k8s.Namespace(a.Namespace), libcron.Expression(a.CronExpression))
+func (a *application) createCron(sentryClient libsentry.Client, backupExectuor pkg.BackupExectuor) run.Func {
+	return pkg.CreateBackupCron(sentryClient, backupExectuor, a.Kubeconfig, k8s.Namespace(a.Namespace), libcron.Expression(a.CronExpression))
 }
 
 func (a *application) createSetupResourceDefinition(trigger run.Trigger) func(ctx context.Context) error {
@@ -65,6 +73,7 @@ func (a *application) createSetupResourceDefinition(trigger run.Trigger) func(ct
 func (a *application) createHttpServer(
 	sentryClient libsentry.Client,
 	currentTimeGetter libtime.CurrentTimeGetter,
+	backupExectuor pkg.BackupExectuor,
 ) run.Func {
 	return func(ctx context.Context) error {
 		ctx, cancel := context.WithCancel(ctx)
@@ -142,11 +151,7 @@ func (a *application) createHttpServer(
 				if err != nil {
 					return errors.Wrapf(ctx, err, "get target failed")
 				}
-				backupExectuor := pkg.CreateBackupExectuor(
-					currentTimeGetter,
-					pkg.Path(a.BackupRootDir),
-					pkg.SSHPrivateKey(a.SSHPrivateKey),
-				)
+
 				if err := backupExectuor.Backup(ctx, target.Spec); err != nil {
 					return errors.Wrapf(ctx, err, "backup %s failed", target.Name)
 				}
@@ -158,10 +163,8 @@ func (a *application) createHttpServer(
 		router.Path("/trigger").Handler(libhttp.NewBackgroundRunHandler(ctx,
 			pkg.CreateBackupAction(
 				sentryClient,
-				currentTimeGetter,
+				backupExectuor,
 				a.Kubeconfig,
-				pkg.Path(a.BackupRootDir),
-				pkg.SSHPrivateKey(a.SSHPrivateKey),
 				k8s.Namespace(a.Namespace),
 			).Run,
 		))

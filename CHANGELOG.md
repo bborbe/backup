@@ -10,6 +10,10 @@ Please choose versions by [Semantic Versioning](http://semver.org/).
 
 All notable changes to this project will be documented in this file.
 
+## 3.4.0
+
+- prevent concurrent backups
+
 ## 3.3.3
 
 - fix backup cron on sunday
@@ -43,7 +47,7 @@ All notable changes to this project will be documented in this file.
 
 ## 3.1.0
 
-- Add status endpoint 
+- Add status endpoint
 
 ## 3.0.0
 
