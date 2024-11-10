@@ -13,6 +13,7 @@ All notable changes to this project will be documented in this file.
 ## 3.4.0
 
 - prevent concurrent backups
+- go mod update
 
 ## 3.3.3
 
