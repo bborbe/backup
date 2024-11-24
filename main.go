@@ -58,7 +58,7 @@ func (a *application) Run(ctx context.Context, sentryClient libsentry.Client) er
 		ctx,
 		a.createSetupResourceDefinition(trigger),
 		run.Triggered(a.createCron(sentryClient, backupExectuor), trigger.Done()),
-		a.createHttpServer(sentryClient, currentTime, backupExectuor),
+		a.createHttpServer(sentryClient, backupExectuor),
 	)
 }
 
@@ -72,7 +72,6 @@ func (a *application) createSetupResourceDefinition(trigger run.Trigger) func(ct
 
 func (a *application) createHttpServer(
 	sentryClient libsentry.Client,
-	currentTimeGetter libtime.CurrentTimeGetter,
 	backupExectuor pkg.BackupExectuor,
 ) run.Func {
 	return func(ctx context.Context) error {
