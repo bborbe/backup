@@ -132,13 +132,19 @@ func CreateBackupExectuor(
 	)
 }
 
-func CreateStatusHandler(kubeconfig string, namespace k8s.Namespace, backupRootDir pkg.Path) libhttp.WithError {
+func CreateStatusHandler(
+	kubeconfig string,
+	namespace k8s.Namespace,
+	backupRootDir pkg.Path,
+) libhttp.WithError {
 	return handler.NewStatusHandler(
 		pkg.NewK8sConnector(
 			kubeconfig,
 			namespace,
 		),
-		backupRootDir,
+		pkg.NewBackupFinder(
+			backupRootDir,
+		),
 	)
 }
 
@@ -164,7 +170,9 @@ func CreateBackupCleaner(
 	return pkg.NewBackupCleanerOnlyOnce(
 		pkg.NewBackupCleaner(
 			currentTimeGetter,
-			backupRootDirectory,
+			pkg.NewBackupFinder(
+				backupRootDirectory,
+			),
 		),
 	)
 }

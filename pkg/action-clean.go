@@ -28,7 +28,7 @@ func NewCleanAction(
 				return ctx.Err()
 			default:
 				glog.V(2).Infof("clean %s started", target.Name)
-				if err := cleanExectuor.Clean(ctx, target.Spec); err != nil {
+				if err := cleanExectuor.Clean(ctx, target.Spec.Host); err != nil {
 					sentryClient.CaptureException(
 						err,
 						&sentry.EventHint{

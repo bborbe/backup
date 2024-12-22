@@ -13,7 +13,6 @@ import (
 func NewListHandler(k8sConnector pkg.K8sConnector) libhttp.WithError {
 	return libhttp.NewJsonHandler(
 		libhttp.JsonHandlerFunc(func(ctx context.Context, req *http.Request) (interface{}, error) {
-
 			targets, err := k8sConnector.Targets(ctx)
 			if err != nil {
 				return nil, errors.Wrapf(ctx, err, "list targets failed")

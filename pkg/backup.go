@@ -1,8 +1,9 @@
 package pkg
 
 import (
-	v1 "github.com/bborbe/backup/k8s/apis/backup.benjamin-borbe.de/v1"
 	libtime "github.com/bborbe/time"
+
+	v1 "github.com/bborbe/backup/k8s/apis/backup.benjamin-borbe.de/v1"
 )
 
 type Backups []Backup

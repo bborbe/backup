@@ -21,7 +21,7 @@ type backupCleanerOnlyOnce struct {
 	backupCleaner BackupCleaner
 }
 
-func (b *backupCleanerOnlyOnce) Clean(ctx context.Context, target v1.BackupSpec) error {
+func (b *backupCleanerOnlyOnce) Clean(ctx context.Context, backupHost v1.BackupHost) error {
 	b.mux.Lock()
 	if b.running {
 		b.mux.Unlock()
@@ -29,7 +29,7 @@ func (b *backupCleanerOnlyOnce) Clean(ctx context.Context, target v1.BackupSpec)
 	}
 	b.running = true
 	b.mux.Unlock()
-	err := b.backupCleaner.Clean(ctx, target)
+	err := b.backupCleaner.Clean(ctx, backupHost)
 	b.mux.Lock()
 	b.running = false
 	b.mux.Unlock()
