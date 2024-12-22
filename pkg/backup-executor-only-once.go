@@ -8,7 +8,7 @@ import (
 	v1 "github.com/bborbe/backup/k8s/apis/backup.benjamin-borbe.de/v1"
 )
 
-var AlreadyRunningError = stderrors.New("backup already running")
+var BackupAlreadyRunningError = stderrors.New("backup already running")
 
 func NewBackupExectuorOnlyOnce(
 	backupExectuor BackupExectuor,
@@ -28,7 +28,7 @@ func (b *backupExectuorOnlyOnce) Backup(ctx context.Context, target v1.BackupSpe
 	b.mux.Lock()
 	if b.running {
 		b.mux.Unlock()
-		return AlreadyRunningError
+		return BackupAlreadyRunningError
 	}
 	b.running = true
 	b.mux.Unlock()

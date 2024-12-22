@@ -2,10 +2,13 @@ package pkg
 
 import (
 	"context"
+	stderrors "errors"
 	"sync"
 
 	v1 "github.com/bborbe/backup/k8s/apis/backup.benjamin-borbe.de/v1"
 )
+
+var CleanupAlreadyRunningError = stderrors.New("cleanup already running")
 
 func NewBackupCleanerOnlyOnce(
 	backupCleaner BackupCleaner,
@@ -25,7 +28,7 @@ func (b *backupCleanerOnlyOnce) Clean(ctx context.Context, backupHost v1.BackupH
 	b.mux.Lock()
 	if b.running {
 		b.mux.Unlock()
-		return AlreadyRunningError
+		return CleanupAlreadyRunningError
 	}
 	b.running = true
 	b.mux.Unlock()

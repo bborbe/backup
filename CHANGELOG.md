@@ -10,6 +10,10 @@ Please choose versions by [Semantic Versioning](http://semver.org/).
 
 All notable changes to this project will be documented in this file.
 
+## 3.5.1
+
+- add cleanup already running error
+
 ## 3.5.0
 
 - backup cleanup cron
