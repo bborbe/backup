@@ -16,6 +16,31 @@ import (
 	"github.com/bborbe/backup/pkg/handler"
 )
 
+func CreateCleanupCron(
+	sentryClient libsentry.Client,
+	backupCleaner pkg.BackupCleaner,
+	kubeConfig string,
+	namespace k8s.Namespace,
+	cronExpression libcron.Expression,
+) run.Func {
+	return func(ctx context.Context) error {
+		backupAction := CreateCleanAction(
+			sentryClient,
+			backupCleaner,
+			kubeConfig,
+			namespace,
+		)
+		parallelSkipper := run.NewParallelSkipper()
+		return cron.NewExpressionCron(
+			cronExpression,
+			libsentry.NewSkipErrorAndReport(
+				sentryClient,
+				parallelSkipper.SkipParallel(backupAction.Run),
+			),
+		).Run(ctx)
+	}
+}
+
 func CreateBackupCron(
 	sentryClient libsentry.Client,
 	backupExectuor pkg.BackupExectuor,
@@ -39,6 +64,22 @@ func CreateBackupCron(
 			),
 		).Run(ctx)
 	}
+}
+
+func CreateCleanAction(
+	sentryClient libsentry.Client,
+	backupCleaner pkg.BackupCleaner,
+	kubeConfig string,
+	namespace k8s.Namespace,
+) run.Runnable {
+	return pkg.NewCleanAction(
+		sentryClient,
+		pkg.NewK8sConnector(
+			kubeConfig,
+			namespace,
+		),
+		backupCleaner,
+	)
 }
 
 func CreateBackupAction(
@@ -114,4 +155,16 @@ func CreateBackupHandler(kubeconfig string, namespace k8s.Namespace, backupExect
 		kubeconfig,
 		namespace,
 	), backupExectuor)
+}
+
+func CreateBackupCleaner(
+	currentTimeGetter libtime.CurrentTimeGetter,
+	backupRootDirectory pkg.Path,
+) pkg.BackupCleaner {
+	return pkg.NewBackupCleanerOnlyOnce(
+		pkg.NewBackupCleaner(
+			currentTimeGetter,
+			backupRootDirectory,
+		),
+	)
 }

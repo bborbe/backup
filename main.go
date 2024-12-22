@@ -50,18 +50,28 @@ func (a *application) Run(ctx context.Context, sentryClient libsentry.Client) er
 		pkg.SSHPrivateKey(a.SSHPrivateKey),
 	)
 
+	backupCleaner := factory.CreateBackupCleaner(
+		currentTime,
+		pkg.Path(a.BackupRootDir),
+	)
+
 	trigger := run.NewTrigger()
 
 	return service.Run(
 		ctx,
 		a.createSetupResourceDefinition(trigger),
-		run.Triggered(a.createCron(sentryClient, backupExectuor), trigger.Done()),
+		run.Triggered(a.createBackupCron(sentryClient, backupExectuor), trigger.Done()),
+		run.Triggered(a.createCleanupCron(sentryClient, backupCleaner), trigger.Done()),
 		a.createHttpServer(sentryClient, backupExectuor),
 	)
 }
 
-func (a *application) createCron(sentryClient libsentry.Client, backupExectuor pkg.BackupExectuor) run.Func {
+func (a *application) createBackupCron(sentryClient libsentry.Client, backupExectuor pkg.BackupExectuor) run.Func {
 	return factory.CreateBackupCron(sentryClient, backupExectuor, a.Kubeconfig, k8s.Namespace(a.Namespace), libcron.Expression(a.CronExpression))
+}
+
+func (a *application) createCleanupCron(sentryClient libsentry.Client, backupCleaner pkg.BackupCleaner) run.Func {
+	return factory.CreateCleanupCron(sentryClient, backupCleaner, a.Kubeconfig, k8s.Namespace(a.Namespace), libcron.Expression(a.CronExpression))
 }
 
 func (a *application) createSetupResourceDefinition(trigger run.Trigger) func(ctx context.Context) error {
