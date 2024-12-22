@@ -51,12 +51,16 @@ spec:
                 secretKeyRef:
                   key: sentry-dsn
                   name: backup
-            - name: BACKUP_ROOT_DIR
-              value: '/backup'
             - name: SSH_KEY
               value: '/secret/id_backup'
             - name: CRON_EXPRESSION
               value: '0 0 * * * 0'
+            - name: BACKUP_ROOT_DIR
+              value: '/backup'
+            - name: BACKUP_CLEANUP_ENABLED
+              value: 'true'
+            - name: BACKUP_KEEP_AMOUNT
+              value: '2'
           image: 'docker.io/bborbe/backup:{{"BRANCH" | env}}'
           imagePullPolicy: Always
           livenessProbe:

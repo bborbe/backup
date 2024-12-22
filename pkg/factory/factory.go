@@ -163,9 +163,21 @@ func CreateBackupHandler(kubeconfig string, namespace k8s.Namespace, backupExect
 	), backupExectuor)
 }
 
+func CreateCleanupHandler(kubeconfig string, namespace k8s.Namespace, backupCleaner pkg.BackupCleaner) libhttp.WithError {
+	return handler.NewCleanupHandler(
+		pkg.NewK8sConnector(
+			kubeconfig,
+			namespace,
+		),
+		backupCleaner,
+	)
+}
+
 func CreateBackupCleaner(
 	currentTimeGetter libtime.CurrentTimeGetter,
 	backupRootDirectory pkg.Path,
+	backupKeepAmount int,
+	backupCleanEnabled bool,
 ) pkg.BackupCleaner {
 	return pkg.NewBackupCleanerOnlyOnce(
 		pkg.NewBackupCleaner(
@@ -173,6 +185,9 @@ func CreateBackupCleaner(
 			pkg.NewBackupFinder(
 				backupRootDirectory,
 			),
+			backupRootDirectory,
+			backupKeepAmount,
+			backupCleanEnabled,
 		),
 	)
 }

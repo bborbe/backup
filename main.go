@@ -31,14 +31,16 @@ func main() {
 }
 
 type application struct {
-	SentryDSN      string `required:"true" arg:"sentry-dsn" env:"SENTRY_DSN" usage:"SentryDSN" display:"length"`
-	SentryProxy    string `required:"false" arg:"sentry-proxy" env:"SENTRY_PROXY" usage:"Sentry Proxy"`
-	Listen         string `required:"true" arg:"listen" env:"LISTEN" usage:"address to listen to"`
-	Kubeconfig     string `required:"false" arg:"kubeconfig" env:"KUBECONFIG" usage:"Path to k8s config"`
-	CronExpression string `required:"true" arg:"cron-expression" env:"CRON_EXPRESSION" usage:"Cron expression to determine when service is run" default:"@every 1h"`
-	BackupRootDir  string `required:"true" arg:"backup-root-dir" env:"BACKUP_ROOT_DIR" usage:"Directory all backups are stored"`
-	SSHPrivateKey  string `required:"true" arg:"ssh-key" env:"SSH_KEY" usage:"path to ssh private key"`
-	Namespace      string `required:"true" arg:"namespace" env:"NAMESPACE" usage:"kubernetes namespace"`
+	SentryDSN            string `required:"true" arg:"sentry-dsn" env:"SENTRY_DSN" usage:"SentryDSN" display:"length"`
+	SentryProxy          string `required:"false" arg:"sentry-proxy" env:"SENTRY_PROXY" usage:"Sentry Proxy"`
+	Listen               string `required:"true" arg:"listen" env:"LISTEN" usage:"address to listen to"`
+	Kubeconfig           string `required:"false" arg:"kubeconfig" env:"KUBECONFIG" usage:"Path to k8s config"`
+	CronExpression       string `required:"true" arg:"cron-expression" env:"CRON_EXPRESSION" usage:"Cron expression to determine when service is run" default:"@every 1h"`
+	SSHPrivateKey        string `required:"true" arg:"ssh-key" env:"SSH_KEY" usage:"path to ssh private key"`
+	Namespace            string `required:"true" arg:"namespace" env:"NAMESPACE" usage:"kubernetes namespace"`
+	BackupRootDir        string `required:"true" arg:"backup-root-dir" env:"BACKUP_ROOT_DIR" usage:"Directory all backups are stored"`
+	BackupCleanupEnabled bool   `required:"true" arg:"backup-cleanup-enabled" env:"BACKUP_CLEANUP_ENABLED" usage:"allow enable backup cleanup"`
+	BackupKeepAmount     int    `required:"true" arg:"backup-keep-amount" env:"BACKUP_KEEP_AMOUNT" usage:"how many backups to keep" default:"3"`
 }
 
 func (a *application) Run(ctx context.Context, sentryClient libsentry.Client) error {
@@ -53,6 +55,8 @@ func (a *application) Run(ctx context.Context, sentryClient libsentry.Client) er
 	backupCleaner := factory.CreateBackupCleaner(
 		currentTime,
 		pkg.Path(a.BackupRootDir),
+		a.BackupKeepAmount,
+		a.BackupCleanupEnabled,
 	)
 
 	trigger := run.NewTrigger()
@@ -62,7 +66,7 @@ func (a *application) Run(ctx context.Context, sentryClient libsentry.Client) er
 		a.createSetupResourceDefinition(trigger),
 		run.Triggered(a.createBackupCron(sentryClient, backupExectuor), trigger.Done()),
 		run.Triggered(a.createCleanupCron(sentryClient, backupCleaner), trigger.Done()),
-		a.createHttpServer(sentryClient, backupExectuor),
+		a.createHttpServer(sentryClient, backupExectuor, backupCleaner),
 	)
 }
 
@@ -81,6 +85,7 @@ func (a *application) createSetupResourceDefinition(trigger run.Trigger) func(ct
 func (a *application) createHttpServer(
 	sentryClient libsentry.Client,
 	backupExectuor pkg.BackupExectuor,
+	backupCleaner pkg.BackupCleaner,
 ) run.Func {
 	return func(ctx context.Context) error {
 		ctx, cancel := context.WithCancel(ctx)
@@ -111,6 +116,19 @@ func (a *application) createHttpServer(
 
 		router.Path("/backup/{name}").Handler(libhttp.NewErrorHandler(
 			factory.CreateBackupHandler(a.Kubeconfig, k8s.Namespace(a.Namespace), backupExectuor),
+		))
+
+		router.Path("/cleanup/all").Handler(libhttp.NewBackgroundRunHandler(ctx,
+			factory.CreateCleanAction(
+				sentryClient,
+				backupCleaner,
+				a.Kubeconfig,
+				k8s.Namespace(a.Namespace),
+			).Run,
+		))
+
+		router.Path("/cleanup/{name}").Handler(libhttp.NewErrorHandler(
+			factory.CreateCleanupHandler(a.Kubeconfig, k8s.Namespace(a.Namespace), backupCleaner),
 		))
 
 		glog.V(2).Infof("starting http server listen on %s", a.Listen)

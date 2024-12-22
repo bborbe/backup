@@ -2,6 +2,7 @@ package pkg
 
 import (
 	"context"
+	"os"
 	"sort"
 
 	"github.com/bborbe/errors"
@@ -18,18 +19,25 @@ type BackupCleaner interface {
 func NewBackupCleaner(
 	currentTimeGetter libtime.CurrentTimeGetter,
 	backupFinder BackupFinder,
+	backupRootDir Path,
+	backupKeepAmount int,
+	backupCleanEnabled bool,
 ) BackupCleaner {
 	return &backupCleaner{
-		backupFinder:      backupFinder,
-		currentTimeGetter: currentTimeGetter,
-		keepAmount:        2,
+		backupFinder:       backupFinder,
+		currentTimeGetter:  currentTimeGetter,
+		backupKeepAmount:   backupKeepAmount,
+		backupRootDir:      backupRootDir,
+		backupCleanEnabled: backupCleanEnabled,
 	}
 }
 
 type backupCleaner struct {
-	currentTimeGetter libtime.CurrentTimeGetter
-	backupFinder      BackupFinder
-	keepAmount        int
+	currentTimeGetter  libtime.CurrentTimeGetter
+	backupFinder       BackupFinder
+	backupKeepAmount   int
+	backupCleanEnabled bool
+	backupRootDir      Path
 }
 
 func (b *backupCleaner) Clean(ctx context.Context, backupHost v1.BackupHost) error {
@@ -38,7 +46,7 @@ func (b *backupCleaner) Clean(ctx context.Context, backupHost v1.BackupHost) err
 	if err != nil {
 		return errors.Wrapf(ctx, err, "list backups failed")
 	}
-	if len(dates) <= b.keepAmount {
+	if len(dates) <= b.backupKeepAmount {
 		glog.V(2).Infof("host %s has nothing to clean", backupHost)
 		return nil
 	}
@@ -46,11 +54,21 @@ func (b *backupCleaner) Clean(ctx context.Context, backupHost v1.BackupHost) err
 		return dates[i].Time().After(dates[j].Time())
 	})
 	for i, date := range dates {
-		if i < b.keepAmount {
+		if i < b.backupKeepAmount {
 			glog.V(2).Infof("keep backup %s/%s", backupHost, date)
 			continue
 		}
+		if b.backupCleanEnabled == false {
+			glog.V(2).Infof("would delete backup %s/%s", backupHost, date)
+			continue
+		}
 		glog.V(2).Infof("delete backup %s/%s", backupHost, date)
+		dir := b.backupRootDir.Join(backupHost.String(), date.String())
+		glog.V(2).Infof("os.RemoveAll(%s) started", dir)
+		if err := os.RemoveAll(dir.String()); err != nil {
+			return errors.Wrapf(ctx, err, "os.RemoveAll(%s) failed", dir)
+		}
+		glog.V(2).Infof("os.RemoveAll(%s) completed", dir)
 	}
 	glog.V(2).Infof("backup host %s completed", backupHost)
 	return nil
