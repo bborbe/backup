@@ -10,6 +10,11 @@ Please choose versions by [Semantic Versioning](http://semver.org/).
 
 All notable changes to this project will be documented in this file.
 
+## 3.4.1
+
+- refactor
+- go mod update
+
 ## 3.4.0
 
 - prevent concurrent backups

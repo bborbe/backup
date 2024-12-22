@@ -24,9 +24,11 @@ func ParseBackupExcludes(values []string) BackupExcludes {
 type BackupExcludes []BackupExclude
 
 func (a BackupExcludes) Len() int { return len(a) }
+
 func (a BackupExcludes) Less(i, j int) bool {
 	return strings.Compare(strings.ToLower(a[i].String()), strings.ToLower(a[j].String())) < 0
 }
+
 func (a BackupExcludes) Swap(i, j int) { a[i], a[j] = a[j], a[i] }
 
 func (a BackupExcludes) Strings() []string {

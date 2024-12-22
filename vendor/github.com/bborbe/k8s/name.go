@@ -11,12 +11,28 @@ import (
 
 	"github.com/bborbe/errors"
 	"github.com/bborbe/validation"
+	corev1 "k8s.io/api/core/v1"
 )
 
+var nameWithoutSuffixNumber = regexp.MustCompile(`(.*)-\d+$`)
 var replaceLeading = regexp.MustCompile(`^[0-9-]+`)
-var replaceFolling = regexp.MustCompile(`[0-9-]+$`)
+var replaceFolling = regexp.MustCompile(`[-]+$`)
 var replaceIllegalCharacters = regexp.MustCompile(`[^a-z0-9-]+`)
 var replaceMultiDash = regexp.MustCompile(`-+`)
+
+// NameFromPod return the name of the pod with -0 or hash
+func NameFromPod(pod corev1.Pod) Name {
+	if podTemplateHash, ok := pod.Labels["pod-template-hash"]; ok {
+		parts := strings.Split(pod.Name, podTemplateHash)
+		if len(parts) == 2 {
+			return Name(strings.TrimSuffix(parts[0], "-"))
+		}
+	}
+	if match := nameWithoutSuffixNumber.FindStringSubmatch(pod.Name); len(match) > 1 {
+		return Name(match[1])
+	}
+	return Name(pod.Name)
+}
 
 // BuildName from the given string. Replace all illegal characters with underscore
 func BuildName(names ...string) Name {

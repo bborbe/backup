@@ -8,6 +8,17 @@ Please choose versions by [Semantic Versioning](http://semver.org/).
 * MINOR version when you add functionality in a backwards-compatible manner, and
 * PATCH version when you make backwards-compatible bug fixes.
 
+## 1.3.6
+
+- allow BuildName with number at the end
+- go mod update
+- remove deprecated golint
+
+## 1.3.5
+
+- add name from pod function
+- go mod update
+
 ## 1.3.4
 
 - go mod update

@@ -22,9 +22,11 @@ func ParseBackupDirs(values []string) BackupDirs {
 type BackupDirs []BackupDir
 
 func (a BackupDirs) Len() int { return len(a) }
+
 func (a BackupDirs) Less(i, j int) bool {
 	return strings.Compare(strings.ToLower(a[i].String()), strings.ToLower(a[j].String())) < 0
 }
+
 func (a BackupDirs) Swap(i, j int) { a[i], a[j] = a[j], a[i] }
 
 func (a BackupDirs) Strings() []string {

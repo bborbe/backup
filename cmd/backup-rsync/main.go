@@ -16,6 +16,7 @@ import (
 
 	v1 "github.com/bborbe/backup/k8s/apis/backup.benjamin-borbe.de/v1"
 	"github.com/bborbe/backup/pkg"
+	"github.com/bborbe/backup/pkg/factory"
 )
 
 func main() {
@@ -37,7 +38,7 @@ type application struct {
 
 func (a *application) Run(ctx context.Context, sentryClient libsentry.Client) error {
 	currentTime := libtime.NewCurrentTime()
-	backupExectuor := pkg.CreateBackupExectuor(
+	backupExectuor := factory.CreateBackupExectuor(
 		currentTime,
 		pkg.Path(a.BackupRootDir),
 		pkg.SSHPrivateKey(a.SSHPrivateKey),

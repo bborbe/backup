@@ -6,12 +6,10 @@ package main
 
 import (
 	"context"
-	"net/http"
 	"os"
 	"time"
 
 	libcron "github.com/bborbe/cron"
-	"github.com/bborbe/errors"
 	libhttp "github.com/bborbe/http"
 	"github.com/bborbe/k8s"
 	"github.com/bborbe/log"
@@ -23,8 +21,8 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 
-	v1 "github.com/bborbe/backup/k8s/apis/backup.benjamin-borbe.de/v1"
 	"github.com/bborbe/backup/pkg"
+	"github.com/bborbe/backup/pkg/factory"
 )
 
 func main() {
@@ -46,7 +44,7 @@ type application struct {
 func (a *application) Run(ctx context.Context, sentryClient libsentry.Client) error {
 	currentTime := libtime.NewCurrentTime()
 
-	backupExectuor := pkg.CreateBackupExectuor(
+	backupExectuor := factory.CreateBackupExectuor(
 		currentTime,
 		pkg.Path(a.BackupRootDir),
 		pkg.SSHPrivateKey(a.SSHPrivateKey),
@@ -63,11 +61,11 @@ func (a *application) Run(ctx context.Context, sentryClient libsentry.Client) er
 }
 
 func (a *application) createCron(sentryClient libsentry.Client, backupExectuor pkg.BackupExectuor) run.Func {
-	return pkg.CreateBackupCron(sentryClient, backupExectuor, a.Kubeconfig, k8s.Namespace(a.Namespace), libcron.Expression(a.CronExpression))
+	return factory.CreateBackupCron(sentryClient, backupExectuor, a.Kubeconfig, k8s.Namespace(a.Namespace), libcron.Expression(a.CronExpression))
 }
 
 func (a *application) createSetupResourceDefinition(trigger run.Trigger) func(ctx context.Context) error {
-	return pkg.CreateSetupResourceDefinition(a.Kubeconfig, k8s.Namespace(a.Namespace), trigger)
+	return factory.CreateSetupResourceDefinition(a.Kubeconfig, k8s.Namespace(a.Namespace), trigger)
 }
 
 func (a *application) createHttpServer(
@@ -85,87 +83,24 @@ func (a *application) createHttpServer(
 		router.Path("/setloglevel/{level}").Handler(log.NewSetLoglevelHandler(ctx, log.NewLogLevelSetter(2, 5*time.Minute)))
 
 		router.Path("/status").Handler(libhttp.NewErrorHandler(
-			libhttp.NewJsonHandler(
-				libhttp.JsonHandlerFunc(func(ctx context.Context, req *http.Request) (interface{}, error) {
-					k8sConnector := pkg.NewK8sConnector(
-						a.Kubeconfig,
-						k8s.Namespace(a.Namespace),
-					)
-					targets, err := k8sConnector.Targets(ctx)
-					if err != nil {
-						return nil, errors.Wrapf(ctx, err, "list targets failed")
-					}
-					result := map[v1.BackupHost]string{}
-					for _, target := range targets {
-						host := target.Spec.Host
-						backupDir := pkg.Path(a.BackupRootDir).Join(host.String())
-						glog.V(4).Infof("search for backups in %s", backupDir)
-						entries, err := os.ReadDir(backupDir.String())
-						if err != nil {
-							return nil, errors.Wrapf(ctx, err, "list failed")
-						}
-						glog.V(4).Infof("found %d entries in %s", len(entries), backupDir)
-						var latestBackup *time.Time
-						for _, entry := range entries {
-							backupTime, err := time.Parse(time.DateOnly, entry.Name())
-							if err != nil {
-								glog.V(4).Infof("name(%s) is not valid  => skip", entry.Name())
-								continue
-							}
-							if latestBackup == nil || backupTime.After(*latestBackup) {
-								latestBackup = &backupTime
-								result[host] = backupTime.Format(time.DateOnly)
-							}
-						}
-					}
-					return result, nil
-				}),
-			),
+			factory.CreateStatusHandler(a.Kubeconfig, k8s.Namespace(a.Namespace), pkg.Path(a.BackupRootDir)),
 		))
 
 		router.Path("/list").Handler(libhttp.NewErrorHandler(
-			libhttp.NewJsonHandler(
-				libhttp.JsonHandlerFunc(func(ctx context.Context, req *http.Request) (interface{}, error) {
-					k8sConnector := pkg.NewK8sConnector(
-						a.Kubeconfig,
-						k8s.Namespace(a.Namespace),
-					)
-					targets, err := k8sConnector.Targets(ctx)
-					if err != nil {
-						return nil, errors.Wrapf(ctx, err, "list targets failed")
-					}
-					return targets.Specs(), nil
-				}),
-			),
+			factory.CreateListHandler(a.Kubeconfig, k8s.Namespace(a.Namespace)),
 		))
 
-		router.Path("/backup/{name}").Handler(libhttp.NewErrorHandler(
-			libhttp.WithErrorFunc(func(ctx context.Context, resp http.ResponseWriter, req *http.Request) error {
-				vars := mux.Vars(req)
-				k8sConnector := pkg.NewK8sConnector(
-					a.Kubeconfig,
-					k8s.Namespace(a.Namespace),
-				)
-				target, err := k8sConnector.Target(ctx, vars["name"])
-				if err != nil {
-					return errors.Wrapf(ctx, err, "get target failed")
-				}
-
-				if err := backupExectuor.Backup(ctx, target.Spec); err != nil {
-					return errors.Wrapf(ctx, err, "backup %s failed", target.Name)
-				}
-				libhttp.WriteAndGlog(resp, "backup %s completed", target.Name)
-				return nil
-			}),
-		))
-
-		router.Path("/trigger").Handler(libhttp.NewBackgroundRunHandler(ctx,
-			pkg.CreateBackupAction(
+		router.Path("/backup/all").Handler(libhttp.NewBackgroundRunHandler(ctx,
+			factory.CreateBackupAction(
 				sentryClient,
 				backupExectuor,
 				a.Kubeconfig,
 				k8s.Namespace(a.Namespace),
 			).Run,
+		))
+
+		router.Path("/backup/{name}").Handler(libhttp.NewErrorHandler(
+			factory.CreateBackupHandler(a.Kubeconfig, k8s.Namespace(a.Namespace), backupExectuor),
 		))
 
 		glog.V(2).Infof("starting http server listen on %s", a.Listen)
