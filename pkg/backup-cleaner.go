@@ -28,5 +28,7 @@ type backupCleaner struct {
 }
 
 func (b *backupCleaner) Clean(ctx context.Context, backupSpec v1.BackupSpec) error {
+	list
+
 	return nil
 }
