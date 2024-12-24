@@ -3,6 +3,8 @@ IMAGE ?= bborbe/backup
 BRANCH ?= $(shell git rev-parse --abbrev-ref HEAD)
 DIRS += $(shell find */* -maxdepth 0 -name Makefile -exec dirname "{}" \;)
 
+default: precommit
+
 build:
 	docker build --no-cache --rm=true --platform=linux/amd64 -t $(REGISTRY)/$(IMAGE):$(BRANCH) -f Dockerfile .
 
