@@ -3,7 +3,14 @@ kind: Ingress
 metadata:
   name: backup
   namespace: '{{ "NAMESPACE" | env }}'
+  annotations:
+    traefik.ingress.kubernetes.io/router.entrypoints: websecure
+    traefik.ingress.kubernetes.io/router.tls: "true"
 spec:
+  tls:
+    - secretName: hell-tls
+      hosts:
+        - backup.hell.hm.benjamin-borbe.de
   ingressClassName: 'traefik'
   rules:
     - host: 'backup.hell.hm.benjamin-borbe.de'
