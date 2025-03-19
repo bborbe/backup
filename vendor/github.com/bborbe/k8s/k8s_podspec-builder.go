@@ -20,21 +20,29 @@ type PodSpecBuilder interface {
 	SetVolumes(volumes []corev1.Volume) PodSpecBuilder
 	SetRestartPolicy(restartPolicy corev1.RestartPolicy) PodSpecBuilder
 	SetAffinity(affinity corev1.Affinity) PodSpecBuilder
+	SetImagePullSecrets(imagePullSecrets []string) PodSpecBuilder
 }
 
 func NewPodSpecBuilder() PodSpecBuilder {
 	return &podSpecBuilder{
-		restartPolicy: corev1.RestartPolicyAlways,
+		restartPolicy:    corev1.RestartPolicyAlways,
+		imagePullSecrets: []string{"docker"},
 	}
 }
 
 type podSpecBuilder struct {
-	name          string
-	objectMeta    metav1.ObjectMeta
-	containers    []corev1.Container
-	volumes       []corev1.Volume
-	restartPolicy corev1.RestartPolicy
-	affinity      *corev1.Affinity
+	name             string
+	objectMeta       metav1.ObjectMeta
+	containers       []corev1.Container
+	volumes          []corev1.Volume
+	restartPolicy    corev1.RestartPolicy
+	affinity         *corev1.Affinity
+	imagePullSecrets []string
+}
+
+func (p *podSpecBuilder) SetImagePullSecrets(imagePullSecrets []string) PodSpecBuilder {
+	p.imagePullSecrets = imagePullSecrets
+	return p
 }
 
 func (p *podSpecBuilder) SetRestartPolicy(restartPolicy corev1.RestartPolicy) PodSpecBuilder {
@@ -66,14 +74,18 @@ func (p *podSpecBuilder) Build(ctx context.Context) (*corev1.PodSpec, error) {
 		return nil, errors.Wrapf(ctx, err, "validate ingressBuilder failed")
 	}
 	return &corev1.PodSpec{
-		Volumes:       p.volumes,
-		Containers:    p.containers,
-		RestartPolicy: p.restartPolicy,
-		ImagePullSecrets: []corev1.LocalObjectReference{
-			{
-				Name: "docker",
-			},
-		},
-		Affinity: p.affinity,
+		Volumes:          p.volumes,
+		Containers:       p.containers,
+		RestartPolicy:    p.restartPolicy,
+		ImagePullSecrets: p.createImagePullSecrets(),
+		Affinity:         p.affinity,
 	}, nil
+}
+
+func (p *podSpecBuilder) createImagePullSecrets() []corev1.LocalObjectReference {
+	result := make([]corev1.LocalObjectReference, 0, len(p.imagePullSecrets))
+	for _, imagePullSecret := range p.imagePullSecrets {
+		result = append(result, corev1.LocalObjectReference{Name: imagePullSecret})
+	}
+	return result
 }
