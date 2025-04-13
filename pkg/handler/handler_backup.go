@@ -4,11 +4,10 @@ import (
 	"context"
 	"net/http"
 
+	"github.com/bborbe/backup/pkg"
 	"github.com/bborbe/errors"
 	libhttp "github.com/bborbe/http"
 	"github.com/gorilla/mux"
-
-	"github.com/bborbe/backup/pkg"
 )
 
 func NewBackupHandler(k8sConnector pkg.K8sConnector, backupExectuor pkg.BackupExectuor) libhttp.WithError {

@@ -4,10 +4,9 @@ import (
 	"context"
 	"net/http"
 
+	"github.com/bborbe/backup/pkg"
 	"github.com/bborbe/errors"
 	libhttp "github.com/bborbe/http"
-
-	"github.com/bborbe/backup/pkg"
 )
 
 func NewListHandler(k8sConnector pkg.K8sConnector) libhttp.WithError {

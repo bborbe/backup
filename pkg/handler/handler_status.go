@@ -5,12 +5,11 @@ import (
 	"net/http"
 	"time"
 
+	v1 "github.com/bborbe/backup/k8s/apis/backup.benjamin-borbe.de/v1"
+	"github.com/bborbe/backup/pkg"
 	"github.com/bborbe/errors"
 	libhttp "github.com/bborbe/http"
 	libtime "github.com/bborbe/time"
-
-	v1 "github.com/bborbe/backup/k8s/apis/backup.benjamin-borbe.de/v1"
-	"github.com/bborbe/backup/pkg"
 )
 
 func NewStatusHandler(

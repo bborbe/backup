@@ -8,15 +8,14 @@ import (
 	"context"
 	"os"
 
+	v1 "github.com/bborbe/backup/k8s/apis/backup.benjamin-borbe.de/v1"
+	"github.com/bborbe/backup/pkg"
+	"github.com/bborbe/backup/pkg/factory"
 	"github.com/bborbe/errors"
 	libsentry "github.com/bborbe/sentry"
 	"github.com/bborbe/service"
 	libtime "github.com/bborbe/time"
 	"github.com/golang/glog"
-
-	v1 "github.com/bborbe/backup/k8s/apis/backup.benjamin-borbe.de/v1"
-	"github.com/bborbe/backup/pkg"
-	"github.com/bborbe/backup/pkg/factory"
 )
 
 func main() {

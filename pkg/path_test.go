@@ -1,10 +1,9 @@
 package pkg_test
 
 import (
+	"github.com/bborbe/backup/pkg"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
-
-	"github.com/bborbe/backup/pkg"
 )
 
 var _ = Describe("Path", func() {

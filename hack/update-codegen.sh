@@ -7,7 +7,7 @@ set -o pipefail
 SCRIPT_ROOT=$(dirname "${BASH_SOURCE[0]}")/..
 source ./vendor/k8s.io/code-generator/kube_codegen.sh
 
-THIS_PKG="github.com/bborbe/alert"
+THIS_PKG="github.com/bborbe/backup"
 
 kube::codegen::gen_helpers \
     --boilerplate "${SCRIPT_ROOT}/hack/boilerplate.go.txt" \
