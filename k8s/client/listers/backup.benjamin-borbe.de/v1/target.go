@@ -6,11 +6,10 @@
 package v1
 
 import (
+	backupbenjaminborbedev1 "github.com/bborbe/backup/k8s/apis/backup.benjamin-borbe.de/v1"
 	labels "k8s.io/apimachinery/pkg/labels"
 	listers "k8s.io/client-go/listers"
 	cache "k8s.io/client-go/tools/cache"
-
-	backupbenjaminborbedev1 "github.com/bborbe/backup/k8s/apis/backup.benjamin-borbe.de/v1"
 )
 
 // TargetLister helps list Targets.

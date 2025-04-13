@@ -6,10 +6,9 @@
 package fake
 
 import (
+	v1 "github.com/bborbe/backup/k8s/client/clientset/versioned/typed/backup.benjamin-borbe.de/v1"
 	rest "k8s.io/client-go/rest"
 	testing "k8s.io/client-go/testing"
-
-	v1 "github.com/bborbe/backup/k8s/client/clientset/versioned/typed/backup.benjamin-borbe.de/v1"
 )
 
 type FakeBackupV1 struct {

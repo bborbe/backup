@@ -10,14 +10,13 @@ import (
 	sync "sync"
 	time "time"
 
+	versioned "github.com/bborbe/backup/k8s/client/clientset/versioned"
+	backupbenjaminborbede "github.com/bborbe/backup/k8s/client/informers/externalversions/backup.benjamin-borbe.de"
+	internalinterfaces "github.com/bborbe/backup/k8s/client/informers/externalversions/internalinterfaces"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	runtime "k8s.io/apimachinery/pkg/runtime"
 	schema "k8s.io/apimachinery/pkg/runtime/schema"
 	cache "k8s.io/client-go/tools/cache"
-
-	versioned "github.com/bborbe/backup/k8s/client/clientset/versioned"
-	backupbenjaminborbede "github.com/bborbe/backup/k8s/client/informers/externalversions/backup.benjamin-borbe.de"
-	internalinterfaces "github.com/bborbe/backup/k8s/client/informers/externalversions/internalinterfaces"
 )
 
 // SharedInformerOption defines the functional option type for SharedInformerFactory.
@@ -181,7 +180,7 @@ func (f *sharedInformerFactory) InformerFor(obj runtime.Object, newFunc internal
 	}
 
 	informer = newFunc(f.client, resyncPeriod)
-	_ = informer.SetTransform(f.transform)
+	informer.SetTransform(f.transform)
 	f.informers[informerType] = informer
 
 	return informer

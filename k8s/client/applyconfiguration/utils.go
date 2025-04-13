@@ -6,13 +6,12 @@
 package applyconfiguration
 
 import (
-	runtime "k8s.io/apimachinery/pkg/runtime"
-	schema "k8s.io/apimachinery/pkg/runtime/schema"
-	testing "k8s.io/client-go/testing"
-
 	v1 "github.com/bborbe/backup/k8s/apis/backup.benjamin-borbe.de/v1"
 	backupbenjaminborbedev1 "github.com/bborbe/backup/k8s/client/applyconfiguration/backup.benjamin-borbe.de/v1"
 	internal "github.com/bborbe/backup/k8s/client/applyconfiguration/internal"
+	runtime "k8s.io/apimachinery/pkg/runtime"
+	schema "k8s.io/apimachinery/pkg/runtime/schema"
+	testing "k8s.io/client-go/testing"
 )
 
 // ForKind returns an apply configuration type for the given GroupVersionKind, or nil if no
