@@ -9,8 +9,6 @@ import (
 	"os"
 	"time"
 
-	"github.com/bborbe/backup/pkg"
-	"github.com/bborbe/backup/pkg/factory"
 	libcron "github.com/bborbe/cron"
 	libhttp "github.com/bborbe/http"
 	"github.com/bborbe/k8s"
@@ -22,6 +20,9 @@ import (
 	"github.com/golang/glog"
 	"github.com/gorilla/mux"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
+
+	"github.com/bborbe/backup/pkg"
+	"github.com/bborbe/backup/pkg/factory"
 )
 
 func main() {

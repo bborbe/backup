@@ -1,12 +1,17 @@
+// Copyright (c) 2025 Benjamin Borbe All rights reserved.
+// Use of this source code is governed by a BSD-style
+// license that can be found in the LICENSE file.
+
 package handler
 
 import (
 	"context"
 	"net/http"
 
-	"github.com/bborbe/backup/pkg"
 	"github.com/bborbe/errors"
 	libhttp "github.com/bborbe/http"
+
+	"github.com/bborbe/backup/pkg"
 )
 
 func NewListHandler(k8sConnector pkg.K8sConnector) libhttp.WithError {

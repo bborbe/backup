@@ -8,9 +8,6 @@ import (
 	"context"
 	"time"
 
-	backupv1 "github.com/bborbe/backup/k8s/apis/backup.benjamin-borbe.de/v1"
-	"github.com/bborbe/backup/k8s/client/clientset/versioned"
-	"github.com/bborbe/backup/k8s/client/informers/externalversions"
 	"github.com/bborbe/errors"
 	"github.com/bborbe/k8s"
 	"github.com/golang/glog"
@@ -20,6 +17,10 @@ import (
 	"k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/cache"
 	"k8s.io/client-go/tools/clientcmd"
+
+	backupv1 "github.com/bborbe/backup/k8s/apis/backup.benjamin-borbe.de/v1"
+	"github.com/bborbe/backup/k8s/client/clientset/versioned"
+	"github.com/bborbe/backup/k8s/client/informers/externalversions"
 )
 
 const (
