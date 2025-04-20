@@ -43,7 +43,11 @@ func (r *rsyncExectuor) Rsync(ctx context.Context, args ...string) error {
 			glog.V(2).Infof("rsync closed with exit error")
 			if waitstatus, ok := msg.Sys().(syscall.WaitStatus); ok {
 				glog.V(2).Infof("rsync closed with exit error: %d", waitstatus.ExitStatus())
-				if waitstatus.ExitStatus() == 24 {
+				switch waitstatus.ExitStatus() {
+				case 23:
+					glog.V(2).Infof("rsync finished with some files/attrs were not transferred")
+					return nil
+				case 24:
 					glog.V(2).Infof("rsync finished with vanished file error")
 					return nil
 				}
