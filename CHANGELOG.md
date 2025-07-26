@@ -10,6 +10,11 @@ Please choose versions by [Semantic Versioning](http://semver.org/).
 
 All notable changes to this project will be documented in this file.
 
+## v3.5.4
+
+- go mod update
+- update Dockerfile
+
 ## v3.5.3
 
 - go mod update

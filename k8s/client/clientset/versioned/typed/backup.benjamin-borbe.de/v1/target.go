@@ -8,13 +8,14 @@ package v1
 import (
 	context "context"
 
-	backupbenjaminborbedev1 "github.com/bborbe/backup/k8s/apis/backup.benjamin-borbe.de/v1"
-	applyconfigurationbackupbenjaminborbedev1 "github.com/bborbe/backup/k8s/client/applyconfiguration/backup.benjamin-borbe.de/v1"
-	scheme "github.com/bborbe/backup/k8s/client/clientset/versioned/scheme"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	types "k8s.io/apimachinery/pkg/types"
 	watch "k8s.io/apimachinery/pkg/watch"
 	gentype "k8s.io/client-go/gentype"
+
+	backupbenjaminborbedev1 "github.com/bborbe/backup/k8s/apis/backup.benjamin-borbe.de/v1"
+	applyconfigurationbackupbenjaminborbedev1 "github.com/bborbe/backup/k8s/client/applyconfiguration/backup.benjamin-borbe.de/v1"
+	scheme "github.com/bborbe/backup/k8s/client/clientset/versioned/scheme"
 )
 
 // TargetsGetter has a method to return a TargetInterface.

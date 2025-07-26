@@ -9,14 +9,15 @@ import (
 	context "context"
 	time "time"
 
-	apisbackupbenjaminborbedev1 "github.com/bborbe/backup/k8s/apis/backup.benjamin-borbe.de/v1"
-	versioned "github.com/bborbe/backup/k8s/client/clientset/versioned"
-	internalinterfaces "github.com/bborbe/backup/k8s/client/informers/externalversions/internalinterfaces"
-	backupbenjaminborbedev1 "github.com/bborbe/backup/k8s/client/listers/backup.benjamin-borbe.de/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	runtime "k8s.io/apimachinery/pkg/runtime"
 	watch "k8s.io/apimachinery/pkg/watch"
 	cache "k8s.io/client-go/tools/cache"
+
+	apisbackupbenjaminborbedev1 "github.com/bborbe/backup/k8s/apis/backup.benjamin-borbe.de/v1"
+	versioned "github.com/bborbe/backup/k8s/client/clientset/versioned"
+	internalinterfaces "github.com/bborbe/backup/k8s/client/informers/externalversions/internalinterfaces"
+	backupbenjaminborbedev1 "github.com/bborbe/backup/k8s/client/listers/backup.benjamin-borbe.de/v1"
 )
 
 // TargetInformer provides access to a shared informer and lister for

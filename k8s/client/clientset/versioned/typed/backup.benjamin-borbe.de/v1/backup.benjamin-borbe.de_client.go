@@ -8,9 +8,10 @@ package v1
 import (
 	http "net/http"
 
+	rest "k8s.io/client-go/rest"
+
 	backupbenjaminborbedev1 "github.com/bborbe/backup/k8s/apis/backup.benjamin-borbe.de/v1"
 	scheme "github.com/bborbe/backup/k8s/client/clientset/versioned/scheme"
-	rest "k8s.io/client-go/rest"
 )
 
 type BackupV1Interface interface {

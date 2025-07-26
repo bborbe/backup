@@ -320,14 +320,6 @@ func (fake *K8sConnector) TargetsReturnsOnCall(i int, result1 v1.Targets, result
 func (fake *K8sConnector) Invocations() map[string][][]interface{} {
 	fake.invocationsMutex.RLock()
 	defer fake.invocationsMutex.RUnlock()
-	fake.listenMutex.RLock()
-	defer fake.listenMutex.RUnlock()
-	fake.setupCustomResourceDefinitionMutex.RLock()
-	defer fake.setupCustomResourceDefinitionMutex.RUnlock()
-	fake.targetMutex.RLock()
-	defer fake.targetMutex.RUnlock()
-	fake.targetsMutex.RLock()
-	defer fake.targetsMutex.RUnlock()
 	copiedInvocations := map[string][][]interface{}{}
 	for key, value := range fake.invocations {
 		copiedInvocations[key] = value

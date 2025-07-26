@@ -6,15 +6,16 @@
 package fake
 
 import (
-	applyconfiguration "github.com/bborbe/backup/k8s/client/applyconfiguration"
-	clientset "github.com/bborbe/backup/k8s/client/clientset/versioned"
-	backupv1 "github.com/bborbe/backup/k8s/client/clientset/versioned/typed/backup.benjamin-borbe.de/v1"
-	fakebackupv1 "github.com/bborbe/backup/k8s/client/clientset/versioned/typed/backup.benjamin-borbe.de/v1/fake"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/watch"
 	"k8s.io/client-go/discovery"
 	fakediscovery "k8s.io/client-go/discovery/fake"
 	"k8s.io/client-go/testing"
+
+	applyconfiguration "github.com/bborbe/backup/k8s/client/applyconfiguration"
+	clientset "github.com/bborbe/backup/k8s/client/clientset/versioned"
+	backupv1 "github.com/bborbe/backup/k8s/client/clientset/versioned/typed/backup.benjamin-borbe.de/v1"
+	fakebackupv1 "github.com/bborbe/backup/k8s/client/clientset/versioned/typed/backup.benjamin-borbe.de/v1/fake"
 )
 
 // NewSimpleClientset returns a clientset that will respond with the provided objects.
