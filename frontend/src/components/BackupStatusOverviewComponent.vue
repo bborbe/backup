@@ -3,12 +3,21 @@ import { ref, onMounted } from "vue";
 // @ts-ignore
 import backupApiClient from "../lib/BackupApiClient.ts";
 import type { BackupStatus, LoadingState } from "../lib/types";
+import ActionButtonComponent from "./ActionButtonComponent.vue";
 
 const status = ref<BackupStatus>({});
 const loadingState = ref<LoadingState>({
   isLoading: false,
   error: null,
 });
+
+const actionState = ref({
+  isBackingUp: false,
+  isCleaningUp: false,
+  message: null as string | null,
+});
+
+const individualActionState = ref<Record<string, { isBackingUp: boolean; isCleaningUp: boolean }>>({});
 
 onMounted(async () => {
   await loadStatus();
@@ -28,6 +37,12 @@ async function loadStatus() {
     // Ensure we have a proper object, not an array
     if (result && typeof result === 'object' && !Array.isArray(result)) {
       status.value = result;
+      // Initialize individual action states for all hosts
+      for (const host of Object.keys(result)) {
+        if (!individualActionState.value[host]) {
+          individualActionState.value[host] = { isBackingUp: false, isCleaningUp: false };
+        }
+      }
     } else {
       console.warn("API returned unexpected data format:", result);
       status.value = {};
@@ -68,11 +83,120 @@ function formatDate(dateString: string): string {
   if (daysDiff < 0) return "Future date (error)";
   return `${daysDiff} days ago`;
 }
+
+async function triggerBackupAll() {
+  actionState.value.isBackingUp = true;
+  actionState.value.message = null;
+  
+  try {
+    const result = await backupApiClient.triggerBackupAll();
+    actionState.value.message = result.message;
+    setTimeout(() => {
+      actionState.value.message = null;
+    }, 5000);
+  } catch (err) {
+    actionState.value.message = err instanceof Error ? err.message : "Failed to trigger backup";
+    setTimeout(() => {
+      actionState.value.message = null;
+    }, 5000);
+  } finally {
+    actionState.value.isBackingUp = false;
+  }
+}
+
+async function triggerCleanupAll() {
+  actionState.value.isCleaningUp = true;
+  actionState.value.message = null;
+  
+  try {
+    const result = await backupApiClient.triggerCleanupAll();
+    actionState.value.message = result.message;
+    setTimeout(() => {
+      actionState.value.message = null;
+    }, 5000);
+  } catch (err) {
+    actionState.value.message = err instanceof Error ? err.message : "Failed to trigger cleanup";
+    setTimeout(() => {
+      actionState.value.message = null;
+    }, 5000);
+  } finally {
+    actionState.value.isCleaningUp = false;
+  }
+}
+
+async function triggerBackup(host: string) {
+  if (!individualActionState.value[host]) {
+    individualActionState.value[host] = { isBackingUp: false, isCleaningUp: false };
+  }
+  
+  individualActionState.value[host].isBackingUp = true;
+  actionState.value.message = null;
+  
+  try {
+    const result = await backupApiClient.triggerBackup(host);
+    actionState.value.message = result.message;
+    setTimeout(() => {
+      actionState.value.message = null;
+    }, 5000);
+  } catch (err) {
+    actionState.value.message = err instanceof Error ? err.message : `Failed to trigger backup for ${host}`;
+    setTimeout(() => {
+      actionState.value.message = null;
+    }, 5000);
+  } finally {
+    individualActionState.value[host].isBackingUp = false;
+  }
+}
+
+async function triggerCleanup(host: string) {
+  if (!individualActionState.value[host]) {
+    individualActionState.value[host] = { isBackingUp: false, isCleaningUp: false };
+  }
+  
+  individualActionState.value[host].isCleaningUp = true;
+  actionState.value.message = null;
+  
+  try {
+    const result = await backupApiClient.triggerCleanup(host);
+    actionState.value.message = result.message;
+    setTimeout(() => {
+      actionState.value.message = null;
+    }, 5000);
+  } catch (err) {
+    actionState.value.message = err instanceof Error ? err.message : `Failed to trigger cleanup for ${host}`;
+    setTimeout(() => {
+      actionState.value.message = null;
+    }, 5000);
+  } finally {
+    individualActionState.value[host].isCleaningUp = false;
+  }
+}
 </script>
 
 <template>
   <div class="status-overview">
-    <h2>Backup Status Overview</h2>
+    <div class="header">
+      <h2>Backup Status Overview</h2>
+      
+      <div class="action-buttons">
+        <ActionButtonComponent
+          label="Backup All"
+          variant="primary"
+          :disabled="actionState.isBackingUp || actionState.isCleaningUp"
+          @click="triggerBackupAll"
+        />
+        <ActionButtonComponent
+          label="Cleanup All"
+          variant="danger"
+          :disabled="actionState.isBackingUp || actionState.isCleaningUp"
+          @click="triggerCleanupAll"
+        />
+      </div>
+    </div>
+    
+    <div v-if="actionState.message" class="action-message">
+      {{ actionState.message }}
+    </div>
     
     <div v-if="loadingState.isLoading" class="loading">
       Loading backup status...
@@ -93,9 +217,32 @@ function formatDate(dateString: string): string {
         :key="host"
         :class="['status-card', getStatusClass(lastBackup)]"
       >
-        <div class="host-name">{{ host }}</div>
-        <div class="last-backup">{{ formatDate(lastBackup) }}</div>
-        <div class="backup-date">{{ lastBackup || 'No date available' }}</div>
+        <div class="card-content">
+          <div class="host-name">{{ host }}</div>
+          <div class="last-backup">{{ formatDate(lastBackup) }}</div>
+          <div class="backup-date">{{ lastBackup || 'No date available' }}</div>
+        </div>
+        
+        <div class="card-actions">
+          <ActionButtonComponent
+            label="Backup"
+            variant="primary"
+            :disabled="
+              (individualActionState[host]?.isBackingUp || individualActionState[host]?.isCleaningUp) ||
+              actionState.isBackingUp || actionState.isCleaningUp
+            "
+            @click="triggerBackup(host)"
+          />
+          <ActionButtonComponent
+            label="Cleanup"
+            variant="danger"
+            :disabled="
+              (individualActionState[host]?.isBackingUp || individualActionState[host]?.isCleaningUp) ||
+              actionState.isBackingUp || actionState.isCleaningUp
+            "
+            @click="triggerCleanup(host)"
+          />
+        </div>
       </div>
     </div>
   </div>
@@ -106,9 +253,30 @@ function formatDate(dateString: string): string {
   padding: 1rem;
 }
 
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
 .status-overview h2 {
-  margin: 0 0 1rem 0;
+  margin: 0;
   color: #1f2937;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.action-message {
+  padding: 0.75rem 1rem;
+  margin-bottom: 1rem;
+  background-color: #dbeafe;
+  border: 1px solid #60a5fa;
+  border-radius: 0.5rem;
+  color: #1e40af;
 }
 
 .loading, .error, .empty {
@@ -144,6 +312,21 @@ function formatDate(dateString: string): string {
   border-radius: 0.5rem;
   border: 2px solid;
   background-color: white;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.card-content {
+  flex: 1;
+}
+
+.card-actions {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: flex-end;
+  padding-top: 0.5rem;
+  border-top: 1px solid #e5e7eb;
 }
 
 .status-success {

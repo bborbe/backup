@@ -10,6 +10,10 @@ Please choose versions by [Semantic Versioning](http://semver.org/).
 
 All notable changes to this project will be documented in this file.
 
+## v3.6.0
+
+- add UI
+
 ## v3.5.4
 
 - go mod update

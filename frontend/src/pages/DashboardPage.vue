@@ -1,8 +1,6 @@
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
 import BackupStatusOverviewComponent from "../components/BackupStatusOverviewComponent.vue";
-import ActionPanelComponent from "../components/ActionPanelComponent.vue";
-import TargetListComponent from "../components/TargetListComponent.vue";
 
 const currentTime = ref("");
 
@@ -24,9 +22,7 @@ function updateTime() {
     </header>
     
     <main class="dashboard-content">
-      <ActionPanelComponent />
       <BackupStatusOverviewComponent />
-      <TargetListComponent />
     </main>
   </div>
 </template>
