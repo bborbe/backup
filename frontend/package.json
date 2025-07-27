@@ -1,0 +1,36 @@
+{
+  "name": "backup-service-frontend",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "test": "vitest",
+    "build-watch": "vite build --mode development --watch",
+    "build-dev": "vite build --mode development",
+    "build-staging": "vite build --mode staging",
+    "build": "vite build",
+    "build:check": "vue-tsc && vite build",
+    "preview": "vite preview",
+    "lint:analyse": "eslint src --ext .ts,.vue",
+    "lint:fix": "eslint src --fix --ext .ts,.vue",
+    "update": "npm-check-updates -u"
+  },
+  "dependencies": {
+    "vue": "^3.5.17",
+    "vue-router": "^4.5.1",
+    "axios": "^1.10.0"
+  },
+  "devDependencies": {
+    "eslint-plugin-prettier": "^5.5.1",
+    "@vitejs/plugin-vue": "^6.0.0",
+    "@vue/test-utils": "^2.4.6",
+    "typescript": "~5.8.3",
+    "vite": "^7.0.4",
+    "vitest": "^3.2.4",
+    "vue-tsc": "^3.0.1",
+    "eslint": "^9.31.0",
+    "eslint-plugin-vue": "^10.3.0",
+    "@typescript-eslint/eslint-plugin": "^8.37.0"
+  }
+}

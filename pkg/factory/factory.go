@@ -6,6 +6,7 @@ package factory
 
 import (
 	"context"
+	"net/http"
 
 	"github.com/bborbe/cron"
 	libcron "github.com/bborbe/cron"
@@ -152,44 +153,59 @@ func CreateStatusHandler(
 	apiextensionsInterface libk8s.ApiextensionsInterface,
 	namespace k8s.Namespace,
 	backupRootDir pkg.Path,
-) libhttp.WithError {
-	return handler.NewStatusHandler(
-		pkg.NewK8sConnector(
-			backupClientset,
-			apiextensionsInterface,
-			namespace,
-		),
-		pkg.NewBackupFinder(
-			backupRootDir,
+) http.Handler {
+	return libhttp.NewErrorHandler(
+		handler.NewStatusHandler(
+			pkg.NewK8sConnector(
+				backupClientset,
+				apiextensionsInterface,
+				namespace,
+			),
+			pkg.NewBackupFinder(
+				backupRootDir,
+			),
 		),
 	)
 }
 
-func CreateListHandler(backupClientset pkg.BackupClientset, apiextensionsInterface libk8s.ApiextensionsInterface, namespace k8s.Namespace) libhttp.WithError {
-	k8sConnector := pkg.NewK8sConnector(
-		backupClientset,
-		apiextensionsInterface,
-		namespace,
-	)
-	return handler.NewListHandler(k8sConnector)
-}
-
-func CreateBackupHandler(backupClientset pkg.BackupClientset, apiextensionsInterface libk8s.ApiextensionsInterface, namespace k8s.Namespace, backupExectuor pkg.BackupExectuor) libhttp.WithError {
-	return handler.NewBackupHandler(pkg.NewK8sConnector(
-		backupClientset,
-		apiextensionsInterface,
-		namespace,
-	), backupExectuor)
-}
-
-func CreateCleanupHandler(backupClientset pkg.BackupClientset, apiextensionsInterface libk8s.ApiextensionsInterface, namespace k8s.Namespace, backupCleaner pkg.BackupCleaner) libhttp.WithError {
-	return handler.NewCleanupHandler(
-		pkg.NewK8sConnector(
-			backupClientset,
-			apiextensionsInterface,
-			namespace,
+func CreateListHandler(
+	backupClientset pkg.BackupClientset,
+	apiextensionsInterface libk8s.ApiextensionsInterface,
+	namespace k8s.Namespace) http.Handler {
+	return libhttp.NewErrorHandler(
+		handler.NewListHandler(
+			pkg.NewK8sConnector(
+				backupClientset,
+				apiextensionsInterface,
+				namespace,
+			),
 		),
-		backupCleaner,
+	)
+}
+
+func CreateBackupHandler(backupClientset pkg.BackupClientset, apiextensionsInterface libk8s.ApiextensionsInterface, namespace k8s.Namespace, backupExectuor pkg.BackupExectuor) http.Handler {
+	return libhttp.NewErrorHandler(
+		handler.NewBackupHandler(
+			pkg.NewK8sConnector(
+				backupClientset,
+				apiextensionsInterface,
+				namespace,
+			),
+			backupExectuor,
+		),
+	)
+}
+
+func CreateCleanupHandler(backupClientset pkg.BackupClientset, apiextensionsInterface libk8s.ApiextensionsInterface, namespace k8s.Namespace, backupCleaner pkg.BackupCleaner) http.Handler {
+	return libhttp.NewErrorHandler(
+		handler.NewCleanupHandler(
+			pkg.NewK8sConnector(
+				backupClientset,
+				apiextensionsInterface,
+				namespace,
+			),
+			backupCleaner,
+		),
 	)
 }
 
@@ -209,5 +225,29 @@ func CreateBackupCleaner(
 			backupKeepAmount,
 			backupCleanEnabled,
 		),
+	)
+}
+
+func CreateBackupActionHandler(ctx context.Context, sentryClient libsentry.Client, backupExectuor pkg.BackupExectuor, backupClientset pkg.BackupClientset, apiextensionClientset libk8s.ApiextensionsInterface, namespace k8s.Namespace) http.Handler {
+	return libhttp.NewBackgroundRunHandler(ctx,
+		CreateBackupAction(
+			sentryClient,
+			backupExectuor,
+			backupClientset,
+			apiextensionClientset,
+			namespace,
+		).Run,
+	)
+}
+
+func CreateCleanActionHandler(ctx context.Context, sentryClient libsentry.Client, backupCleaner pkg.BackupCleaner, backupClientset pkg.BackupClientset, apiextensionClientset libk8s.ApiextensionsInterface, namespace libk8s.Namespace) http.Handler {
+	return libhttp.NewBackgroundRunHandler(ctx,
+		CreateCleanAction(
+			sentryClient,
+			backupCleaner,
+			backupClientset,
+			apiextensionClientset,
+			namespace,
+		).Run,
 	)
 }

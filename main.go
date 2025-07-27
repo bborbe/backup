@@ -110,42 +110,13 @@ func (a *application) createHttpServer(
 		router.Path("/readiness").Handler(libhttp.NewPrintHandler("OK"))
 		router.Path("/metrics").Handler(promhttp.Handler())
 		router.Path("/setloglevel/{level}").Handler(log.NewSetLoglevelHandler(ctx, log.NewLogLevelSetter(2, 5*time.Minute)))
-
-		router.Path("/status").Handler(libhttp.NewErrorHandler(
-			factory.CreateStatusHandler(backupClientset, apiextensionClientset, k8s.Namespace(a.Namespace), pkg.Path(a.BackupRootDir)),
-		))
-
-		router.Path("/list").Handler(libhttp.NewErrorHandler(
-			factory.CreateListHandler(backupClientset, apiextensionClientset, k8s.Namespace(a.Namespace)),
-		))
-
-		router.Path("/backup/all").Handler(libhttp.NewBackgroundRunHandler(ctx,
-			factory.CreateBackupAction(
-				sentryClient,
-				backupExectuor,
-				backupClientset,
-				apiextensionClientset,
-				k8s.Namespace(a.Namespace),
-			).Run,
-		))
-
-		router.Path("/backup/{name}").Handler(libhttp.NewErrorHandler(
-			factory.CreateBackupHandler(backupClientset, apiextensionClientset, k8s.Namespace(a.Namespace), backupExectuor),
-		))
-
-		router.Path("/cleanup/all").Handler(libhttp.NewBackgroundRunHandler(ctx,
-			factory.CreateCleanAction(
-				sentryClient,
-				backupCleaner,
-				backupClientset,
-				apiextensionClientset,
-				k8s.Namespace(a.Namespace),
-			).Run,
-		))
-
-		router.Path("/cleanup/{name}").Handler(libhttp.NewErrorHandler(
-			factory.CreateCleanupHandler(backupClientset, apiextensionClientset, k8s.Namespace(a.Namespace), backupCleaner),
-		))
+		router.Path("/status").Handler(factory.CreateStatusHandler(backupClientset, apiextensionClientset, libk8s.Namespace(a.Namespace), pkg.Path(a.BackupRootDir)))
+		router.Path("/list").Handler(factory.CreateListHandler(backupClientset, apiextensionClientset, libk8s.Namespace(a.Namespace)))
+		router.Path("/backup/all").Handler(factory.CreateBackupActionHandler(ctx, sentryClient, backupExectuor, backupClientset, apiextensionClientset, libk8s.Namespace(a.Namespace)))
+		router.Path("/backup/{name}").Handler(factory.CreateBackupHandler(backupClientset, apiextensionClientset, libk8s.Namespace(a.Namespace), backupExectuor))
+		router.Path("/cleanup/all").Handler(factory.CreateCleanActionHandler(ctx, sentryClient, backupCleaner, backupClientset, apiextensionClientset, libk8s.Namespace(a.Namespace)))
+		router.Path("/cleanup/{name}").Handler(factory.CreateCleanupHandler(backupClientset, apiextensionClientset, libk8s.Namespace(a.Namespace), backupCleaner))
+		router.PathPrefix("/").Handler(libhttp.FileServer("frontend/dist", "/"))
 
 		glog.V(2).Infof("starting http server listen on %s", a.Listen)
 		return libhttp.NewServer(
