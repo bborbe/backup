@@ -10,16 +10,13 @@ import (
 
 	"github.com/bborbe/errors"
 	"github.com/bborbe/k8s"
+	libk8s "github.com/bborbe/k8s"
 	"github.com/golang/glog"
 	"k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1"
-	apiextensionsClient "k8s.io/apiextensions-apiserver/pkg/client/clientset/clientset"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/cache"
-	"k8s.io/client-go/tools/clientcmd"
 
 	backupv1 "github.com/bborbe/backup/k8s/apis/backup.benjamin-borbe.de/v1"
-	"github.com/bborbe/backup/k8s/client/clientset/versioned"
 	"github.com/bborbe/backup/k8s/client/informers/externalversions"
 )
 
@@ -37,30 +34,25 @@ type K8sConnector interface {
 }
 
 func NewK8sConnector(
-	kubeconfig string,
+	backupClientset BackupClientset,
+	apiextensionsInterface libk8s.ApiextensionsInterface,
 	namespace k8s.Namespace,
 ) K8sConnector {
 	return &k8sConnector{
-		kubeconfig: kubeconfig,
-		namespace:  namespace,
+		backupClientset:        backupClientset,
+		apiextensionsInterface: apiextensionsInterface,
+		namespace:              namespace,
 	}
 }
 
 type k8sConnector struct {
-	kubeconfig string
-	namespace  k8s.Namespace
+	namespace              k8s.Namespace
+	backupClientset        BackupClientset
+	apiextensionsInterface libk8s.ApiextensionsInterface
 }
 
 func (k *k8sConnector) Target(ctx context.Context, name string) (*backupv1.Target, error) {
-	config, err := k.createKubernetesConfig()
-	if err != nil {
-		return nil, errors.Wrap(ctx, err, "build k8s config failed")
-	}
-	clientset, err := versioned.NewForConfig(config)
-	if err != nil {
-		return nil, errors.Wrap(ctx, err, "build clientset failed")
-	}
-	target, err := clientset.BackupV1().Targets(k.namespace.String()).Get(ctx, name, metav1.GetOptions{})
+	target, err := k.backupClientset.BackupV1().Targets(k.namespace.String()).Get(ctx, name, metav1.GetOptions{})
 	if err != nil {
 		return nil, errors.Wrap(ctx, err, "list target failed")
 	}
@@ -68,15 +60,7 @@ func (k *k8sConnector) Target(ctx context.Context, name string) (*backupv1.Targe
 }
 
 func (k *k8sConnector) Targets(ctx context.Context) (backupv1.Targets, error) {
-	config, err := k.createKubernetesConfig()
-	if err != nil {
-		return nil, errors.Wrap(ctx, err, "build k8s config failed")
-	}
-	clientset, err := versioned.NewForConfig(config)
-	if err != nil {
-		return nil, errors.Wrap(ctx, err, "build clientset failed")
-	}
-	targetList, err := clientset.BackupV1().Targets(k.namespace.String()).List(ctx, metav1.ListOptions{})
+	targetList, err := k.backupClientset.BackupV1().Targets(k.namespace.String()).List(ctx, metav1.ListOptions{})
 	if err != nil {
 		return nil, errors.Wrap(ctx, err, "list target failed")
 	}
@@ -87,16 +71,8 @@ func (k *k8sConnector) Listen(
 	ctx context.Context,
 	resourceEventHandler cache.ResourceEventHandler,
 ) error {
-	config, err := k.createKubernetesConfig()
-	if err != nil {
-		return errors.Wrap(ctx, err, "build k8s config failed")
-	}
-	clientset, err := versioned.NewForConfig(config)
-	if err != nil {
-		return errors.Wrap(ctx, err, "build clientset failed")
-	}
-	informerFactory := externalversions.NewSharedInformerFactory(clientset, defaultResync)
-	_, err = informerFactory.
+	informerFactory := externalversions.NewSharedInformerFactory(k.backupClientset, defaultResync)
+	_, err := informerFactory.
 		Backup().
 		V1().
 		Targets().
@@ -119,39 +95,31 @@ func (k *k8sConnector) Listen(
 }
 
 func (k *k8sConnector) SetupCustomResourceDefinition(ctx context.Context) error {
-	config, err := k.createKubernetesConfig()
-	if err != nil {
-		return errors.Wrap(ctx, err, "build k8s config failed")
-	}
-	clientset, err := apiextensionsClient.NewForConfig(config)
-	if err != nil {
-		return errors.Wrap(ctx, err, "build clientset failed")
-	}
-	customResourceDefinition, err := clientset.ApiextensionsV1().CustomResourceDefinitions().Get(ctx, name, metav1.GetOptions{})
+	customResourceDefinition, err := k.apiextensionsInterface.ApiextensionsV1().CustomResourceDefinitions().Get(ctx, name, metav1.GetOptions{})
 	if err != nil {
 		glog.V(2).Infof("CustomResourceDefinition '%s' not found (%v) => create", name, err)
-		if err := k.createCrd(ctx, clientset); err != nil {
+		if err := k.createCrd(ctx); err != nil {
 			return errors.Wrap(ctx, err, "create crd failed")
 		}
 		return nil
 	}
-	if err := k.updateCrd(ctx, customResourceDefinition, clientset); err != nil {
+	if err := k.updateCrd(ctx, customResourceDefinition); err != nil {
 		return errors.Wrap(ctx, err, "create crd failed")
 	}
 	return nil
 }
 
-func (k *k8sConnector) updateCrd(ctx context.Context, customResourceDefinition *v1.CustomResourceDefinition, clientset *apiextensionsClient.Clientset) error {
+func (k *k8sConnector) updateCrd(ctx context.Context, customResourceDefinition *v1.CustomResourceDefinition) error {
 	customResourceDefinition.Spec = createSpec()
-	if _, err := clientset.ApiextensionsV1().CustomResourceDefinitions().Update(ctx, customResourceDefinition, metav1.UpdateOptions{}); err != nil {
+	if _, err := k.apiextensionsInterface.ApiextensionsV1().CustomResourceDefinitions().Update(ctx, customResourceDefinition, metav1.UpdateOptions{}); err != nil {
 		return errors.Wrap(ctx, err, "update CustomResourceDefinition failed")
 	}
 	glog.V(2).Infof("CustomResourceDefinitions '%s' updated", name)
 	return nil
 }
 
-func (k *k8sConnector) createCrd(ctx context.Context, clientset *apiextensionsClient.Clientset) error {
-	_, err := clientset.ApiextensionsV1().CustomResourceDefinitions().Create(
+func (k *k8sConnector) createCrd(ctx context.Context) error {
+	_, err := k.apiextensionsInterface.ApiextensionsV1().CustomResourceDefinitions().Create(
 		ctx,
 		&v1.CustomResourceDefinition{
 			TypeMeta: metav1.TypeMeta{
@@ -170,15 +138,6 @@ func (k *k8sConnector) createCrd(ctx context.Context, clientset *apiextensionsCl
 	}
 	glog.V(2).Infof("CustomResourceDefinition '%s' created", name)
 	return nil
-}
-
-func (k *k8sConnector) createKubernetesConfig() (*rest.Config, error) {
-	if len(k.kubeconfig) > 0 {
-		glog.V(3).Infof("create kube config from flags")
-		return clientcmd.BuildConfigFromFlags("", k.kubeconfig)
-	}
-	glog.V(3).Infof("create in cluster kube config")
-	return rest.InClusterConfig()
 }
 
 func boolPointer(value bool) *bool {

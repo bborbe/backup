@@ -12,6 +12,7 @@ import (
 	"github.com/bborbe/errors"
 	libhttp "github.com/bborbe/http"
 	"github.com/bborbe/k8s"
+	libk8s "github.com/bborbe/k8s"
 	"github.com/bborbe/run"
 	libsentry "github.com/bborbe/sentry"
 	libtime "github.com/bborbe/time"
@@ -23,7 +24,8 @@ import (
 func CreateCleanupCron(
 	sentryClient libsentry.Client,
 	backupCleaner pkg.BackupCleaner,
-	kubeConfig string,
+	backupClientset pkg.BackupClientset,
+	apiextensionsInterface libk8s.ApiextensionsInterface,
 	namespace k8s.Namespace,
 	cronExpression libcron.Expression,
 ) run.Func {
@@ -31,7 +33,8 @@ func CreateCleanupCron(
 		backupAction := CreateCleanAction(
 			sentryClient,
 			backupCleaner,
-			kubeConfig,
+			backupClientset,
+			apiextensionsInterface,
 			namespace,
 		)
 		parallelSkipper := run.NewParallelSkipper()
@@ -48,7 +51,8 @@ func CreateCleanupCron(
 func CreateBackupCron(
 	sentryClient libsentry.Client,
 	backupExectuor pkg.BackupExectuor,
-	kubeConfig string,
+	backupClientset pkg.BackupClientset,
+	apiextensionsInterface libk8s.ApiextensionsInterface,
 	namespace k8s.Namespace,
 	cronExpression libcron.Expression,
 ) run.Func {
@@ -56,7 +60,8 @@ func CreateBackupCron(
 		backupAction := CreateBackupAction(
 			sentryClient,
 			backupExectuor,
-			kubeConfig,
+			backupClientset,
+			apiextensionsInterface,
 			namespace,
 		)
 		parallelSkipper := run.NewParallelSkipper()
@@ -73,13 +78,15 @@ func CreateBackupCron(
 func CreateCleanAction(
 	sentryClient libsentry.Client,
 	backupCleaner pkg.BackupCleaner,
-	kubeConfig string,
+	backupClientset pkg.BackupClientset,
+	apiextensionsInterface libk8s.ApiextensionsInterface,
 	namespace k8s.Namespace,
 ) run.Runnable {
 	return pkg.NewCleanAction(
 		sentryClient,
 		pkg.NewK8sConnector(
-			kubeConfig,
+			backupClientset,
+			apiextensionsInterface,
 			namespace,
 		),
 		backupCleaner,
@@ -89,13 +96,15 @@ func CreateCleanAction(
 func CreateBackupAction(
 	sentryClient libsentry.Client,
 	backupExectuor pkg.BackupExectuor,
-	kubeConfig string,
+	backupClientset pkg.BackupClientset,
+	apiextensionsInterface libk8s.ApiextensionsInterface,
 	namespace k8s.Namespace,
 ) run.Runnable {
 	return pkg.NewBackupAction(
 		sentryClient,
 		pkg.NewK8sConnector(
-			kubeConfig,
+			backupClientset,
+			apiextensionsInterface,
 			namespace,
 		),
 		backupExectuor,
@@ -103,13 +112,15 @@ func CreateBackupAction(
 }
 
 func CreateSetupResourceDefinition(
-	kubeConfig string,
+	backupClientset pkg.BackupClientset,
+	apiextensionsInterface libk8s.ApiextensionsInterface,
 	namespace k8s.Namespace,
 	trigger run.Fire,
 ) func(ctx context.Context) error {
 	return func(ctx context.Context) error {
 		k8sConnector := pkg.NewK8sConnector(
-			kubeConfig,
+			backupClientset,
+			apiextensionsInterface,
 			namespace,
 		)
 		if err := k8sConnector.SetupCustomResourceDefinition(ctx); err != nil {
@@ -137,13 +148,15 @@ func CreateBackupExectuor(
 }
 
 func CreateStatusHandler(
-	kubeconfig string,
+	backupClientset pkg.BackupClientset,
+	apiextensionsInterface libk8s.ApiextensionsInterface,
 	namespace k8s.Namespace,
 	backupRootDir pkg.Path,
 ) libhttp.WithError {
 	return handler.NewStatusHandler(
 		pkg.NewK8sConnector(
-			kubeconfig,
+			backupClientset,
+			apiextensionsInterface,
 			namespace,
 		),
 		pkg.NewBackupFinder(
@@ -152,25 +165,28 @@ func CreateStatusHandler(
 	)
 }
 
-func CreateListHandler(kubeconfig string, namespace k8s.Namespace) libhttp.WithError {
+func CreateListHandler(backupClientset pkg.BackupClientset, apiextensionsInterface libk8s.ApiextensionsInterface, namespace k8s.Namespace) libhttp.WithError {
 	k8sConnector := pkg.NewK8sConnector(
-		kubeconfig,
+		backupClientset,
+		apiextensionsInterface,
 		namespace,
 	)
 	return handler.NewListHandler(k8sConnector)
 }
 
-func CreateBackupHandler(kubeconfig string, namespace k8s.Namespace, backupExectuor pkg.BackupExectuor) libhttp.WithError {
+func CreateBackupHandler(backupClientset pkg.BackupClientset, apiextensionsInterface libk8s.ApiextensionsInterface, namespace k8s.Namespace, backupExectuor pkg.BackupExectuor) libhttp.WithError {
 	return handler.NewBackupHandler(pkg.NewK8sConnector(
-		kubeconfig,
+		backupClientset,
+		apiextensionsInterface,
 		namespace,
 	), backupExectuor)
 }
 
-func CreateCleanupHandler(kubeconfig string, namespace k8s.Namespace, backupCleaner pkg.BackupCleaner) libhttp.WithError {
+func CreateCleanupHandler(backupClientset pkg.BackupClientset, apiextensionsInterface libk8s.ApiextensionsInterface, namespace k8s.Namespace, backupCleaner pkg.BackupCleaner) libhttp.WithError {
 	return handler.NewCleanupHandler(
 		pkg.NewK8sConnector(
-			kubeconfig,
+			backupClientset,
+			apiextensionsInterface,
 			namespace,
 		),
 		backupCleaner,

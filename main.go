@@ -10,8 +10,10 @@ import (
 	"time"
 
 	libcron "github.com/bborbe/cron"
+	"github.com/bborbe/errors"
 	libhttp "github.com/bborbe/http"
 	"github.com/bborbe/k8s"
+	libk8s "github.com/bborbe/k8s"
 	"github.com/bborbe/log"
 	"github.com/bborbe/run"
 	libsentry "github.com/bborbe/sentry"
@@ -59,33 +61,45 @@ func (a *application) Run(ctx context.Context, sentryClient libsentry.Client) er
 		a.BackupCleanupEnabled,
 	)
 
+	backupClientset, err := pkg.CreateBackupClientset(ctx, a.Kubeconfig)
+	if err != nil {
+		return errors.Wrapf(ctx, err, "create backup client failed")
+	}
+
+	apiextensionClientset, err := libk8s.CreateApiextensionsClient(a.Kubeconfig)
+	if err != nil {
+		return errors.Wrap(ctx, err, "build k8s clientset failed")
+	}
+
 	trigger := run.NewTrigger()
 
 	return service.Run(
 		ctx,
-		a.createSetupResourceDefinition(trigger),
-		run.Triggered(a.createBackupCron(sentryClient, backupExectuor), trigger.Done()),
-		run.Triggered(a.createCleanupCron(sentryClient, backupCleaner), trigger.Done()),
-		a.createHttpServer(sentryClient, backupExectuor, backupCleaner),
+		a.createSetupResourceDefinition(backupClientset, apiextensionClientset, trigger),
+		run.Triggered(a.createBackupCron(sentryClient, backupExectuor, backupClientset, apiextensionClientset), trigger.Done()),
+		run.Triggered(a.createCleanupCron(sentryClient, backupCleaner, backupClientset, apiextensionClientset), trigger.Done()),
+		a.createHttpServer(sentryClient, backupExectuor, backupCleaner, backupClientset, apiextensionClientset),
 	)
 }
 
-func (a *application) createBackupCron(sentryClient libsentry.Client, backupExectuor pkg.BackupExectuor) run.Func {
-	return factory.CreateBackupCron(sentryClient, backupExectuor, a.Kubeconfig, k8s.Namespace(a.Namespace), libcron.Expression(a.CronExpression))
+func (a *application) createBackupCron(sentryClient libsentry.Client, backupExectuor pkg.BackupExectuor, backupClientset pkg.BackupClientset, apiextensionClientset libk8s.ApiextensionsInterface) run.Func {
+	return factory.CreateBackupCron(sentryClient, backupExectuor, backupClientset, apiextensionClientset, k8s.Namespace(a.Namespace), libcron.Expression(a.CronExpression))
 }
 
-func (a *application) createCleanupCron(sentryClient libsentry.Client, backupCleaner pkg.BackupCleaner) run.Func {
-	return factory.CreateCleanupCron(sentryClient, backupCleaner, a.Kubeconfig, k8s.Namespace(a.Namespace), libcron.Expression(a.CronExpression))
+func (a *application) createCleanupCron(sentryClient libsentry.Client, backupCleaner pkg.BackupCleaner, backupClientset pkg.BackupClientset, apiextensionClientset libk8s.ApiextensionsInterface) run.Func {
+	return factory.CreateCleanupCron(sentryClient, backupCleaner, backupClientset, apiextensionClientset, k8s.Namespace(a.Namespace), libcron.Expression(a.CronExpression))
 }
 
-func (a *application) createSetupResourceDefinition(trigger run.Trigger) func(ctx context.Context) error {
-	return factory.CreateSetupResourceDefinition(a.Kubeconfig, k8s.Namespace(a.Namespace), trigger)
+func (a *application) createSetupResourceDefinition(backupClientset pkg.BackupClientset, apiextensionClientset libk8s.ApiextensionsInterface, trigger run.Trigger) func(ctx context.Context) error {
+	return factory.CreateSetupResourceDefinition(backupClientset, apiextensionClientset, k8s.Namespace(a.Namespace), trigger)
 }
 
 func (a *application) createHttpServer(
 	sentryClient libsentry.Client,
 	backupExectuor pkg.BackupExectuor,
 	backupCleaner pkg.BackupCleaner,
+	backupClientset pkg.BackupClientset,
+	apiextensionClientset libk8s.ApiextensionsInterface,
 ) run.Func {
 	return func(ctx context.Context) error {
 		ctx, cancel := context.WithCancel(ctx)
@@ -98,37 +112,39 @@ func (a *application) createHttpServer(
 		router.Path("/setloglevel/{level}").Handler(log.NewSetLoglevelHandler(ctx, log.NewLogLevelSetter(2, 5*time.Minute)))
 
 		router.Path("/status").Handler(libhttp.NewErrorHandler(
-			factory.CreateStatusHandler(a.Kubeconfig, k8s.Namespace(a.Namespace), pkg.Path(a.BackupRootDir)),
+			factory.CreateStatusHandler(backupClientset, apiextensionClientset, k8s.Namespace(a.Namespace), pkg.Path(a.BackupRootDir)),
 		))
 
 		router.Path("/list").Handler(libhttp.NewErrorHandler(
-			factory.CreateListHandler(a.Kubeconfig, k8s.Namespace(a.Namespace)),
+			factory.CreateListHandler(backupClientset, apiextensionClientset, k8s.Namespace(a.Namespace)),
 		))
 
 		router.Path("/backup/all").Handler(libhttp.NewBackgroundRunHandler(ctx,
 			factory.CreateBackupAction(
 				sentryClient,
 				backupExectuor,
-				a.Kubeconfig,
+				backupClientset,
+				apiextensionClientset,
 				k8s.Namespace(a.Namespace),
 			).Run,
 		))
 
 		router.Path("/backup/{name}").Handler(libhttp.NewErrorHandler(
-			factory.CreateBackupHandler(a.Kubeconfig, k8s.Namespace(a.Namespace), backupExectuor),
+			factory.CreateBackupHandler(backupClientset, apiextensionClientset, k8s.Namespace(a.Namespace), backupExectuor),
 		))
 
 		router.Path("/cleanup/all").Handler(libhttp.NewBackgroundRunHandler(ctx,
 			factory.CreateCleanAction(
 				sentryClient,
 				backupCleaner,
-				a.Kubeconfig,
+				backupClientset,
+				apiextensionClientset,
 				k8s.Namespace(a.Namespace),
 			).Run,
 		))
 
 		router.Path("/cleanup/{name}").Handler(libhttp.NewErrorHandler(
-			factory.CreateCleanupHandler(a.Kubeconfig, k8s.Namespace(a.Namespace), backupCleaner),
+			factory.CreateCleanupHandler(backupClientset, apiextensionClientset, k8s.Namespace(a.Namespace), backupCleaner),
 		))
 
 		glog.V(2).Infof("starting http server listen on %s", a.Listen)

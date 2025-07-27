@@ -15,6 +15,7 @@ import (
 	v1 "github.com/bborbe/backup/k8s/apis/backup.benjamin-borbe.de/v1"
 )
 
+//counterfeiter:generate -o ../mocks/backup-finder.go --fake-name BackupFinder . BackupFinder
 type BackupFinder interface {
 	List(ctx context.Context, host v1.BackupHost) ([]libtime.Date, error)
 }

@@ -17,6 +17,7 @@ import (
 	v1 "github.com/bborbe/backup/k8s/apis/backup.benjamin-borbe.de/v1"
 )
 
+//counterfeiter:generate -o ../mocks/backup-executor.go --fake-name BackupExecutor . BackupExectuor
 type BackupExectuor interface {
 	Backup(ctx context.Context, target v1.BackupSpec) error
 }

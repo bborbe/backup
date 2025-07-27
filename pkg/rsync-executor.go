@@ -15,6 +15,7 @@ import (
 	"github.com/golang/glog"
 )
 
+//counterfeiter:generate -o ../mocks/rsync-executor.go --fake-name RsyncExecutor . RsyncExectuor
 type RsyncExectuor interface {
 	Rsync(ctx context.Context, args ...string) error
 }

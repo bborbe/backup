@@ -16,6 +16,7 @@ import (
 	v1 "github.com/bborbe/backup/k8s/apis/backup.benjamin-borbe.de/v1"
 )
 
+//counterfeiter:generate -o ../mocks/backup-cleaner.go --fake-name BackupCleaner . BackupCleaner
 type BackupCleaner interface {
 	Clean(ctx context.Context, backupSpec v1.BackupHost) error
 }

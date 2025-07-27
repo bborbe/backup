@@ -33,21 +33,23 @@ func NewCleanAction(
 			default:
 				glog.V(2).Infof("clean %s started", target.Name)
 				if err := cleanExectuor.Clean(ctx, target.Spec.Host); err != nil {
-					sentryClient.CaptureException(
-						err,
-						&sentry.EventHint{
-							Context: ctx,
-							Data: map[string]interface{}{
-								"name":     target.Name,
-								"host":     target.Spec.Host,
-								"port":     target.Spec.Port,
-								"user":     target.Spec.User,
-								"dirs":     target.Spec.Dirs,
-								"excludes": target.Spec.Excludes,
+					if sentryClient != nil {
+						sentryClient.CaptureException(
+							err,
+							&sentry.EventHint{
+								Context: ctx,
+								Data: map[string]interface{}{
+									"name":     target.Name,
+									"host":     target.Spec.Host,
+									"port":     target.Spec.Port,
+									"user":     target.Spec.User,
+									"dirs":     target.Spec.Dirs,
+									"excludes": target.Spec.Excludes,
+								},
 							},
-						},
-						nil,
-					)
+							nil,
+						)
+					}
 					glog.Warningf("clean %s failed: %v", target.Name, err)
 					continue
 				}

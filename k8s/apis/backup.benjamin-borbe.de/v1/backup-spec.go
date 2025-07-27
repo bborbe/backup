@@ -75,5 +75,8 @@ func (a BackupSpec) Validate(ctx context.Context) error {
 	if a.User == "" {
 		return errors.Wrap(ctx, validation.Error, "User is empty")
 	}
+	if len(a.Dirs) == 0 {
+		return errors.Wrap(ctx, validation.Error, "Dirs is empty")
+	}
 	return nil
 }
