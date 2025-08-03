@@ -92,6 +92,8 @@ spec:
           volumeMounts:
             - mountPath: /backup
               name: backup
+            - mountPath: /tmp
+              name: tmp
             - mountPath: /secret
               name: secret
               readOnly: true
@@ -107,3 +109,5 @@ spec:
               - key: id_backup
                 path: id_backup
                 mode: 384
+        - name: tmp
+          emptyDir: { }

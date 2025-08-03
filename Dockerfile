@@ -8,19 +8,21 @@ FROM node:lts-alpine AS build-node
 COPY frontend /frontend
 WORKDIR /frontend
 # RUN npm set registry https://registry.npmmirror.com
-RUN npm set registry https://verdaccio.quant.benjamin-borbe.de
+# RUN npm set registry https://verdaccio.quant.benjamin-borbe.de
 RUN npm install -g npm@11.4.2 --verbose
 RUN	npm install --verbose
 RUN npm run lint:analyse
 RUN npm run build
 
 FROM alpine:3.22 AS alpine
-RUN apk --no-cache add ca-certificates
-
-FROM scratch
+RUN apk --no-cache add \
+	ca-certificates \
+	rsync \
+	openssh-client \
+	tzdata \
+	&& rm -rf /var/cache/apk/*
 COPY --from=build-node /frontend/dist /frontend/dist
 COPY --from=build /main /main
-COPY --from=alpine /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
 COPY --from=build /usr/local/go/lib/time/zoneinfo.zip /
 ENV ZONEINFO=/zoneinfo.zip
 ENTRYPOINT ["/main"]

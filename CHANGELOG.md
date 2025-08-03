@@ -10,6 +10,12 @@ Please choose versions by [Semantic Versioning](http://semver.org/).
 
 All notable changes to this project will be documented in this file.
 
+## v3.6.1
+
+- fix backup failure when /tmp directory doesn't exist in container
+- change container base from scratch to alpine with rsync, openssh-client, and tzdata
+- mount /tmp volume in Kubernetes deployment
+
 ## v3.6.0
 
 - add UI

@@ -33,6 +33,7 @@ func NewBackupExectuor(
 		currentTimeGetter:   currentTimeGetter,
 		backupRootDirectory: backupRootDirectory,
 		rsyncExectuor:       rsyncExectuor,
+		tmpDir:              "/tmp",
 	}
 }
 
@@ -41,6 +42,7 @@ type backupExectuor struct {
 	rsyncExectuor       RsyncExectuor
 	backupRootDirectory Path
 	sshPrivateKey       SSHPrivateKey
+	tmpDir              string
 }
 
 func (b *backupExectuor) Backup(ctx context.Context, backupSpec v1.BackupSpec) error {
@@ -118,9 +120,8 @@ func (b *backupExectuor) createCurrentIfNotExists(ctx context.Context, backupSpe
 func (b *backupExectuor) runRsync(ctx context.Context, backupSpec v1.BackupSpec) error {
 	glog.V(3).Infof("rsync started")
 
-	excludePath := b.excludePath(backupSpec)
-	if err := os.WriteFile(excludePath.String(), backupSpec.Excludes.Bytes(), 0644); err != nil {
-		return errors.Wrapf(ctx, err, "write exclude failed")
+	if err := b.writeBackupSpec(ctx, backupSpec); err != nil {
+		return errors.Wrapf(ctx, err, "write backup spec failed")
 	}
 
 	args := []string{
@@ -134,7 +135,7 @@ func (b *backupExectuor) runRsync(ctx context.Context, backupSpec v1.BackupSpec)
 		"--delete-excluded",
 		"-e",
 		fmt.Sprintf("ssh -T -x -o StrictHostKeyChecking=no -p %d -i %s", backupSpec.Port, b.sshPrivateKey),
-		fmt.Sprintf("--exclude-from=%s", excludePath),
+		fmt.Sprintf("--exclude-from=%s", b.excludePath(backupSpec)),
 		fmt.Sprintf("--port=%d", backupSpec.Port),
 		fmt.Sprintf("--link-dest=%s", b.currentPath(backupSpec)),
 	}
@@ -148,6 +149,22 @@ func (b *backupExectuor) runRsync(ctx context.Context, backupSpec v1.BackupSpec)
 	}
 
 	glog.V(3).Infof("rsync completed")
+	return nil
+}
+
+func (b *backupExectuor) writeBackupSpec(ctx context.Context, backupSpec v1.BackupSpec) error {
+	glog.V(2).Infof("create tmp dir '%s' started", b.tmpDir)
+	if err := os.MkdirAll(b.tmpDir, 0755); err != nil {
+		return errors.Wrapf(ctx, err, "create tmp directory failed")
+	}
+	glog.V(2).Infof("create tmp dir '%s' completed", b.tmpDir)
+
+	excludePath := b.excludePath(backupSpec)
+	glog.V(2).Infof("write excludes to '%s' started", excludePath)
+	if err := os.WriteFile(excludePath.String(), backupSpec.Excludes.Bytes(), 0644); err != nil {
+		return errors.Wrapf(ctx, err, "write exclude failed")
+	}
+	glog.V(2).Infof("write excludes to '%s' completed", excludePath)
 	return nil
 }
 
@@ -205,5 +222,5 @@ func (b *backupExectuor) backupPath(backupSpec v1.BackupSpec) Path {
 }
 
 func (b *backupExectuor) excludePath(spec v1.BackupSpec) Path {
-	return Path(fmt.Sprintf("/tmp/%s.excludes", spec.Host))
+	return Path(fmt.Sprintf("%s/%s.excludes", b.tmpDir, spec.Host))
 }
