@@ -14,6 +14,12 @@ const props = defineProps({
     default: "primary",
     validator: (value: string) => ["primary", "secondary", "danger"].includes(value),
   },
+  size: {
+    type: String,
+    required: false,
+    default: "normal",
+    validator: (value: string) => ["small", "normal"].includes(value),
+  },
 });
 
 const emit = defineEmits<{
@@ -32,6 +38,7 @@ function handleClick() {
     :class="[
       'btn',
       `btn-${props.variant}`,
+      `btn-${props.size}`,
       { 'btn-disabled': props.disabled }
     ]"
     :disabled="props.disabled"
@@ -43,12 +50,32 @@ function handleClick() {
 
 <style scoped>
 .btn {
-  padding: 0.5rem 1rem;
+  padding: var(--spacing-sm) var(--spacing-md);
   border: none;
-  border-radius: 0.375rem;
-  font-weight: 500;
+  border-radius: var(--radius-md);
+  font-weight: var(--font-weight-medium);
+  font-size: var(--font-size-base);
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all var(--transition-fast);
+  line-height: var(--line-height-normal);
+  position: relative;
+  overflow: hidden;
+  transform: translateZ(0);
+}
+
+.btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  transition: left var(--transition-normal);
+}
+
+.btn:hover::before {
+  left: 100%;
 }
 
 .btn:disabled {
@@ -57,29 +84,61 @@ function handleClick() {
 }
 
 .btn-primary {
-  background-color: #2563eb;
-  color: white;
+  background-color: var(--accent-primary);
+  color: var(--text-primary);
 }
 
 .btn-primary:hover:not(:disabled) {
-  background-color: #1d4ed8;
+  background-color: var(--accent-primary-hover);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.btn-primary:active:not(:disabled) {
+  background-color: var(--accent-primary-active);
+  transform: translateY(0);
+  box-shadow: var(--shadow-sm);
 }
 
 .btn-secondary {
-  background-color: #6b7280;
-  color: white;
+  background-color: var(--bg-tertiary);
+  color: var(--text-primary);
+  border: 1px solid var(--border-primary);
 }
 
 .btn-secondary:hover:not(:disabled) {
-  background-color: #4b5563;
+  background-color: var(--bg-hover);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-sm);
+}
+
+.btn-secondary:active:not(:disabled) {
+  transform: translateY(0);
 }
 
 .btn-danger {
-  background-color: #dc2626;
-  color: white;
+  background-color: var(--status-error);
+  color: var(--text-primary);
 }
 
 .btn-danger:hover:not(:disabled) {
-  background-color: #b91c1c;
+  background-color: var(--status-error);
+  filter: brightness(1.1);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.btn-danger:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: var(--shadow-sm);
+}
+
+.btn-small {
+  padding: var(--spacing-xs) var(--spacing-sm);
+  font-size: var(--font-size-sm);
+}
+
+.btn-normal {
+  padding: var(--spacing-sm) var(--spacing-md);
 }
 </style>

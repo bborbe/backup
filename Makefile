@@ -5,8 +5,11 @@ DIRS += $(shell find */* -maxdepth 0 -name Makefile -exec dirname "{}" \;)
 
 default: precommit
 
-precommit: ensure format generate test check addlicense
+precommit: ensure format generate test check addlicense frontend-precommit
 	@echo "ready to commit"
+
+frontend-precommit:
+	$(MAKE) -C frontend precommit
 
 ensure:
 	go mod tidy

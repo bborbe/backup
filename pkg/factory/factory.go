@@ -183,10 +183,24 @@ func CreateListHandler(
 	)
 }
 
+func CreateTargetFinder(
+	backupClientset pkg.BackupClientset,
+	apiextensionsInterface libk8s.ApiextensionsInterface,
+	namespace k8s.Namespace,
+) pkg.TargetFinder {
+	return pkg.NewCombinedTargetFinder(
+		pkg.NewK8sConnector(
+			backupClientset,
+			apiextensionsInterface,
+			namespace,
+		),
+	)
+}
+
 func CreateBackupHandler(backupClientset pkg.BackupClientset, apiextensionsInterface libk8s.ApiextensionsInterface, namespace k8s.Namespace, backupExectuor pkg.BackupExectuor) http.Handler {
 	return libhttp.NewErrorHandler(
 		handler.NewBackupHandler(
-			pkg.NewK8sConnector(
+			CreateTargetFinder(
 				backupClientset,
 				apiextensionsInterface,
 				namespace,
@@ -199,7 +213,7 @@ func CreateBackupHandler(backupClientset pkg.BackupClientset, apiextensionsInter
 func CreateCleanupHandler(backupClientset pkg.BackupClientset, apiextensionsInterface libk8s.ApiextensionsInterface, namespace k8s.Namespace, backupCleaner pkg.BackupCleaner) http.Handler {
 	return libhttp.NewErrorHandler(
 		handler.NewCleanupHandler(
-			pkg.NewK8sConnector(
+			CreateTargetFinder(
 				backupClientset,
 				apiextensionsInterface,
 				namespace,

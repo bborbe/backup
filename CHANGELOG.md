@@ -10,6 +10,17 @@ Please choose versions by [Semantic Versioning](http://semver.org/).
 
 All notable changes to this project will be documented in this file.
 
+## v3.7.0
+
+- add GitHub workflows for CI/CD automation
+- major frontend UI improvements and enhancements
+- implement target finder functionality with multiple strategies (by hostname, by name, combined, list)
+- add comprehensive tests for backup cleaner and executor components
+- enhance factory pattern for better dependency injection
+- improve backup and cleanup handlers
+- add design system documentation
+- refactor frontend components with better error handling and user experience
+
 ## v3.6.1
 
 - fix backup failure when /tmp directory doesn't exist in container

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
+import { ref, onMounted, defineExpose } from "vue";
 // @ts-ignore
 import backupApiClient from "../lib/BackupApiClient.ts";
 import type { BackupStatus, LoadingState } from "../lib/types";
@@ -67,6 +67,20 @@ function getStatusClass(date: string): string {
   if (daysDiff === 0) return "status-success";
   if (daysDiff === 1) return "status-warning";
   return "status-error";
+}
+
+function getStatusText(date: string): string {
+  if (!date || date === "") return "Failed";
+  
+  const backupDate = new Date(date);
+  if (isNaN(backupDate.getTime())) return "Failed";
+  
+  const now = new Date();
+  const daysDiff = Math.floor((now.getTime() - backupDate.getTime()) / (1000 * 60 * 60 * 24));
+  
+  if (daysDiff === 0) return "Healthy";
+  if (daysDiff === 1) return "Warning";
+  return "Critical";
 }
 
 function formatDate(dateString: string): string {
@@ -171,28 +185,17 @@ async function triggerCleanup(host: string) {
     individualActionState.value[host].isCleaningUp = false;
   }
 }
+
+// Expose functions and state for parent component
+defineExpose({
+  triggerBackupAll,
+  triggerCleanupAll,
+  actionState
+});
 </script>
 
 <template>
   <div class="status-overview">
-    <div class="header">
-      <h2>Backup Status Overview</h2>
-      
-      <div class="action-buttons">
-        <ActionButtonComponent
-          label="Backup All"
-          variant="primary"
-          :disabled="actionState.isBackingUp || actionState.isCleaningUp"
-          @click="triggerBackupAll"
-        />
-        <ActionButtonComponent
-          label="Cleanup All"
-          variant="danger"
-          :disabled="actionState.isBackingUp || actionState.isCleaningUp"
-          @click="triggerCleanupAll"
-        />
-      </div>
-    </div>
     
     <div v-if="actionState.message" class="action-message">
       {{ actionState.message }}
@@ -217,31 +220,47 @@ async function triggerCleanup(host: string) {
         :key="host"
         :class="['status-card', getStatusClass(lastBackup)]"
       >
-        <div class="card-content">
+        <div class="card-header">
           <div class="host-name">{{ host }}</div>
-          <div class="last-backup">{{ formatDate(lastBackup) }}</div>
-          <div class="backup-date">{{ lastBackup || 'No date available' }}</div>
+          <div class="status-indicator" :class="getStatusClass(lastBackup)"></div>
         </div>
         
-        <div class="card-actions">
-          <ActionButtonComponent
-            label="Backup"
-            variant="primary"
-            :disabled="
-              (individualActionState[host]?.isBackingUp || individualActionState[host]?.isCleaningUp) ||
-              actionState.isBackingUp || actionState.isCleaningUp
-            "
-            @click="triggerBackup(host)"
-          />
-          <ActionButtonComponent
-            label="Cleanup"
-            variant="danger"
-            :disabled="
-              (individualActionState[host]?.isBackingUp || individualActionState[host]?.isCleaningUp) ||
-              actionState.isBackingUp || actionState.isCleaningUp
-            "
-            @click="triggerCleanup(host)"
-          />
+        <div class="card-body">
+          <div class="status-details">
+            <div class="detail-row">
+              <span class="detail-label">Last Backup</span>
+              <span class="detail-value" :class="getStatusClass(lastBackup)">{{ formatDate(lastBackup) }}</span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-label">Status</span>
+              <span class="status-pill" :class="getStatusClass(lastBackup)">
+                {{ getStatusText(lastBackup) }}
+              </span>
+            </div>
+          </div>
+          
+          <div class="card-actions">
+            <ActionButtonComponent
+              label="Backup"
+              variant="primary"
+              size="small"
+              :disabled="
+                (individualActionState[host]?.isBackingUp || individualActionState[host]?.isCleaningUp) ||
+                actionState.isBackingUp || actionState.isCleaningUp
+              "
+              @click="triggerBackup(String(host))"
+            />
+            <ActionButtonComponent
+              label="Cleanup"
+              variant="danger"
+              size="small"
+              :disabled="
+                (individualActionState[host]?.isBackingUp || individualActionState[host]?.isCleaningUp) ||
+                actionState.isBackingUp || actionState.isCleaningUp
+              "
+              @click="triggerCleanup(String(host))"
+            />
+          </div>
         </div>
       </div>
     </div>
@@ -250,114 +269,262 @@ async function triggerCleanup(host: string) {
 
 <style scoped>
 .status-overview {
-  padding: 1rem;
+  padding: var(--spacing-md) var(--spacing-xl);
+  background-color: var(--bg-primary);
 }
 
-.header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1rem;
-}
-
-.status-overview h2 {
-  margin: 0;
-  color: #1f2937;
-}
-
-.action-buttons {
-  display: flex;
-  gap: 0.5rem;
-}
 
 .action-message {
-  padding: 0.75rem 1rem;
-  margin-bottom: 1rem;
-  background-color: #dbeafe;
-  border: 1px solid #60a5fa;
-  border-radius: 0.5rem;
-  color: #1e40af;
+  padding: var(--spacing-sm) var(--spacing-md);
+  margin-bottom: var(--spacing-lg);
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-md);
+  color: var(--text-secondary);
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-normal);
 }
 
 .loading, .error, .empty {
-  padding: 2rem;
+  padding: var(--spacing-xl);
   text-align: center;
-  background-color: #f9fafb;
-  border-radius: 0.5rem;
-  border: 1px solid #e5e7eb;
+  background-color: var(--bg-tertiary);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-secondary);
+  color: var(--text-secondary);
+  font-size: var(--font-size-base);
+  line-height: var(--line-height-normal);
 }
 
 .error {
-  color: #dc2626;
+  color: var(--status-error);
 }
 
 .retry-btn {
-  margin-left: 1rem;
-  padding: 0.25rem 0.5rem;
-  background-color: #2563eb;
-  color: white;
+  margin-left: var(--spacing-md);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  background-color: var(--accent-primary);
+  color: var(--text-primary);
   border: none;
-  border-radius: 0.25rem;
+  border-radius: var(--radius-sm);
   cursor: pointer;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  transition: var(--transition-fast);
+}
+
+.retry-btn:hover {
+  background-color: var(--accent-primary-hover);
 }
 
 .status-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: 1rem;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 0.75rem;
+}
+
+@media (min-width: 1024px) {
+  .status-grid {
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  }
+}
+
+@media (min-width: 1280px) {
+  .status-grid {
+    grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+  }
+}
+
+@media (min-width: 1536px) {
+  .status-grid {
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  }
 }
 
 .status-card {
-  padding: 1rem;
-  border-radius: 0.5rem;
-  border: 2px solid;
-  background-color: white;
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-primary);
+  background-color: var(--bg-tertiary);
+  overflow: hidden;
+  transition: all var(--transition-normal);
+  cursor: pointer;
+  position: relative;
 }
 
-.card-content {
-  flex: 1;
+.status-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.02), transparent);
+  opacity: 0;
+  transition: opacity var(--transition-normal);
+  pointer-events: none;
+}
+
+.status-card:hover {
+  border-color: var(--border-accent);
+  box-shadow: var(--shadow-hover);
+  transform: translateY(-4px);
+}
+
+.status-card:hover::before {
+  opacity: 1;
+}
+
+.card-header {
+  padding: 0.75rem;
+  background-color: var(--bg-quaternary);
+  border-bottom: 1px solid var(--border-secondary);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.card-body {
+  padding: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.status-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+}
+
+.detail-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  min-height: 1.5rem;
+}
+
+.detail-label {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.detail-value {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--text-primary);
+}
+
+.detail-value.status-success {
+  color: var(--financial-positive);
+}
+
+.detail-value.status-warning {
+  color: var(--status-warning);
+}
+
+.detail-value.status-error {
+  color: var(--financial-negative);
+}
+
+.status-pill {
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
+}
+
+.status-pill.status-success {
+  background-color: var(--status-success-bg);
+  color: var(--status-success);
+  border: 1px solid var(--status-success-border);
+}
+
+.status-pill.status-warning {
+  background-color: var(--status-warning-bg);
+  color: var(--status-warning);
+  border: 1px solid var(--status-warning-border);
+}
+
+.status-pill.status-error {
+  background-color: var(--status-error-bg);
+  color: var(--status-error);
+  border: 1px solid var(--status-error-border);
+}
+
+.status-indicator {
+  width: 0.625rem;
+  height: 0.625rem;
+  border-radius: 50%;
+  flex-shrink: 0;
+  position: relative;
+  transition: all var(--transition-normal);
+}
+
+.status-indicator::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  opacity: 0;
+  transition: all var(--transition-normal);
+}
+
+.status-card:hover .status-indicator::after {
+  width: 150%;
+  height: 150%;
+  opacity: 0.3;
+}
+
+.status-success .status-indicator::after {
+  background-color: var(--status-success);
+}
+
+.status-warning .status-indicator::after {
+  background-color: var(--status-warning);
+}
+
+.status-error .status-indicator::after {
+  background-color: var(--status-error);
 }
 
 .card-actions {
   display: flex;
-  gap: 0.5rem;
-  justify-content: flex-end;
+  gap: 0.375rem;
   padding-top: 0.5rem;
-  border-top: 1px solid #e5e7eb;
+  border-top: 1px solid var(--border-secondary);
+  margin-top: 0.5rem;
 }
 
-.status-success {
-  border-color: #10b981;
-  background-color: #f0fdf4;
+.status-success .status-indicator {
+  background-color: var(--status-success);
 }
 
-.status-warning {
-  border-color: #f59e0b;
-  background-color: #fffbeb;
+.status-warning .status-indicator {
+  background-color: var(--status-warning);
 }
 
-.status-error {
-  border-color: #ef4444;
-  background-color: #fef2f2;
+.status-error .status-indicator {
+  background-color: var(--status-error);
 }
 
 .host-name {
-  font-weight: 600;
-  font-size: 1.125rem;
-  margin-bottom: 0.5rem;
-  color: #1f2937;
+  font-weight: var(--font-weight-semibold);
+  font-size: var(--font-size-sm);
+  color: var(--text-primary);
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  hyphens: auto;
+  line-height: var(--line-height-tight);
+  flex: 1;
 }
 
-.last-backup {
-  font-weight: 500;
-  margin-bottom: 0.25rem;
-}
-
-.backup-date {
-  font-size: 0.875rem;
-  color: #6b7280;
-}
 </style>
