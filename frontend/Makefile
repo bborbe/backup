@@ -5,6 +5,7 @@ deps:
 	sudo npm install -g npm-check-updates
 
 test:
+	npm install
 	npm run test -- --run
 
 build:
@@ -21,4 +22,5 @@ update:
 	ncu -u
 
 lint:
+	npm install
 	npm run lint:analyse
