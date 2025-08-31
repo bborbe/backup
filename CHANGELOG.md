@@ -10,6 +10,13 @@ Please choose versions by [Semantic Versioning](http://semver.org/).
 
 All notable changes to this project will be documented in this file.
 
+## v3.7.1
+
+- implement interactive filtering system for dashboard metric cards
+- add multi-select filtering with visual feedback (active/inactive states)
+- implement master toggle functionality for Total hosts filter
+- enhance user experience with clickable metric cards and hover effects
+
 ## v3.7.0
 
 - add GitHub workflows for CI/CD automation
