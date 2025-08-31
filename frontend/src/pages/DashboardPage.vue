@@ -6,9 +6,40 @@ import ActionButtonComponent from "../components/ActionButtonComponent.vue";
 import backupApiClient from "../lib/BackupApiClient.ts";
 import type { BackupStatus } from "../lib/types";
 
+interface FilterState {
+  total: boolean;
+  healthy: boolean;
+  warning: boolean;
+  critical: boolean;
+}
+
 const currentTime = ref("");
 const backupOverviewRef = ref<InstanceType<typeof BackupStatusOverviewComponent>>();
 const status = ref<BackupStatus>({});
+const baseFilters = ref({
+  healthy: true,
+  warning: true,
+  critical: true
+});
+
+const activeFilters = computed<FilterState>({
+  get() {
+    const allSelected = baseFilters.value.healthy && baseFilters.value.warning && baseFilters.value.critical;
+    return {
+      total: allSelected,
+      healthy: baseFilters.value.healthy,
+      warning: baseFilters.value.warning,
+      critical: baseFilters.value.critical
+    };
+  },
+  set(newValue) {
+    baseFilters.value = {
+      healthy: newValue.healthy,
+      warning: newValue.warning,
+      critical: newValue.critical
+    };
+  }
+});
 
 onMounted(async () => {
   updateTime();
@@ -64,6 +95,21 @@ const metrics = computed(() => {
     critical: counts.critical
   };
 });
+
+function toggleFilter(category: keyof FilterState) {
+  if (category === 'total') {
+    // If total is clicked, toggle all three categories to the same state
+    const currentTotalState = activeFilters.value.total;
+    const newState = !currentTotalState;
+    
+    baseFilters.value.healthy = newState;
+    baseFilters.value.warning = newState;
+    baseFilters.value.critical = newState;
+  } else {
+    // Toggle individual category
+    baseFilters.value[category] = !baseFilters.value[category];
+  }
+}
 </script>
 
 <template>
@@ -93,26 +139,42 @@ const metrics = computed(() => {
     <main class="dashboard-content">
       <div class="metrics-section">
         <div class="metrics-grid">
-          <div class="metric-card">
+          <div 
+            class="metric-card"
+            :class="{ active: activeFilters.total, inactive: !activeFilters.total }"
+            @click="toggleFilter('total')"
+          >
             <div class="metric-number">{{ metrics.total }}</div>
             <div class="metric-label">Total Hosts</div>
           </div>
-          <div class="metric-card">
+          <div 
+            class="metric-card"
+            :class="{ active: activeFilters.healthy, inactive: !activeFilters.healthy }"
+            @click="toggleFilter('healthy')"
+          >
             <div class="metric-number success">{{ metrics.healthy }}</div>
             <div class="metric-label">Healthy</div>
           </div>
-          <div class="metric-card">
+          <div 
+            class="metric-card"
+            :class="{ active: activeFilters.warning, inactive: !activeFilters.warning }"
+            @click="toggleFilter('warning')"
+          >
             <div class="metric-number warning">{{ metrics.warning }}</div>
             <div class="metric-label">Warning</div>
           </div>
-          <div class="metric-card">
+          <div 
+            class="metric-card"
+            :class="{ active: activeFilters.critical, inactive: !activeFilters.critical }"
+            @click="toggleFilter('critical')"
+          >
             <div class="metric-number error">{{ metrics.critical }}</div>
             <div class="metric-label">Critical</div>
           </div>
         </div>
       </div>
       
-      <BackupStatusOverviewComponent ref="backupOverviewRef" />
+      <BackupStatusOverviewComponent ref="backupOverviewRef" :filters="activeFilters" />
     </main>
   </div>
 </template>
@@ -190,12 +252,38 @@ const metrics = computed(() => {
   padding: var(--metric-card-padding);
   text-align: center;
   transition: var(--transition-fast);
+  cursor: pointer;
+  user-select: none;
 }
 
 .metric-card:hover {
   border-color: var(--border-accent);
   transform: translateY(-2px);
   box-shadow: var(--shadow-md);
+}
+
+.metric-card.active {
+  border-color: var(--accent-primary);
+  background-color: var(--bg-secondary);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-1px);
+}
+
+.metric-card.inactive {
+  border-color: var(--border-secondary);
+  background-color: var(--bg-quaternary);
+  opacity: 0.5;
+  transform: none;
+}
+
+.metric-card.inactive:hover {
+  border-color: var(--border-accent);
+  opacity: 0.7;
+  transform: translateY(-1px);
+}
+
+.metric-card.active:hover {
+  border-color: var(--accent-primary-hover);
 }
 
 .metric-number {

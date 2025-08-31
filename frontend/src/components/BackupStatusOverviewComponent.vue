@@ -1,9 +1,29 @@
 <script setup lang="ts">
-import { ref, onMounted, defineExpose } from "vue";
+import { ref, onMounted, defineExpose, computed } from "vue";
 // @ts-ignore
 import backupApiClient from "../lib/BackupApiClient.ts";
 import type { BackupStatus, LoadingState } from "../lib/types";
 import ActionButtonComponent from "./ActionButtonComponent.vue";
+
+interface FilterState {
+  total: boolean;
+  healthy: boolean;
+  warning: boolean;
+  critical: boolean;
+}
+
+interface Props {
+  filters?: FilterState;
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  filters: () => ({
+    total: true,
+    healthy: true,
+    warning: true,
+    critical: true
+  })
+});
 
 const status = ref<BackupStatus>({});
 const loadingState = ref<LoadingState>({
@@ -82,6 +102,41 @@ function getStatusText(date: string): string {
   if (daysDiff === 1) return "Warning";
   return "Critical";
 }
+
+function getStatusCategory(date: string): 'healthy' | 'warning' | 'critical' {
+  if (!date || date === "") return "critical";
+  
+  const backupDate = new Date(date);
+  if (isNaN(backupDate.getTime())) return "critical";
+  
+  const now = new Date();
+  const daysDiff = Math.floor((now.getTime() - backupDate.getTime()) / (1000 * 60 * 60 * 24));
+  
+  if (daysDiff === 0) return "healthy";
+  if (daysDiff === 1) return "warning";
+  return "critical";
+}
+
+const filteredStatus = computed(() => {
+  const entries = Object.entries(status.value);
+  const filtered = entries.filter(([, lastBackup]) => {
+    const category = getStatusCategory(lastBackup);
+    
+    // Check if this category should be shown based on filters
+    switch (category) {
+      case 'healthy':
+        return props.filters.healthy;
+      case 'warning':
+        return props.filters.warning;
+      case 'critical':
+        return props.filters.critical;
+      default:
+        return true; // fallback
+    }
+  });
+  
+  return Object.fromEntries(filtered);
+});
 
 function formatDate(dateString: string): string {
   if (!dateString || dateString === "") return "No backup yet";
@@ -214,9 +269,13 @@ defineExpose({
       No backup targets found or no backups have been created yet
     </div>
     
+    <div v-else-if="Object.keys(filteredStatus).length === 0" class="empty">
+      No backup targets match the current filter
+    </div>
+    
     <div v-else class="status-grid">
       <div
-        v-for="(lastBackup, host) in status"
+        v-for="(lastBackup, host) in filteredStatus"
         :key="host"
         :class="['status-card', getStatusClass(lastBackup)]"
       >
