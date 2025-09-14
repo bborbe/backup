@@ -10,6 +10,12 @@ Please choose versions by [Semantic Versioning](http://semver.org/).
 
 All notable changes to this project will be documented in this file.
 
+## v3.7.2
+- update Go to version 1.25.1 in Dockerfile
+- update npm to version 11.6.0 in Dockerfile
+- update frontend dependencies and build system
+- update go.mod dependencies
+
 ## v3.7.1
 
 - implement interactive filtering system for dashboard metric cards
