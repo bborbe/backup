@@ -7,6 +7,7 @@ CMD ["/bin/bash"]
 FROM node:lts-alpine AS build-node
 COPY frontend /frontend
 WORKDIR /frontend
+# RUN npm set registry https://registry.npmmirror.com
 RUN npm set registry https://verdaccio.quant.benjamin-borbe.de
 RUN npm install -g npm@11.6.0 --verbose
 RUN	npm install --verbose
