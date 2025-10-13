@@ -12,7 +12,7 @@ import (
 	"github.com/bborbe/k8s"
 	libk8s "github.com/bborbe/k8s"
 	"github.com/golang/glog"
-	"k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1"
+	v1 "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/tools/cache"
 
@@ -52,7 +52,9 @@ type k8sConnector struct {
 }
 
 func (k *k8sConnector) Target(ctx context.Context, name string) (*backupv1.Target, error) {
-	target, err := k.backupClientset.BackupV1().Targets(k.namespace.String()).Get(ctx, name, metav1.GetOptions{})
+	target, err := k.backupClientset.BackupV1().
+		Targets(k.namespace.String()).
+		Get(ctx, name, metav1.GetOptions{})
 	if err != nil {
 		return nil, errors.Wrap(ctx, err, "list target failed")
 	}
@@ -60,7 +62,9 @@ func (k *k8sConnector) Target(ctx context.Context, name string) (*backupv1.Targe
 }
 
 func (k *k8sConnector) Targets(ctx context.Context) (backupv1.Targets, error) {
-	targetList, err := k.backupClientset.BackupV1().Targets(k.namespace.String()).List(ctx, metav1.ListOptions{})
+	targetList, err := k.backupClientset.BackupV1().
+		Targets(k.namespace.String()).
+		List(ctx, metav1.ListOptions{})
 	if err != nil {
 		return nil, errors.Wrap(ctx, err, "list target failed")
 	}
@@ -95,7 +99,9 @@ func (k *k8sConnector) Listen(
 }
 
 func (k *k8sConnector) SetupCustomResourceDefinition(ctx context.Context) error {
-	customResourceDefinition, err := k.apiextensionsInterface.ApiextensionsV1().CustomResourceDefinitions().Get(ctx, name, metav1.GetOptions{})
+	customResourceDefinition, err := k.apiextensionsInterface.ApiextensionsV1().
+		CustomResourceDefinitions().
+		Get(ctx, name, metav1.GetOptions{})
 	if err != nil {
 		glog.V(2).Infof("CustomResourceDefinition '%s' not found (%v) => create", name, err)
 		if err := k.createCrd(ctx); err != nil {
@@ -109,7 +115,10 @@ func (k *k8sConnector) SetupCustomResourceDefinition(ctx context.Context) error 
 	return nil
 }
 
-func (k *k8sConnector) updateCrd(ctx context.Context, customResourceDefinition *v1.CustomResourceDefinition) error {
+func (k *k8sConnector) updateCrd(
+	ctx context.Context,
+	customResourceDefinition *v1.CustomResourceDefinition,
+) error {
 	customResourceDefinition.Spec = createSpec()
 	if _, err := k.apiextensionsInterface.ApiextensionsV1().CustomResourceDefinitions().Update(ctx, customResourceDefinition, metav1.UpdateOptions{}); err != nil {
 		return errors.Wrap(ctx, err, "update CustomResourceDefinition failed")

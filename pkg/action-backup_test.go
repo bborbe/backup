@@ -14,7 +14,7 @@ import (
 	. "github.com/onsi/gomega"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
-	"github.com/bborbe/backup/k8s/apis/backup.benjamin-borbe.de/v1"
+	v1 "github.com/bborbe/backup/k8s/apis/backup.benjamin-borbe.de/v1"
 	"github.com/bborbe/backup/mocks"
 	"github.com/bborbe/backup/pkg"
 )
@@ -158,7 +158,9 @@ var _ = Describe("BackupAction", func() {
 			It("captures exception for failed backup", func() {
 				Expect(mockSentryClient.CaptureExceptionCallCount()).To(Equal(1))
 
-				actualErr, actualHint, actualScope := mockSentryClient.CaptureExceptionArgsForCall(0)
+				actualErr, actualHint, actualScope := mockSentryClient.CaptureExceptionArgsForCall(
+					0,
+				)
 				Expect(actualErr.Error()).To(ContainSubstring("backup execution failed"))
 				Expect(actualHint).NotTo(BeNil())
 				Expect(actualHint.Context).To(Equal(ctx))

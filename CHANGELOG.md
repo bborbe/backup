@@ -10,6 +10,15 @@ Please choose versions by [Semantic Versioning](http://semver.org/).
 
 All notable changes to this project will be documented in this file.
 
+## v3.8.0
+- add golangci-lint configuration (.golangci.yml)
+- enhance Makefile with improved build tooling and quality checks
+- update Go version to 1.25.2
+- standardize code formatting across all Go files
+- add new security scanning tools (gosec, trivy, osv-scanner)
+- improve formatting tools integration (goimports-reviser, golines)
+- update dependencies in go.mod
+
 ## v3.7.2
 - update Go to version 1.25.1 in Dockerfile
 - update npm to version 11.6.0 in Dockerfile

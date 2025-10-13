@@ -25,15 +25,15 @@ func main() {
 }
 
 type application struct {
-	SentryDSN      string `required:"true" arg:"sentry-dsn" env:"SENTRY_DSN" usage:"SentryDSN" display:"length"`
-	SentryProxy    string `required:"false" arg:"sentry-proxy" env:"SENTRY_PROXY" usage:"Sentry Proxy"`
-	BackupRootDir  string `required:"true" arg:"backup-root-dir" env:"BACKUP_ROOT_DIR" usage:"Directory all backups are stored"`
-	BackupHost     string `required:"true" arg:"backup-host" env:"BACKUP_HOST" usage:"host used to connect to client to backup"`
-	BackupPort     int    `required:"true" arg:"backup-port" env:"BACKUP_PORT" usage:"port used to connect to client to backup" default:"22"`
-	BackupUser     string `required:"true" arg:"backup-user" env:"BACKUP_USER" usage:"user used to connect to client to backup" default:"root"`
-	BackupDirs     string `required:"true" arg:"backup-dirs" env:"BACKUP_DIRS" usage:"comma seperated list of directoies to backup"`
+	SentryDSN      string `required:"true"  arg:"sentry-dsn"      env:"SENTRY_DSN"      usage:"SentryDSN"                                    display:"length"`
+	SentryProxy    string `required:"false" arg:"sentry-proxy"    env:"SENTRY_PROXY"    usage:"Sentry Proxy"`
+	BackupRootDir  string `required:"true"  arg:"backup-root-dir" env:"BACKUP_ROOT_DIR" usage:"Directory all backups are stored"`
+	BackupHost     string `required:"true"  arg:"backup-host"     env:"BACKUP_HOST"     usage:"host used to connect to client to backup"`
+	BackupPort     int    `required:"true"  arg:"backup-port"     env:"BACKUP_PORT"     usage:"port used to connect to client to backup"                      default:"22"`
+	BackupUser     string `required:"true"  arg:"backup-user"     env:"BACKUP_USER"     usage:"user used to connect to client to backup"                      default:"root"`
+	BackupDirs     string `required:"true"  arg:"backup-dirs"     env:"BACKUP_DIRS"     usage:"comma seperated list of directoies to backup"`
 	BackupExcludes string `required:"false" arg:"backup-excludes" env:"BACKUP_EXCLUDES" usage:"comma seperated excludes"`
-	SSHPrivateKey  string `required:"true" arg:"ssh-key" env:"SSH_KEY" usage:"path to ssh private key"`
+	SSHPrivateKey  string `required:"true"  arg:"ssh-key"         env:"SSH_KEY"         usage:"path to ssh private key"`
 }
 
 func (a *application) Run(ctx context.Context, sentryClient libsentry.Client) error {

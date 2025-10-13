@@ -22,7 +22,10 @@ type targetFinderByHostname struct {
 	k8sConnector K8sConnector
 }
 
-func (t *targetFinderByHostname) Target(ctx context.Context, hostname string) (*backupv1.Target, error) {
+func (t *targetFinderByHostname) Target(
+	ctx context.Context,
+	hostname string,
+) (*backupv1.Target, error) {
 	targets, err := t.k8sConnector.Targets(ctx)
 	if err != nil {
 		return nil, errors.Wrapf(ctx, err, "get targets failed")
@@ -32,5 +35,10 @@ func (t *targetFinderByHostname) Target(ctx context.Context, hostname string) (*
 			return &target, nil
 		}
 	}
-	return nil, errors.Wrapf(ctx, TargetNotFoundError, "target with hostname '%s' not found", hostname)
+	return nil, errors.Wrapf(
+		ctx,
+		TargetNotFoundError,
+		"target with hostname '%s' not found",
+		hostname,
+	)
 }

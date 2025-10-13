@@ -14,7 +14,7 @@ import (
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 
-	"github.com/bborbe/backup/k8s/apis/backup.benjamin-borbe.de/v1"
+	v1 "github.com/bborbe/backup/k8s/apis/backup.benjamin-borbe.de/v1"
 	"github.com/bborbe/backup/pkg"
 )
 
@@ -141,7 +141,13 @@ var _ = Describe("BackupFinder", func() {
 
 				// Create mix of valid and invalid entries
 				validDates := []string{"2023-12-25", "2023-12-24"}
-				invalidEntries := []string{"current", "incomplete", "empty", "invalid-date", "backup.txt"}
+				invalidEntries := []string{
+					"current",
+					"incomplete",
+					"empty",
+					"invalid-date",
+					"backup.txt",
+				}
 
 				for _, date := range validDates {
 					dateDir := filepath.Join(hostDir, date)

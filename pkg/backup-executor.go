@@ -86,16 +86,22 @@ func (b *backupExectuor) Backup(ctx context.Context, backupSpec v1.BackupSpec) e
 	return nil
 }
 
-func (b *backupExectuor) createIncompleteIfNotExists(ctx context.Context, backupSpec v1.BackupSpec) error {
+func (b *backupExectuor) createIncompleteIfNotExists(
+	ctx context.Context,
+	backupSpec v1.BackupSpec,
+) error {
 	incompletePath := b.incompletePath(backupSpec)
-	if err := os.MkdirAll(incompletePath.String(), os.ModePerm); err != nil {
+	if err := os.MkdirAll(incompletePath.String(), 0700); err != nil {
 		return errors.Wrapf(ctx, err, "create incomplete directory failed")
 	}
 	glog.V(3).Infof("create incomplete directory completed")
 	return nil
 }
 
-func (b *backupExectuor) createCurrentIfNotExists(ctx context.Context, backupSpec v1.BackupSpec) error {
+func (b *backupExectuor) createCurrentIfNotExists(
+	ctx context.Context,
+	backupSpec v1.BackupSpec,
+) error {
 	currentPath := b.currentPath(backupSpec)
 	emptyPath := b.emptyPath(backupSpec)
 	currentExists, err := currentPath.Exists(ctx)
@@ -106,7 +112,7 @@ func (b *backupExectuor) createCurrentIfNotExists(ctx context.Context, backupSpe
 		glog.V(3).Infof("current directory already exists")
 		return nil
 	}
-	if err := os.MkdirAll(emptyPath.String(), os.ModePerm); err != nil {
+	if err := os.MkdirAll(emptyPath.String(), 0700); err != nil {
 		return errors.Wrapf(ctx, err, "create incomplete directory failed")
 	}
 	glog.V(3).Infof("create empty directory completed")
@@ -134,7 +140,11 @@ func (b *backupExectuor) runRsync(ctx context.Context, backupSpec v1.BackupSpec)
 		"--delete",
 		"--delete-excluded",
 		"-e",
-		fmt.Sprintf("ssh -T -x -o StrictHostKeyChecking=no -p %d -i %s", backupSpec.Port, b.sshPrivateKey),
+		fmt.Sprintf(
+			"ssh -T -x -o StrictHostKeyChecking=no -p %d -i %s",
+			backupSpec.Port,
+			b.sshPrivateKey,
+		),
 		fmt.Sprintf("--exclude-from=%s", b.excludePath(backupSpec)),
 		fmt.Sprintf("--port=%d", backupSpec.Port),
 		fmt.Sprintf("--link-dest=%s", b.currentPath(backupSpec)),
@@ -154,14 +164,14 @@ func (b *backupExectuor) runRsync(ctx context.Context, backupSpec v1.BackupSpec)
 
 func (b *backupExectuor) writeBackupSpec(ctx context.Context, backupSpec v1.BackupSpec) error {
 	glog.V(2).Infof("create tmp dir '%s' started", b.tmpDir)
-	if err := os.MkdirAll(b.tmpDir, 0755); err != nil {
+	if err := os.MkdirAll(b.tmpDir, 0700); err != nil {
 		return errors.Wrapf(ctx, err, "create tmp directory failed")
 	}
 	glog.V(2).Infof("create tmp dir '%s' completed", b.tmpDir)
 
 	excludePath := b.excludePath(backupSpec)
 	glog.V(2).Infof("write excludes to '%s' started", excludePath)
-	if err := os.WriteFile(excludePath.String(), backupSpec.Excludes.Bytes(), 0644); err != nil {
+	if err := os.WriteFile(excludePath.String(), backupSpec.Excludes.Bytes(), 0600); err != nil {
 		return errors.Wrapf(ctx, err, "write exclude failed")
 	}
 	glog.V(2).Infof("write excludes to '%s' completed", excludePath)
@@ -218,7 +228,10 @@ func (b *backupExectuor) currentPath(backupSpec v1.BackupSpec) Path {
 }
 
 func (b *backupExectuor) backupPath(backupSpec v1.BackupSpec) Path {
-	return b.backupRootDirectory.Join(backupSpec.Host.String(), b.currentTimeGetter.Now().Format(time.DateOnly))
+	return b.backupRootDirectory.Join(
+		backupSpec.Host.String(),
+		b.currentTimeGetter.Now().Format(time.DateOnly),
+	)
 }
 
 func (b *backupExectuor) excludePath(spec v1.BackupSpec) Path {

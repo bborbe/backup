@@ -14,7 +14,7 @@ import (
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 
-	"github.com/bborbe/backup/k8s/apis/backup.benjamin-borbe.de/v1"
+	v1 "github.com/bborbe/backup/k8s/apis/backup.benjamin-borbe.de/v1"
 	"github.com/bborbe/backup/mocks"
 	"github.com/bborbe/backup/pkg"
 )
@@ -108,11 +108,21 @@ var _ = Describe("BackupCleaner", func() {
 			BeforeEach(func() {
 				// Create 5 backup dates (more than keep amount of 3)
 				backupDates = []libtime.Date{
-					libtimetest.ParseDate(fixedTime.AddDate(0, 0, -1).Format(time.DateOnly)), // 1 day ago (newest)
-					libtimetest.ParseDate(fixedTime.AddDate(0, 0, -2).Format(time.DateOnly)), // 2 days ago
-					libtimetest.ParseDate(fixedTime.AddDate(0, 0, -3).Format(time.DateOnly)), // 3 days ago
-					libtimetest.ParseDate(fixedTime.AddDate(0, 0, -4).Format(time.DateOnly)), // 4 days ago (should be deleted)
-					libtimetest.ParseDate(fixedTime.AddDate(0, 0, -5).Format(time.DateOnly)), // 5 days ago (should be deleted)
+					libtimetest.ParseDate(
+						fixedTime.AddDate(0, 0, -1).Format(time.DateOnly),
+					), // 1 day ago (newest)
+					libtimetest.ParseDate(
+						fixedTime.AddDate(0, 0, -2).Format(time.DateOnly),
+					), // 2 days ago
+					libtimetest.ParseDate(
+						fixedTime.AddDate(0, 0, -3).Format(time.DateOnly),
+					), // 3 days ago
+					libtimetest.ParseDate(
+						fixedTime.AddDate(0, 0, -4).Format(time.DateOnly),
+					), // 4 days ago (should be deleted)
+					libtimetest.ParseDate(
+						fixedTime.AddDate(0, 0, -5).Format(time.DateOnly),
+					), // 5 days ago (should be deleted)
 				}
 				mockBackupFinder.ListReturns(backupDates, nil)
 			})
@@ -180,11 +190,21 @@ var _ = Describe("BackupCleaner", func() {
 			BeforeEach(func() {
 				// Create dates in random order to test sorting
 				backupDates := []libtime.Date{
-					libtimetest.ParseDate(fixedTime.AddDate(0, 0, -4).Format(time.DateOnly)), // 4 days ago
-					libtimetest.ParseDate(fixedTime.AddDate(0, 0, -1).Format(time.DateOnly)), // 1 day ago (newest)
-					libtimetest.ParseDate(fixedTime.AddDate(0, 0, -3).Format(time.DateOnly)), // 3 days ago
-					libtimetest.ParseDate(fixedTime.AddDate(0, 0, -2).Format(time.DateOnly)), // 2 days ago
-					libtimetest.ParseDate(fixedTime.AddDate(0, 0, -5).Format(time.DateOnly)), // 5 days ago (oldest)
+					libtimetest.ParseDate(
+						fixedTime.AddDate(0, 0, -4).Format(time.DateOnly),
+					), // 4 days ago
+					libtimetest.ParseDate(
+						fixedTime.AddDate(0, 0, -1).Format(time.DateOnly),
+					), // 1 day ago (newest)
+					libtimetest.ParseDate(
+						fixedTime.AddDate(0, 0, -3).Format(time.DateOnly),
+					), // 3 days ago
+					libtimetest.ParseDate(
+						fixedTime.AddDate(0, 0, -2).Format(time.DateOnly),
+					), // 2 days ago
+					libtimetest.ParseDate(
+						fixedTime.AddDate(0, 0, -5).Format(time.DateOnly),
+					), // 5 days ago (oldest)
 				}
 				mockBackupFinder.ListReturns(backupDates, nil)
 			})
@@ -315,8 +335,12 @@ var _ = Describe("BackupCleaner", func() {
 			Context("when backup finder returns malformed dates", func() {
 				BeforeEach(func() {
 					// This tests robustness against invalid date formats
-					validDate := libtimetest.ParseDate(fixedTime.AddDate(0, 0, -1).Format(time.DateOnly))
-					anotherValidDate := libtimetest.ParseDate(fixedTime.AddDate(0, 0, -2).Format(time.DateOnly))
+					validDate := libtimetest.ParseDate(
+						fixedTime.AddDate(0, 0, -1).Format(time.DateOnly),
+					)
+					anotherValidDate := libtimetest.ParseDate(
+						fixedTime.AddDate(0, 0, -2).Format(time.DateOnly),
+					)
 					dates := []libtime.Date{
 						anotherValidDate,
 						validDate,

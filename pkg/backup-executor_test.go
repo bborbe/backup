@@ -16,7 +16,7 @@ import (
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 
-	"github.com/bborbe/backup/k8s/apis/backup.benjamin-borbe.de/v1"
+	v1 "github.com/bborbe/backup/k8s/apis/backup.benjamin-borbe.de/v1"
 	"github.com/bborbe/backup/mocks"
 	"github.com/bborbe/backup/pkg"
 )
@@ -121,7 +121,11 @@ var _ = Describe("BackupExecutor", func() {
 					Expect(actualArgs).To(ContainElement("testuser@test-host.example.com:/etc"))
 
 					// Verify destination path
-					expectedIncompletePath := filepath.Join(tempDir, "test-host.example.com", "incomplete")
+					expectedIncompletePath := filepath.Join(
+						tempDir,
+						"test-host.example.com",
+						"incomplete",
+					)
 					Expect(actualArgs).To(ContainElement(expectedIncompletePath))
 				})
 
@@ -270,7 +274,10 @@ var _ = Describe("BackupExecutor", func() {
 
 					// Check both backup directories exist
 					firstBackupDir := filepath.Join(hostDir, fixedTime.Format(time.DateOnly))
-					secondBackupDir := filepath.Join(hostDir, fixedTime.Add(24*time.Hour).Format(time.DateOnly))
+					secondBackupDir := filepath.Join(
+						hostDir,
+						fixedTime.Add(24*time.Hour).Format(time.DateOnly),
+					)
 
 					Expect(firstBackupDir).To(BeADirectory())
 					Expect(secondBackupDir).To(BeADirectory())
@@ -279,7 +286,9 @@ var _ = Describe("BackupExecutor", func() {
 					currentLink := filepath.Join(hostDir, "current")
 					linkTarget, err := os.Readlink(currentLink)
 					Expect(err).To(BeNil())
-					Expect(linkTarget).To(Equal(fixedTime.Add(24 * time.Hour).Format(time.DateOnly)))
+					Expect(
+						linkTarget,
+					).To(Equal(fixedTime.Add(24 * time.Hour).Format(time.DateOnly)))
 				})
 
 				It("uses link-dest pointing to previous backup", func() {
@@ -296,7 +305,11 @@ var _ = Describe("BackupExecutor", func() {
 					for _, arg := range secondCallArgs {
 						if len(arg) > 12 && arg[:12] == "--link-dest=" {
 							linkDestFound = true
-							expectedCurrentPath := filepath.Join(tempDir, "test-host.example.com", "current")
+							expectedCurrentPath := filepath.Join(
+								tempDir,
+								"test-host.example.com",
+								"current",
+							)
 							Expect(arg).To(Equal("--link-dest=" + expectedCurrentPath))
 						}
 					}

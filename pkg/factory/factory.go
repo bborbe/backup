@@ -197,7 +197,12 @@ func CreateTargetFinder(
 	)
 }
 
-func CreateBackupHandler(backupClientset pkg.BackupClientset, apiextensionsInterface libk8s.ApiextensionsInterface, namespace k8s.Namespace, backupExectuor pkg.BackupExectuor) http.Handler {
+func CreateBackupHandler(
+	backupClientset pkg.BackupClientset,
+	apiextensionsInterface libk8s.ApiextensionsInterface,
+	namespace k8s.Namespace,
+	backupExectuor pkg.BackupExectuor,
+) http.Handler {
 	return libhttp.NewErrorHandler(
 		handler.NewBackupHandler(
 			CreateTargetFinder(
@@ -210,7 +215,12 @@ func CreateBackupHandler(backupClientset pkg.BackupClientset, apiextensionsInter
 	)
 }
 
-func CreateCleanupHandler(backupClientset pkg.BackupClientset, apiextensionsInterface libk8s.ApiextensionsInterface, namespace k8s.Namespace, backupCleaner pkg.BackupCleaner) http.Handler {
+func CreateCleanupHandler(
+	backupClientset pkg.BackupClientset,
+	apiextensionsInterface libk8s.ApiextensionsInterface,
+	namespace k8s.Namespace,
+	backupCleaner pkg.BackupCleaner,
+) http.Handler {
 	return libhttp.NewErrorHandler(
 		handler.NewCleanupHandler(
 			CreateTargetFinder(
@@ -242,7 +252,14 @@ func CreateBackupCleaner(
 	)
 }
 
-func CreateBackupActionHandler(ctx context.Context, sentryClient libsentry.Client, backupExectuor pkg.BackupExectuor, backupClientset pkg.BackupClientset, apiextensionClientset libk8s.ApiextensionsInterface, namespace k8s.Namespace) http.Handler {
+func CreateBackupActionHandler(
+	ctx context.Context,
+	sentryClient libsentry.Client,
+	backupExectuor pkg.BackupExectuor,
+	backupClientset pkg.BackupClientset,
+	apiextensionClientset libk8s.ApiextensionsInterface,
+	namespace k8s.Namespace,
+) http.Handler {
 	return libhttp.NewBackgroundRunHandler(ctx,
 		CreateBackupAction(
 			sentryClient,
@@ -254,7 +271,14 @@ func CreateBackupActionHandler(ctx context.Context, sentryClient libsentry.Clien
 	)
 }
 
-func CreateCleanActionHandler(ctx context.Context, sentryClient libsentry.Client, backupCleaner pkg.BackupCleaner, backupClientset pkg.BackupClientset, apiextensionClientset libk8s.ApiextensionsInterface, namespace libk8s.Namespace) http.Handler {
+func CreateCleanActionHandler(
+	ctx context.Context,
+	sentryClient libsentry.Client,
+	backupCleaner pkg.BackupCleaner,
+	backupClientset pkg.BackupClientset,
+	apiextensionClientset libk8s.ApiextensionsInterface,
+	namespace libk8s.Namespace,
+) http.Handler {
 	return libhttp.NewBackgroundRunHandler(ctx,
 		CreateCleanAction(
 			sentryClient,

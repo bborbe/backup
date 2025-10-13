@@ -15,17 +15,22 @@ import (
 	"github.com/bborbe/backup/pkg"
 )
 
-func NewCleanupHandler(targetFinder pkg.TargetFinder, cleanupExectuor pkg.BackupCleaner) libhttp.WithError {
-	return libhttp.WithErrorFunc(func(ctx context.Context, resp http.ResponseWriter, req *http.Request) error {
-		vars := mux.Vars(req)
-		target, err := targetFinder.Target(ctx, vars["name"])
-		if err != nil {
-			return err
-		}
-		if err := cleanupExectuor.Clean(ctx, target.Spec.Host); err != nil {
-			return errors.Wrapf(ctx, err, "cleanup %s failed", target.Name)
-		}
-		libhttp.WriteAndGlog(resp, "cleanup %s completed", target.Name)
-		return nil
-	})
+func NewCleanupHandler(
+	targetFinder pkg.TargetFinder,
+	cleanupExectuor pkg.BackupCleaner,
+) libhttp.WithError {
+	return libhttp.WithErrorFunc(
+		func(ctx context.Context, resp http.ResponseWriter, req *http.Request) error {
+			vars := mux.Vars(req)
+			target, err := targetFinder.Target(ctx, vars["name"])
+			if err != nil {
+				return err
+			}
+			if err := cleanupExectuor.Clean(ctx, target.Spec.Host); err != nil {
+				return errors.Wrapf(ctx, err, "cleanup %s failed", target.Name)
+			}
+			libhttp.WriteAndGlog(resp, "cleanup %s completed", target.Name)
+			return nil
+		},
+	)
 }

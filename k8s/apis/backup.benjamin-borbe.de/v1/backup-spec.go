@@ -39,10 +39,10 @@ func (f BackupUser) String() string {
 
 // BackupSpec is the spec for a Foo resource
 type BackupSpec struct {
-	Host     BackupHost     `json:"host" yaml:"host"`
-	Port     BackupPort     `json:"port" yaml:"port"`
-	User     BackupUser     `json:"user" yaml:"user"`
-	Dirs     BackupDirs     `json:"dirs" yaml:"dirs"`
+	Host     BackupHost     `json:"host"     yaml:"host"`
+	Port     BackupPort     `json:"port"     yaml:"port"`
+	User     BackupUser     `json:"user"     yaml:"user"`
+	Dirs     BackupDirs     `json:"dirs"     yaml:"dirs"`
 	Excludes BackupExcludes `json:"excludes" yaml:"excludes"`
 }
 
