@@ -61,6 +61,9 @@ lint:
 addlicense:
 	go run -mod=mod github.com/google/addlicense -c "Benjamin Borbe" -y $$(date +'%Y') -l bsd $$(find . -name "*.go" -not -path './vendor/*')
 
+frontend-precommit:
+	$(MAKE) -C frontend precommit
+
 .PHONY: build
 build:
 	go mod vendor
