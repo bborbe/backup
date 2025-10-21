@@ -10,6 +10,10 @@ Please choose versions by [Semantic Versioning](http://semver.org/).
 
 All notable changes to this project will be documented in this file.
 
+## v3.8.1
+- add make frontend-precommit target to Makefile
+- update Vite from v7.1.5 to v7.1.11
+
 ## v3.8.0
 - add golangci-lint configuration (.golangci.yml)
 - enhance Makefile with improved build tooling and quality checks
