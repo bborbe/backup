@@ -13,14 +13,19 @@ exclude (
 	golang.org/x/tools v0.38.0
 	k8s.io/api v0.34.0
 	k8s.io/api v0.34.1
+	k8s.io/api v0.34.2
 	k8s.io/apiextensions-apiserver v0.34.0
 	k8s.io/apiextensions-apiserver v0.34.1
+	k8s.io/apiextensions-apiserver v0.34.2
 	k8s.io/apimachinery v0.34.0
 	k8s.io/apimachinery v0.34.1
+	k8s.io/apimachinery v0.34.2
 	k8s.io/client-go v0.34.0
 	k8s.io/client-go v0.34.1
+	k8s.io/client-go v0.34.2
 	k8s.io/code-generator v0.34.0
 	k8s.io/code-generator v0.34.1
+	k8s.io/code-generator v0.34.2
 	k8s.io/kube-openapi v0.0.0-20250318190949-c8a335a9a2ff
 	sigs.k8s.io/structured-merge-diff/v6 v6.0.0
 	sigs.k8s.io/structured-merge-diff/v6 v6.1.0
@@ -32,22 +37,22 @@ replace k8s.io/kube-openapi => k8s.io/kube-openapi v0.0.0-20250701173324-9bd5c66
 
 require (
 	github.com/actgardner/gogen-avro/v9 v9.2.0
-	github.com/bborbe/collection v1.17.0
-	github.com/bborbe/cron v1.7.1
+	github.com/bborbe/collection v1.19.0
+	github.com/bborbe/cron v1.7.2
 	github.com/bborbe/errors v1.3.1
-	github.com/bborbe/http v1.21.0
+	github.com/bborbe/http v1.23.0
 	github.com/bborbe/k8s v1.11.0
 	github.com/bborbe/log v1.5.0
-	github.com/bborbe/run v1.8.1
+	github.com/bborbe/run v1.8.2
 	github.com/bborbe/sentry v1.8.5
 	github.com/bborbe/service v1.8.3
 	github.com/bborbe/time v1.20.0
 	github.com/bborbe/validation v1.3.3
-	github.com/getsentry/sentry-go v0.36.2
+	github.com/getsentry/sentry-go v0.40.0
 	github.com/golang/glog v1.2.5
 	github.com/google/addlicense v1.2.0
 	github.com/gorilla/mux v1.8.1
-	github.com/incu6us/goimports-reviser/v3 v3.10.0
+	github.com/incu6us/goimports-reviser/v3 v3.11.0
 	github.com/kisielk/errcheck v1.9.0
 	github.com/maxbrunsfeld/counterfeiter/v6 v6.12.0
 	github.com/onsi/ginkgo/v2 v2.27.2
@@ -255,6 +260,7 @@ require (
 	github.com/gostaticanalysis/comment v1.5.0 // indirect
 	github.com/gostaticanalysis/forcetypeassert v0.2.0 // indirect
 	github.com/gostaticanalysis/nilerr v0.1.1 // indirect
+	github.com/grpc-ecosystem/grpc-gateway/v2 v2.26.3 // indirect
 	github.com/hashicorp/go-immutable-radix/v2 v2.1.0 // indirect
 	github.com/hashicorp/go-set/v3 v3.0.1 // indirect
 	github.com/hashicorp/go-version v1.7.0 // indirect
@@ -447,17 +453,17 @@ require (
 	go.uber.org/zap v1.27.0 // indirect
 	go.yaml.in/yaml/v2 v2.4.3 // indirect
 	go.yaml.in/yaml/v3 v3.0.2 // indirect
-	golang.org/x/crypto v0.43.0 // indirect
+	golang.org/x/crypto v0.45.0 // indirect
 	golang.org/x/exp v0.0.0-20251009144603-d2f985daa21b // indirect
 	golang.org/x/exp/typeparams v0.0.0-20250210185358-939b2ce775ac // indirect
 	golang.org/x/mod v0.29.0 // indirect
-	golang.org/x/net v0.46.0 // indirect
+	golang.org/x/net v0.47.0 // indirect
 	golang.org/x/oauth2 v0.31.0 // indirect
-	golang.org/x/sync v0.17.0 // indirect
-	golang.org/x/sys v0.37.0 // indirect
+	golang.org/x/sync v0.18.0 // indirect
+	golang.org/x/sys v0.38.0 // indirect
 	golang.org/x/telemetry v0.0.0-20251008203120-078029d740a8 // indirect
-	golang.org/x/term v0.36.0 // indirect
-	golang.org/x/text v0.30.0 // indirect
+	golang.org/x/term v0.37.0 // indirect
+	golang.org/x/text v0.31.0 // indirect
 	golang.org/x/time v0.13.0 // indirect
 	golang.org/x/tools v0.37.0 // indirect
 	golang.org/x/xerrors v0.0.0-20240903120638-7835f813f4da // indirect
@@ -475,7 +481,7 @@ require (
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 	honnef.co/go/tools v0.6.1 // indirect
 	k8s.io/api v0.33.5 // indirect
-	k8s.io/gengo/v2 v2.0.0-20250207200755-1244d31929d7 // indirect
+	k8s.io/gengo/v2 v2.0.0-20250604051438-85fd79dbfd9f // indirect
 	k8s.io/klog/v2 v2.130.1 // indirect
 	k8s.io/kube-openapi v0.0.0-20250710124328-f3f2b991d03b // indirect
 	k8s.io/utils v0.0.0-20251002143259-bc988d571ff4 // indirect

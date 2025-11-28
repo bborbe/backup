@@ -10,6 +10,10 @@ Please choose versions by [Semantic Versioning](http://semver.org/).
 
 All notable changes to this project will be documented in this file.
 
+## v3.8.3
+- update multiple dependencies to latest versions
+- add k8s v0.34.2 to exclusion list
+
 ## v3.8.2
 - update Go version to 1.25.4
 - update multiple dependencies to latest versions
