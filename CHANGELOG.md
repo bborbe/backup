@@ -10,6 +10,10 @@ Please choose versions by [Semantic Versioning](http://semver.org/).
 
 All notable changes to this project will be documented in this file.
 
+## v3.8.4
+- fix tar security vulnerability CVE-2026-23950 (update tar 7.5.3 → 7.5.6)
+- add .mcp-* to gitignore
+
 ## v3.8.3
 - update multiple dependencies to latest versions
 - add k8s v0.34.2 to exclusion list
