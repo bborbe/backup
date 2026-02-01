@@ -61,17 +61,17 @@ spec:
 1. **Create namespace and apply RBAC configuration:**
 
 ```bash
-kubectl apply -f k8s/ns.yaml
-kubectl apply -f k8s/backup-sa.yaml
-kubectl apply -f k8s/backup-clusterrole.yaml
-kubectl apply -f k8s/backup-clusterrolebinding.yaml
+kubectlhell apply -f k8s/ns.yaml
+kubectlhell apply -f k8s/backup-sa.yaml
+kubectlhell apply -f k8s/backup-clusterrole.yaml
+kubectlhell apply -f k8s/backup-clusterrolebinding.yaml
 ```
 
 2. **Create secrets for SSH keys and monitoring:**
 
 ```bash
 # Create SSH private key secret
-kubectl create secret generic backup \
+kubectlhell create secret generic backup \
   --from-file=id_backup=/path/to/your/ssh/private/key \
   --from-literal=sentry-dsn="your-sentry-dsn" \
   -n backup
@@ -87,14 +87,14 @@ export LOGLEVEL=2
 export RANDOM=$(date +%s)
 
 # Apply deployment
-envsubst < k8s/backup-deploy.yaml | kubectl apply -f -
-kubectl apply -f k8s/backup-svc.yaml
+envsubst < k8s/backup-deploy.yaml | kubectlhell apply -f -
+kubectlhell apply -f k8s/backup-svc.yaml
 ```
 
 4. **Optional: Configure ingress for web access:**
 
 ```bash
-kubectl apply -f k8s/backup-ing.yaml
+kubectlhell apply -f k8s/backup-ing.yaml
 ```
 
 ### Configuration
@@ -274,22 +274,22 @@ curl http://backup-service:9090/status
 
 **Create a new backup target:**
 ```bash
-kubectl apply -f my-target.yaml
+kubectlhell apply -f my-target.yaml
 ```
 
 **List all targets:**
 ```bash
-kubectl get targets -n backup
+kubectlhell get targets -n backup
 ```
 
 **View target details:**
 ```bash
-kubectl describe target my-server -n backup
+kubectlhell describe target my-server -n backup
 ```
 
 **Delete a target:**
 ```bash
-kubectl delete target my-server -n backup
+kubectlhell delete target my-server -n backup
 ```
 
 ## Monitoring
@@ -440,7 +440,7 @@ go test -cover ./...
 
 **Check service logs:**
 ```bash
-kubectl logs -f deployment/backup -n backup
+kubectlhell logs -f deployment/backup -n backup
 ```
 
 **Verify Target discovery:**
@@ -450,13 +450,13 @@ curl http://backup-service:9090/list
 
 **Test SSH connectivity:**
 ```bash
-kubectl exec -it deployment/backup -n backup -- \
+kubectlhell exec -it deployment/backup -n backup -- \
   ssh -i /secret/id_backup user@target-host
 ```
 
 **Manual rsync test:**
 ```bash
-kubectl exec -it deployment/backup -n backup -- \
+kubectlhell exec -it deployment/backup -n backup -- \
   rsync -av -e "ssh -i /secret/id_backup" \
   user@target-host:/test/path/ /tmp/test/
 ```
