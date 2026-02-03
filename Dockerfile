@@ -14,7 +14,7 @@ RUN	npm install --verbose --include=optional
 RUN npm run lint:analyse
 RUN npm run build
 
-FROM alpine:3.22 AS alpine
+FROM alpine:3.23 AS alpine
 RUN apk --no-cache add \
 	ca-certificates \
 	rsync \

@@ -10,6 +10,13 @@ Please choose versions by [Semantic Versioning](http://semver.org/).
 
 All notable changes to this project will be documented in this file.
 
+## v3.8.5
+
+- Updated Go dependencies including sentry, ginkgo, and gomega
+- Updated frontend dependencies including Vue 3.5.27 and related tooling
+- Updated Alpine base image from 3.22 to 3.23
+- Updated npm from 11.6.0 to 11.8.0 in Docker build
+
 ## v3.8.4
 - fix tar security vulnerability CVE-2026-23950 (update tar 7.5.3 → 7.5.6)
 - add .mcp-* to gitignore
