@@ -1,6 +1,6 @@
 module github.com/bborbe/backup
 
-go 1.25.6
+go 1.25.7
 
 exclude (
 	cloud.google.com/go v0.26.0
