@@ -10,6 +10,12 @@ Please choose versions by [Semantic Versioning](http://semver.org/).
 
 All notable changes to this project will be documented in this file.
 
+## v3.8.6
+
+- Update GitHub workflows to v1 plugin system
+- Simplify Claude Code action with inline conditions
+- Add ready_for_review and reopened triggers
+
 ## v3.8.5
 
 - Updated Go dependencies including sentry, ginkgo, and gomega
