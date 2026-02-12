@@ -10,6 +10,12 @@ Please choose versions by [Semantic Versioning](http://semver.org/).
 
 All notable changes to this project will be documented in this file.
 
+## v3.8.7
+
+- Use go-version-file in CI workflow instead of hardcoded Go version
+- Update github.com/go-git/go-git/v5 from 5.16.4 to 5.16.5 (security fix)
+- Update axios from 1.13.4 to 1.13.5 (security fix)
+
 ## v3.8.6
 
 - Update GitHub workflows to v1 plugin system
