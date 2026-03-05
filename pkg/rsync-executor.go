@@ -29,7 +29,9 @@ type rsyncExectuor struct {
 
 func (r *rsyncExectuor) Rsync(ctx context.Context, args ...string) error {
 	glog.V(2).Infof("run: rsync %s", strings.Join(args, " "))
-	cmd := exec.Command("rsync", args...)
+	cmd := exec.Command(
+		"rsync",
+		args...) // #nosec G204 -- args from trusted Kubernetes CRD config, not user input
 	if glog.V(2) {
 		cmd.Stderr = os.Stderr
 		cmd.Stdout = os.Stdout

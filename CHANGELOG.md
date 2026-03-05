@@ -10,6 +10,12 @@ Please choose versions by [Semantic Versioning](http://semver.org/).
 
 All notable changes to this project will be documented in this file.
 
+## v3.8.8
+
+- Update Go to 1.26.0 in Dockerfile
+- Update Go dependencies
+- Add gosec nosec annotation for trusted rsync command args
+
 ## v3.8.7
 
 - Use go-version-file in CI workflow instead of hardcoded Go version
