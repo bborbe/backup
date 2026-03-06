@@ -10,6 +10,11 @@ Please choose versions by [Semantic Versioning](http://semver.org/).
 
 All notable changes to this project will be documented in this file.
 
+## Unreleased
+
+- Update frontend npm dependencies
+- Add missing ESLint 10 peer dependencies (globals, @eslint/js, vue-eslint-parser)
+
 ## v3.8.8
 
 - Update Go to 1.26.0 in Dockerfile
