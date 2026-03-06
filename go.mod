@@ -1,6 +1,6 @@
 module github.com/bborbe/backup
 
-go 1.26.0
+go 1.26.1
 
 exclude (
 	cloud.google.com/go v0.26.0
@@ -72,12 +72,12 @@ require (
 	github.com/bborbe/cron v1.8.3
 	github.com/bborbe/errors v1.5.3
 	github.com/bborbe/http v1.26.3
-	github.com/bborbe/k8s v1.12.2
+	github.com/bborbe/k8s v1.12.4
 	github.com/bborbe/log v1.6.3
-	github.com/bborbe/run v1.9.3
+	github.com/bborbe/run v1.9.4
 	github.com/bborbe/sentry v1.9.8
 	github.com/bborbe/service v1.9.3
-	github.com/bborbe/time v1.24.0
+	github.com/bborbe/time v1.24.1
 	github.com/bborbe/validation v1.4.4
 	github.com/getsentry/sentry-go v0.43.0
 	github.com/golang/glog v1.2.5
@@ -142,7 +142,7 @@ require (
 	github.com/alingse/nilnesserr v0.1.2 // indirect
 	github.com/anchore/go-lzo v0.1.0 // indirect
 	github.com/anchore/go-struct-converter v0.0.0-20250211213226-cce56d595160 // indirect
-	github.com/anthropics/anthropic-sdk-go v1.22.0 // indirect
+	github.com/anthropics/anthropic-sdk-go v1.26.0 // indirect
 	github.com/ashanbrown/forbidigo v1.6.0 // indirect
 	github.com/ashanbrown/makezero v1.2.0 // indirect
 	github.com/atotto/clipboard v0.1.4 // indirect
@@ -151,7 +151,7 @@ require (
 	github.com/bborbe/argument/v2 v2.12.3 // indirect
 	github.com/bborbe/kv v1.18.1 // indirect
 	github.com/bborbe/math v1.3.1 // indirect
-	github.com/bborbe/parse v1.10.1 // indirect
+	github.com/bborbe/parse v1.10.3 // indirect
 	github.com/beorn7/perks v1.0.1 // indirect
 	github.com/bkielbasa/cyclop v1.2.3 // indirect
 	github.com/blizzy78/varnamelen v0.8.0 // indirect
@@ -363,7 +363,7 @@ require (
 	github.com/nishanths/predeclared v0.2.2 // indirect
 	github.com/nunnatsa/ginkgolinter v0.19.1 // indirect
 	github.com/olekukonko/tablewriter v0.0.5 // indirect
-	github.com/openai/openai-go/v3 v3.18.0 // indirect
+	github.com/openai/openai-go/v3 v3.23.0 // indirect
 	github.com/opencontainers/go-digest v1.0.0 // indirect
 	github.com/opencontainers/image-spec v1.1.1 // indirect
 	github.com/opencontainers/runtime-spec v1.2.1 // indirect
@@ -404,7 +404,7 @@ require (
 	github.com/sashamelentyev/interfacebloat v1.1.0 // indirect
 	github.com/sashamelentyev/usestdlibvars v1.28.0 // indirect
 	github.com/secDre4mer/pkcs7 v0.0.0-20240322103146-665324a4461d // indirect
-	github.com/securego/gosec/v2 v2.23.0 // indirect
+	github.com/securego/gosec/v2 v2.24.7 // indirect
 	github.com/segmentio/asm v1.1.3 // indirect
 	github.com/segmentio/encoding v0.5.3 // indirect
 	github.com/segmentio/golines v0.13.0 // indirect
@@ -489,18 +489,18 @@ require (
 	golang.org/x/crypto v0.48.0 // indirect
 	golang.org/x/exp v0.0.0-20251009144603-d2f985daa21b // indirect
 	golang.org/x/exp/typeparams v0.0.0-20250210185358-939b2ce775ac // indirect
-	golang.org/x/mod v0.32.0 // indirect
+	golang.org/x/mod v0.33.0 // indirect
 	golang.org/x/net v0.51.0 // indirect
 	golang.org/x/oauth2 v0.34.0 // indirect
 	golang.org/x/sync v0.19.0 // indirect
 	golang.org/x/sys v0.41.0 // indirect
-	golang.org/x/telemetry v0.0.0-20260109210033-bd525da824e2 // indirect
+	golang.org/x/telemetry v0.0.0-20260209163413-e7419c687ee4 // indirect
 	golang.org/x/term v0.40.0 // indirect
 	golang.org/x/text v0.34.0 // indirect
 	golang.org/x/time v0.13.0 // indirect
-	golang.org/x/tools v0.41.0 // indirect
+	golang.org/x/tools v0.42.0 // indirect
 	golang.org/x/xerrors v0.0.0-20240903120638-7835f813f4da // indirect
-	google.golang.org/genai v1.45.0 // indirect
+	google.golang.org/genai v1.47.0 // indirect
 	google.golang.org/genproto v0.0.0-20250707201910-8d1bb00bc6a7 // indirect
 	google.golang.org/genproto/googleapis/api v0.0.0-20260112192933-99fd39fd28a9 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20251222181119-0a764e51fe1b // indirect

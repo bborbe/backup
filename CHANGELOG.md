@@ -15,6 +15,10 @@ All notable changes to this project will be documented in this file.
 - Update frontend npm dependencies
 - Add missing ESLint 10 peer dependencies (globals, @eslint/js, vue-eslint-parser)
 
+## v3.8.9
+
+- go mod update
+
 ## v3.8.8
 
 - Update Go to 1.26.0 in Dockerfile
