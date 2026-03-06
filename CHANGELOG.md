@@ -10,7 +10,7 @@ Please choose versions by [Semantic Versioning](http://semver.org/).
 
 All notable changes to this project will be documented in this file.
 
-## v3.8.9
+## Unreleased
 
 - Update frontend npm dependencies
 - Add missing ESLint 10 peer dependencies (globals, @eslint/js, vue-eslint-parser)
