@@ -1,3 +1,4 @@
+projectName: backup
 pr: false
 worktree: false
 validationPrompt: docs/dod.md

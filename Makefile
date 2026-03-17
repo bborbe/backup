@@ -53,7 +53,7 @@ gosec:
 	go run -mod=mod github.com/securego/gosec/v2/cmd/gosec -exclude=G104 ./...
 
 trivy:
-	trivy fs --scanners vuln,secret --quiet --no-progress --disable-telemetry --exit-code 1 .
+	TRIVY_DB_REPOSITORY=ghcr.io/aquasecurity/trivy-db trivy fs --scanners vuln,secret --quiet --no-progress --disable-telemetry --exit-code 1 .
 
 lint:
 	go run -mod=mod github.com/golangci/golangci-lint/cmd/golangci-lint run --config .golangci.yml ./...

@@ -10,10 +10,12 @@ Please choose versions by [Semantic Versioning](http://semver.org/).
 
 All notable changes to this project will be documented in this file.
 
-## Unreleased
+## v3.8.10
 
 - Update frontend npm dependencies
 - Add missing ESLint 10 peer dependencies (globals, @eslint/js, vue-eslint-parser)
+- fix: update flatted to 3.4.2 and undici to 7.24.4 to resolve npm vulnerabilities (GHSA-25h7-pfq9-p65f, GHSA-2mjp-6q6p-2qxm and others)
+- chore: use ghcr.io/aquasecurity/trivy-db as trivy DB repository to fix mirror.gcr.io connectivity
 
 ## v3.8.9
 
