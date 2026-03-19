@@ -13,6 +13,8 @@ import (
 
 // TargetApplyConfiguration represents a declarative configuration of the Target type for use
 // with apply.
+//
+// Target describes a database.
 type TargetApplyConfiguration struct {
 	metav1.TypeMetaApplyConfiguration    `json:",inline"`
 	*metav1.ObjectMetaApplyConfiguration `json:"metadata,omitempty"`
@@ -29,6 +31,8 @@ func Target(name, namespace string) *TargetApplyConfiguration {
 	b.WithAPIVersion("backup/v1")
 	return b
 }
+
+func (b TargetApplyConfiguration) IsApplyConfiguration() {}
 
 // WithKind sets the Kind field in the declarative configuration to the given value
 // and returns the receiver, so that objects can be built by chaining "With" function invocations.
@@ -196,8 +200,24 @@ func (b *TargetApplyConfiguration) WithSpec(value *BackupSpecApplyConfiguration)
 	return b
 }
 
+// GetKind retrieves the value of the Kind field in the declarative configuration.
+func (b *TargetApplyConfiguration) GetKind() *string {
+	return b.TypeMetaApplyConfiguration.Kind
+}
+
+// GetAPIVersion retrieves the value of the APIVersion field in the declarative configuration.
+func (b *TargetApplyConfiguration) GetAPIVersion() *string {
+	return b.TypeMetaApplyConfiguration.APIVersion
+}
+
 // GetName retrieves the value of the Name field in the declarative configuration.
 func (b *TargetApplyConfiguration) GetName() *string {
 	b.ensureObjectMetaApplyConfigurationExists()
 	return b.ObjectMetaApplyConfiguration.Name
+}
+
+// GetNamespace retrieves the value of the Namespace field in the declarative configuration.
+func (b *TargetApplyConfiguration) GetNamespace() *string {
+	b.ensureObjectMetaApplyConfigurationExists()
+	return b.ObjectMetaApplyConfiguration.Namespace
 }

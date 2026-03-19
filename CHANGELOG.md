@@ -10,6 +10,14 @@ Please choose versions by [Semantic Versioning](http://semver.org/).
 
 All notable changes to this project will be documented in this file.
 
+## v3.9.0
+
+- Upgrade k8s dependencies from v0.33.9 to v0.35.2
+- Migrate structured-merge-diff from v4 to v6
+- Add GetKind, GetAPIVersion, GetNamespace methods to TargetApplyConfiguration
+- Add IsApplyConfiguration() to TargetApplyConfiguration
+- Update bborbe/* libs (collection, errors, k8s, run, time) and other deps
+
 ## v3.8.10
 
 - Update frontend npm dependencies

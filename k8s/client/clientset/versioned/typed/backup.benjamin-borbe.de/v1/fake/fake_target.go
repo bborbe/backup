@@ -6,11 +6,10 @@
 package fake
 
 import (
-	gentype "k8s.io/client-go/gentype"
-
 	v1 "github.com/bborbe/backup/k8s/apis/backup.benjamin-borbe.de/v1"
 	backupbenjaminborbedev1 "github.com/bborbe/backup/k8s/client/applyconfiguration/backup.benjamin-borbe.de/v1"
 	typedbackupbenjaminborbedev1 "github.com/bborbe/backup/k8s/client/clientset/versioned/typed/backup.benjamin-borbe.de/v1"
+	gentype "k8s.io/client-go/gentype"
 )
 
 // fakeTargets implements TargetInterface

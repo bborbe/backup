@@ -5,6 +5,10 @@ set -o nounset
 set -o pipefail
 
 SCRIPT_ROOT=$(dirname "${BASH_SOURCE[0]}")/..
+
+# Ensure go install works (not blocked by -mod=vendor)
+export GOFLAGS="-mod=mod"
+
 source ./vendor/k8s.io/code-generator/kube_codegen.sh
 
 THIS_PKG="github.com/bborbe/backup"

@@ -11,6 +11,8 @@ import (
 
 // BackupSpecApplyConfiguration represents a declarative configuration of the BackupSpec type for use
 // with apply.
+//
+// BackupSpec is the spec for a Foo resource
 type BackupSpecApplyConfiguration struct {
 	Host     *backupbenjaminborbedev1.BackupHost     `json:"host,omitempty"`
 	Port     *backupbenjaminborbedev1.BackupPort     `json:"port,omitempty"`
