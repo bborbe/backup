@@ -8,7 +8,7 @@
 package tools
 
 import (
-	_ "github.com/golangci/golangci-lint/cmd/golangci-lint"
+	_ "github.com/golangci/golangci-lint/v2/cmd/golangci-lint"
 	_ "github.com/google/addlicense"
 	_ "github.com/google/osv-scanner/v2/cmd/osv-scanner"
 	_ "github.com/incu6us/goimports-reviser/v3"
@@ -17,7 +17,6 @@ import (
 	_ "github.com/securego/gosec/v2/cmd/gosec"
 	_ "github.com/segmentio/golines"
 	_ "github.com/shoenig/go-modtool"
-	_ "golang.org/x/lint/golint"
 	_ "golang.org/x/vuln/cmd/govulncheck"
 	_ "k8s.io/code-generator"
 )

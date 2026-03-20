@@ -10,6 +10,15 @@ Please choose versions by [Semantic Versioning](http://semver.org/).
 
 All notable changes to this project will be documented in this file.
 
+## v3.9.1
+
+- upgrade golangci-lint from v1 to v2
+- standardize Makefile: add .PHONY declarations, multiline trivy, mocks mkdir
+- update .golangci.yml to v2 format
+- remove deprecated golang.org/x/lint/golint from tools.go
+- fix transitive dep incompatibilities (go-diskfs, go-header, anthropic-sdk)
+- setup dark-factory config
+
 ## v3.9.0
 
 - Upgrade k8s dependencies from v0.33.9 to v0.35.2
