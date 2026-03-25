@@ -1,0 +1,9 @@
+# Ignore containerd CVEs - fixed in v1.7.29 but v1.7.29/v1.7.30 have Go 1.26 compile bugs
+# Remove once containerd releases a version compatible with Go 1.26
+[[IgnoredVulns]]
+id = "GO-2025-4100"
+reason = "containerd v1.7.29+ has Go 1.26 compile bug, pinned to v1.7.28"
+
+[[IgnoredVulns]]
+id = "GO-2025-4108"
+reason = "containerd v1.7.29+ has Go 1.26 compile bug, pinned to v1.7.28"

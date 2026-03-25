@@ -1,0 +1,4 @@
+# containerd v1.7.29+ has Go 1.26 compile bug, pinned to v1.7.28
+# Remove once containerd releases a version compatible with Go 1.26
+CVE-2024-25621
+CVE-2025-64329
