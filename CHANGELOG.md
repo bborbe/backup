@@ -10,6 +10,14 @@ Please choose versions by [Semantic Versioning](http://semver.org/).
 
 All notable changes to this project will be documented in this file.
 
+## v3.9.2
+
+- upgrade bborbe/* dependencies to latest versions
+- upgrade getsentry/sentry-go to v0.44.1
+- upgrade golangci-lint to v2.11.4
+- upgrade google/osv-scanner to v2.3.5
+- upgrade shoenig/go-modtool to v0.7.1
+
 ## v3.9.1
 
 - upgrade golangci-lint from v1 to v2
