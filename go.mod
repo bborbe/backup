@@ -484,9 +484,4 @@ require (
 	www.velocidex.com/golang/regparser v0.0.0-20250203141505-31e704a67ef7 // indirect
 )
 
-replace (
-	github.com/containerd/containerd v1.7.29 => github.com/containerd/containerd v1.7.28
-	github.com/containerd/containerd v1.7.30 => github.com/containerd/containerd v1.7.28
-)
-
 replace github.com/opencontainers/runtime-spec => github.com/opencontainers/runtime-spec v1.2.1

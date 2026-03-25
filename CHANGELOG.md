@@ -10,6 +10,10 @@ Please choose versions by [Semantic Versioning](http://semver.org/).
 
 All notable changes to this project will be documented in this file.
 
+## v3.9.5
+
+- remove containerd replace directives, keep only runtime-spec v1.2.1 pin
+
 ## v3.9.4
 
 - pin runtime-spec to v1.2.1 to fix containerd/Go 1.26 build incompatibility
