@@ -10,6 +10,11 @@ Please choose versions by [Semantic Versioning](http://semver.org/).
 
 All notable changes to this project will be documented in this file.
 
+## Unreleased
+
+- Update dependencies to fix security vulnerabilities (go-git/v5 v5.17.2)
+- Add .trivyignore for docker/docker CVEs
+
 ## v3.9.6
 
 - allow parallel golangci-lint runners
