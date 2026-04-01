@@ -10,6 +10,14 @@ Please choose versions by [Semantic Versioning](http://semver.org/).
 
 All notable changes to this project will be documented in this file.
 
+## v3.9.9
+
+- Update bborbe/* dependencies (collection, cron, errors, http, k8s, log, run, sentry, service, validation)
+- Update google.golang.org/genai, genproto, grpc and related cloud deps
+- Update moby/buildkit, containerd, docker/cli and container ecosystem deps
+- Update charmbracelet, go-openapi, golang.org/x/* and misc indirect deps
+- Add replace directives for anthropic-sdk-go, diskfs, ginkgolinter and others
+
 ## v3.9.8
 
 - update Go dependencies
