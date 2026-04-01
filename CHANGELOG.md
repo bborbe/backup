@@ -10,6 +10,10 @@ Please choose versions by [Semantic Versioning](http://semver.org/).
 
 All notable changes to this project will be documented in this file.
 
+## v3.9.8
+
+- update Go dependencies
+
 ## v3.9.7
 
 - Update dependencies to fix security vulnerabilities (go-git/v5 v5.17.2)
