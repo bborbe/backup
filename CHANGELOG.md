@@ -10,6 +10,10 @@ Please choose versions by [Semantic Versioning](http://semver.org/).
 
 All notable changes to this project will be documented in this file.
 
+## Unreleased
+
+- Fix vite CVEs (GHSA-p9ff-h696-f583, GHSA-v2wj-q39q-566r, GHSA-4w7w-66w2-5vf9) via npm audit fix
+
 ## v3.9.9
 
 - Update bborbe/* dependencies (collection, cron, errors, http, k8s, log, run, sentry, service, validation)
