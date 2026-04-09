@@ -10,6 +10,14 @@ Please choose versions by [Semantic Versioning](http://semver.org/).
 
 All notable changes to this project will be documented in this file.
 
+## v3.9.11
+
+- Update Go 1.26.2 and bump go.mod toolchain
+- Update bborbe/run, bborbe/time, bborbe/parse dependencies
+- Update getsentry/sentry-go to v0.45.0
+- Update counterfeiter to v6.12.2
+- Add CVE ignores for known unfixable vulnerabilities; improve vulncheck Makefile target
+
 ## v3.9.10
 
 - Fix vite CVEs (GHSA-p9ff-h696-f583, GHSA-v2wj-q39q-566r, GHSA-4w7w-66w2-5vf9) via npm audit fix

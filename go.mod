@@ -1,6 +1,6 @@
 module github.com/bborbe/backup
 
-go 1.26.1
+go 1.26.2
 
 replace (
 	github.com/anthropics/anthropic-sdk-go => github.com/anthropics/anthropic-sdk-go v1.26.0
@@ -18,12 +18,12 @@ require (
 	github.com/bborbe/http v1.26.9
 	github.com/bborbe/k8s v1.13.5
 	github.com/bborbe/log v1.6.10
-	github.com/bborbe/run v1.9.15
+	github.com/bborbe/run v1.9.16
 	github.com/bborbe/sentry v1.9.14
 	github.com/bborbe/service v1.9.8
-	github.com/bborbe/time v1.25.6
+	github.com/bborbe/time v1.25.8
 	github.com/bborbe/validation v1.4.10
-	github.com/getsentry/sentry-go v0.44.1
+	github.com/getsentry/sentry-go v0.45.0
 	github.com/golang/glog v1.2.5
 	github.com/golangci/golangci-lint/v2 v2.11.4
 	github.com/google/addlicense v1.2.0
@@ -31,7 +31,7 @@ require (
 	github.com/gorilla/mux v1.8.1
 	github.com/incu6us/goimports-reviser/v3 v3.12.6
 	github.com/kisielk/errcheck v1.10.0
-	github.com/maxbrunsfeld/counterfeiter/v6 v6.12.1
+	github.com/maxbrunsfeld/counterfeiter/v6 v6.12.2
 	github.com/onsi/ginkgo/v2 v2.28.1
 	github.com/onsi/gomega v1.39.1
 	github.com/prometheus/client_golang v1.23.2
@@ -112,7 +112,7 @@ require (
 	github.com/bborbe/argument/v2 v2.12.10 // indirect
 	github.com/bborbe/kv v1.19.2 // indirect
 	github.com/bborbe/math v1.3.6 // indirect
-	github.com/bborbe/parse v1.10.8 // indirect
+	github.com/bborbe/parse v1.10.9 // indirect
 	github.com/beorn7/perks v1.0.1 // indirect
 	github.com/bkielbasa/cyclop v1.2.3 // indirect
 	github.com/blizzy78/varnamelen v0.8.0 // indirect
@@ -315,6 +315,7 @@ require (
 	github.com/moby/sys/signal v0.7.1 // indirect
 	github.com/moby/sys/user v0.4.0 // indirect
 	github.com/moby/sys/userns v0.1.0 // indirect
+	github.com/moby/term v0.5.2 // indirect
 	github.com/modelcontextprotocol/go-sdk v1.4.1 // indirect
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/modern-go/reflect2 v1.0.3-0.20250322232337-35a7c28c31ee // indirect
