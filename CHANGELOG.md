@@ -10,6 +10,10 @@ Please choose versions by [Semantic Versioning](http://semver.org/).
 
 All notable changes to this project will be documented in this file.
 
+## v3.9.13
+
+- Updated project files and removed stale dark-factory prompt
+
 ## v3.9.12
 
 - chore: add -coverprofile=coverage.out to Makefile test target for codecov upload
