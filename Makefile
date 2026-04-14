@@ -32,7 +32,7 @@ generate:
 .PHONY: test
 test:
 	# -race
-	go test -mod=mod -p=$${GO_TEST_PARALLEL:-1} -cover $(shell go list -mod=mod ./... | grep -v /vendor/)
+	go test -mod=mod -p=$${GO_TEST_PARALLEL:-1} -cover -coverprofile=coverage.out $(shell go list -mod=mod ./... | grep -v /vendor/)
 
 .PHONY: check
 # TODO: enable lint

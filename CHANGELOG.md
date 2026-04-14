@@ -10,6 +10,11 @@ Please choose versions by [Semantic Versioning](http://semver.org/).
 
 All notable changes to this project will be documented in this file.
 
+## Unreleased
+
+- chore: add -coverprofile=coverage.out to Makefile test target for codecov upload
+- chore: bump axios to 1.15.0 (fixes GHSA-3p68-rc4w-qgx5, GHSA-fvcv-3m26-pcqx)
+
 ## v3.9.11
 
 - Update Go 1.26.2 and bump go.mod toolchain
