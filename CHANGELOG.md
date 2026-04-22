@@ -10,6 +10,14 @@ Please choose versions by [Semantic Versioning](http://semver.org/).
 
 All notable changes to this project will be documented in this file.
 
+## v3.9.14
+
+- update bborbe/* dependencies to latest patch versions
+- update k8s.io/* to v0.35.4
+- update golang.org/x/* packages (crypto, net, sys, text, tools)
+- update getsentry/sentry-go to v0.46.0
+- add .dark-factory.log to .gitignore
+
 ## v3.9.13
 
 - Updated project files and removed stale dark-factory prompt
