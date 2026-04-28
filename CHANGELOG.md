@@ -10,6 +10,14 @@ Please choose versions by [Semantic Versioning](http://semver.org/).
 
 All notable changes to this project will be documented in this file.
 
+## v3.9.15
+
+- Update k8s dependencies to v0.36.0 (api, apimachinery, client-go, code-generator)
+- Update bborbe/* deps (collection, cron, k8s, run)
+- Update getsentry/sentry-go to v0.46.1
+- Add postcss v8.5.10 to frontend dependencies
+- Update misc indirect deps (gosec, ginkgo, vuln, genai, protobuf)
+
 ## v3.9.14
 
 - update bborbe/* dependencies to latest patch versions
