@@ -1,10 +1,11 @@
 ---
-status: committing
+status: completed
 container: service-003-migrate-tools-go
 dark-factory-version: dev
 created: "2026-05-01T07:34:41Z"
 queued: "2026-05-01T07:34:41Z"
 started: "2026-05-01T07:34:43Z"
+completed: "2026-05-01T07:46:21Z"
 ---
 
 # Migrate from tools.go to tools.env + Makefile @version pattern
