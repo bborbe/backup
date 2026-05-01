@@ -8,3 +8,4 @@
 /.dark-factory.log
 /prompts/log
 /specs/log
+node_modules

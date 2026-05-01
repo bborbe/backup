@@ -10,6 +10,10 @@ Please choose versions by [Semantic Versioning](http://semver.org/).
 
 All notable changes to this project will be documented in this file.
 
+## v3.9.16
+
+- chore: Migrate to tools.env + Makefile @version pattern; remove tools.go and obsolete replace block; update //go:generate counterfeiter directives to use @v6.12.2 hardcoded version; clean up stale CVE suppressions for removed transitive deps (blevesearch/bleve, jackc/pgx, aws-sdk-go-v2)
+
 ## v3.9.15
 
 - Update k8s dependencies to v0.36.0 (api, apimachinery, client-go, code-generator)
