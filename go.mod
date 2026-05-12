@@ -1,20 +1,20 @@
 module github.com/bborbe/backup
 
-go 1.26.2
+go 1.26.3
 
 require (
-	github.com/bborbe/collection v1.20.11
-	github.com/bborbe/cron v1.8.16
-	github.com/bborbe/errors v1.5.12
+	github.com/bborbe/collection v1.20.12
+	github.com/bborbe/cron v1.8.17
+	github.com/bborbe/errors v1.5.13
 	github.com/bborbe/http v1.26.11
-	github.com/bborbe/k8s v1.14.1
-	github.com/bborbe/log v1.6.12
-	github.com/bborbe/run v1.9.23
-	github.com/bborbe/sentry v1.9.16
-	github.com/bborbe/service v1.9.10
-	github.com/bborbe/time v1.25.10
-	github.com/bborbe/validation v1.4.12
-	github.com/getsentry/sentry-go v0.46.1
+	github.com/bborbe/k8s v1.14.2
+	github.com/bborbe/log v1.6.13
+	github.com/bborbe/run v1.9.24
+	github.com/bborbe/sentry v1.9.17
+	github.com/bborbe/service v1.9.11
+	github.com/bborbe/time v1.25.11
+	github.com/bborbe/validation v1.4.13
+	github.com/getsentry/sentry-go v0.46.2
 	github.com/golang/glog v1.2.5
 	github.com/gorilla/mux v1.8.1
 	github.com/onsi/ginkgo/v2 v2.28.3
