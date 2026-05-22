@@ -10,6 +10,11 @@ Please choose versions by [Semantic Versioning](http://semver.org/).
 
 All notable changes to this project will be documented in this file.
 
+## v3.9.18
+
+- security(frontend): bump js-cookie to 3.0.7 (CVE / GHSA-qjx8-664m-686j, High) and brace-expansion via `npm audit fix`
+- security: bump golang.org/x/net to v0.55.0 (GO-2026-5025..5030)
+
 ## v3.9.17
 
 - security(frontend): bump axios to ^1.16.0 (CVE-2026-42035, CVE-2026-42033, CVE-2026-42040, CVE-2026-42036, CVE-2026-42044 + 3 more)
