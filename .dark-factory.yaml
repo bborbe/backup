@@ -1,7 +1,7 @@
 pr: false
 workflow: direct
 validationPrompt: docs/dod.md
-autoRelease: true
+autoRelease: false
 
 env:
   GOPATH: /home/node/go
