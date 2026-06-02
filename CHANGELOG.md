@@ -10,6 +10,10 @@ Please choose versions by [Semantic Versioning](http://semver.org/).
 
 All notable changes to this project will be documented in this file.
 
+## Unreleased
+
+- security(frontend): bump vitest to ^4.1.0 (GHSA-5xrq-8626-4rwp, Critical)
+
 ## v3.9.18
 
 - security(frontend): bump js-cookie to 3.0.7 (CVE / GHSA-qjx8-664m-686j, High) and brace-expansion via `npm audit fix`
