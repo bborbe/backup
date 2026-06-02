@@ -8,7 +8,7 @@ Please choose versions by [Semantic Versioning](http://semver.org/).
 * MINOR version when you add functionality in a backwards-compatible manner, and
 * PATCH version when you make backwards-compatible bug fixes.
 
-## Unreleased
+## v3.9.19
 
 - security(frontend): bump vitest to ^4.1.0 (GHSA-5xrq-8626-4rwp, Critical)
 
