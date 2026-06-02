@@ -8,6 +8,10 @@ Please choose versions by [Semantic Versioning](http://semver.org/).
 * MINOR version when you add functionality in a backwards-compatible manner, and
 * PATCH version when you make backwards-compatible bug fixes.
 
+## Unreleased
+
+- security(frontend): bump vitest to ^4.1.0 (GHSA-5xrq-8626-4rwp, Critical)
+
 ## v3.9.18
 
 - security(frontend): bump js-cookie to 3.0.7 (CVE / GHSA-qjx8-664m-686j, High) and brace-expansion via `npm audit fix`
