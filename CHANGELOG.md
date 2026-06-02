@@ -8,8 +8,6 @@ Please choose versions by [Semantic Versioning](http://semver.org/).
 * MINOR version when you add functionality in a backwards-compatible manner, and
 * PATCH version when you make backwards-compatible bug fixes.
 
-All notable changes to this project will be documented in this file.
-
 ## v3.9.18
 
 - security(frontend): bump js-cookie to 3.0.7 (CVE / GHSA-qjx8-664m-686j, High) and brace-expansion via `npm audit fix`
