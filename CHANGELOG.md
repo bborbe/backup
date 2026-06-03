@@ -8,6 +8,14 @@ Please choose versions by [Semantic Versioning](http://semver.org/).
 * MINOR version when you add functionality in a backwards-compatible manner, and
 * PATCH version when you make backwards-compatible bug fixes.
 
+## v3.9.20
+
+- bump Go 1.26.3 → 1.26.4
+- bump k8s.io/{api,apimachinery,client-go,apiextensions-apiserver} 0.36.0 → 0.36.1
+- bump bborbe/{collection,cron,http,k8s,log,run,sentry,service,time,validation} deps
+- bump ginkgo v2.29.0, gomega v1.41.0, golang.org/x/* tools
+- exclude cloud.google.com/go v0.26.0
+
 ## v3.9.19
 
 - security(frontend): bump vitest to ^4.1.0 (GHSA-5xrq-8626-4rwp, Critical)
