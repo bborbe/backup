@@ -102,11 +102,6 @@ osv-scanner:
 		echo "No config found, running default scan"; \
 		go run github.com/google/osv-scanner/v2/cmd/osv-scanner@$(OSV_SCANNER_VERSION) --recursive .; \
 	fi
-	-exclude=G104 \
-	-quiet \
-	-fmt=summary \
-	-severity=medium \
-	./...
 
 .PHONY: trivy
 trivy:
