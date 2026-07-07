@@ -8,6 +8,14 @@ Please choose versions by [Semantic Versioning](http://semver.org/).
 * MINOR version when you add functionality in a backwards-compatible manner, and
 * PATCH version when you make backwards-compatible bug fixes.
 
+## v3.9.22
+
+- Bump Go module dependencies (bborbe/*, k8s.io/*, ginkgo, gomega, etc.)
+- Bump alpine base image 3.23 -> 3.24 in Dockerfile
+- Rework vulncheck to surface real govulncheck errors, ignore known panic/stdlib CVEs
+- Add opt-in TESTFLAGS_RACE for race-detector test runs
+- Bump frontend npm dependencies
+
 ## v3.9.21
 
 - security(frontend): override esbuild to ^0.28.1 (GHSA-gv7w-rqvm-qjhr, High)
