@@ -8,6 +8,10 @@ Please choose versions by [Semantic Versioning](http://semver.org/).
 * MINOR version when you add functionality in a backwards-compatible manner, and
 * PATCH version when you make backwards-compatible bug fixes.
 
+## Unreleased
+
+- fix(deps): bump Go toolchain to 1.26.5 (GO-2026-5856 stdlib vuln)
+
 ## v3.9.22
 
 - Bump Go module dependencies (bborbe/*, k8s.io/*, ginkgo, gomega, etc.)
