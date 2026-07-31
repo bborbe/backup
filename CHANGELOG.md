@@ -8,7 +8,7 @@ Please choose versions by [Semantic Versioning](http://semver.org/).
 * MINOR version when you add functionality in a backwards-compatible manner, and
 * PATCH version when you make backwards-compatible bug fixes.
 
-## Unreleased
+## v3.9.24
 
 - security(frontend): bump js-yaml 4.2.0 -> 4.3.1 (GHSA-52cp-r559-cp3m, CVE-2026-59869, High)
 - security(frontend): bump brace-expansion 5.0.6 -> 5.0.9 and nested 2.1.1 -> 2.1.4 (CVE-2026-13149, GHSA-3jxr-9vmj-r5cp, GHSA-mh99-v99m-4gvg, High)
