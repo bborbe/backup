@@ -8,6 +8,10 @@ Please choose versions by [Semantic Versioning](http://semver.org/).
 * MINOR version when you add functionality in a backwards-compatible manner, and
 * PATCH version when you make backwards-compatible bug fixes.
 
+## Unreleased
+
+- security(frontend): bump undici to 7.29.0 (GHSA-4cwx-7wf7-3272 High, GHSA-v3r7-h72x-cjcm, GHSA-m8rv-5g2x-5cg5, GHSA-jr45-8vmc-qm54, GHSA-8xcm-r25x-g524 Moderate)
+
 ## v3.9.24
 
 - security(frontend): bump js-yaml 4.2.0 -> 4.3.1 (GHSA-52cp-r559-cp3m, CVE-2026-59869, High)
