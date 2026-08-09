@@ -3,6 +3,7 @@ include tools.env
 REGISTRY ?= docker.io
 IMAGE ?= bborbe/backup
 BRANCH ?= $(shell git rev-parse --abbrev-ref HEAD)
+NPM_REGISTRY ?= https://verdaccio.prod.nuke.benjamin-borbe.de
 DIRS += $(shell find */* -maxdepth 0 -name Makefile -exec dirname "{}" \;)
 
 .PHONY: default
@@ -123,7 +124,7 @@ frontend-precommit:
 .PHONY: build
 build:
 	go mod vendor
-	docker build --no-cache --rm=true --platform=linux/amd64 -t $(REGISTRY)/$(IMAGE):$(BRANCH) -f Dockerfile .
+	docker build --no-cache --rm=true --platform=linux/amd64 --build-arg NPM_REGISTRY=$(NPM_REGISTRY) -t $(REGISTRY)/$(IMAGE):$(BRANCH) -f Dockerfile .
 
 .PHONY: upload
 upload:
