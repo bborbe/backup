@@ -169,9 +169,12 @@ async function triggerBackupAll() {
       actionState.value.message = null;
     }, 5000);
   } catch (err) {
-    actionState.value.message = err instanceof Error ? err.message : "Failed to trigger backup";
+    const failure = toActionFailure(err, "Failed to trigger backup");
+    actionState.value.message = failure.message;
+    actionState.value.severity = failure.severity;
     setTimeout(() => {
       actionState.value.message = null;
+      actionState.value.severity = null;
     }, 5000);
   } finally {
     actionState.value.isBackingUp = false;
@@ -190,9 +193,12 @@ async function triggerCleanupAll() {
       actionState.value.message = null;
     }, 5000);
   } catch (err) {
-    actionState.value.message = err instanceof Error ? err.message : "Failed to trigger cleanup";
+    const failure = toActionFailure(err, "Failed to trigger cleanup");
+    actionState.value.message = failure.message;
+    actionState.value.severity = failure.severity;
     setTimeout(() => {
       actionState.value.message = null;
+      actionState.value.severity = null;
     }, 5000);
   } finally {
     actionState.value.isCleaningUp = false;

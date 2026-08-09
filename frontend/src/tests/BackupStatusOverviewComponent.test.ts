@@ -181,6 +181,48 @@ describe('BackupStatusOverviewComponent', () => {
     expect(classes).toContain("status-error");
   });
 
+  it('shows warning severity for BACKUP_ALREADY_RUNNING conflict on trigger-all backup', async () => {
+    const { backupApiClient } = await import('../lib/BackupApiClient.ts');
+    vi.mocked(backupApiClient.getStatus).mockResolvedValue({ "host1.example.com": "2024-01-01" });
+    vi.mocked(backupApiClient.triggerBackupAll).mockRejectedValue(mockBackupAlreadyRunningError("host1.example.com"));
+
+    const wrapper = mount(BackupStatusOverviewComponent);
+    await flushPromises();
+
+    await (wrapper.vm as unknown as { triggerBackupAll: () => Promise<void> }).triggerBackupAll();
+    await flushPromises();
+
+    const messageEl = wrapper.get(".action-message");
+    const text = messageEl.text();
+    const classes = messageEl.classes();
+
+    expect(text).toContain("host1.example.com");
+    expect(text).toContain("already running");
+    expect(classes).toContain("status-warning");
+    expect(classes).not.toContain("status-error");
+  });
+
+  it('shows warning severity for CLEANUP_ALREADY_RUNNING conflict on trigger-all cleanup', async () => {
+    const { backupApiClient } = await import('../lib/BackupApiClient.ts');
+    vi.mocked(backupApiClient.getStatus).mockResolvedValue({ "host1.example.com": "2024-01-01" });
+    vi.mocked(backupApiClient.triggerCleanupAll).mockRejectedValue(mockCleanupAlreadyRunningError("host1.example.com"));
+
+    const wrapper = mount(BackupStatusOverviewComponent);
+    await flushPromises();
+
+    await (wrapper.vm as unknown as { triggerCleanupAll: () => Promise<void> }).triggerCleanupAll();
+    await flushPromises();
+
+    const messageEl = wrapper.get(".action-message");
+    const text = messageEl.text();
+    const classes = messageEl.classes();
+
+    expect(text).toContain("host1.example.com");
+    expect(text).toContain("already running");
+    expect(classes).toContain("status-warning");
+    expect(classes).not.toContain("status-error");
+  });
+
   it('keeps success presentation unchanged with neutral styling', async () => {
     const { backupApiClient } = await import('../lib/BackupApiClient.ts');
     vi.mocked(backupApiClient.getStatus).mockResolvedValue({ "host1.example.com": "2024-01-01" });
