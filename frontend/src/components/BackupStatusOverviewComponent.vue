@@ -2,6 +2,9 @@
 import { ref, onMounted, defineExpose, computed } from "vue";
 // @ts-ignore
 import backupApiClient from "../lib/BackupApiClient.ts";
+// @ts-ignore
+import { toActionFailure } from "../lib/ApiError.ts";
+import type { ActionSeverity } from "../lib/ApiError";
 import type { BackupStatus, LoadingState } from "../lib/types";
 import ActionButtonComponent from "./ActionButtonComponent.vue";
 
@@ -35,6 +38,7 @@ const actionState = ref({
   isBackingUp: false,
   isCleaningUp: false,
   message: null as string | null,
+  severity: null as ActionSeverity | null,
 });
 
 const individualActionState = ref<Record<string, { isBackingUp: boolean; isCleaningUp: boolean }>>({});
@@ -156,6 +160,7 @@ function formatDate(dateString: string): string {
 async function triggerBackupAll() {
   actionState.value.isBackingUp = true;
   actionState.value.message = null;
+  actionState.value.severity = null;
   
   try {
     const result = await backupApiClient.triggerBackupAll();
@@ -164,9 +169,12 @@ async function triggerBackupAll() {
       actionState.value.message = null;
     }, 5000);
   } catch (err) {
-    actionState.value.message = err instanceof Error ? err.message : "Failed to trigger backup";
+    const failure = toActionFailure(err, "Failed to trigger backup");
+    actionState.value.message = failure.message;
+    actionState.value.severity = failure.severity;
     setTimeout(() => {
       actionState.value.message = null;
+      actionState.value.severity = null;
     }, 5000);
   } finally {
     actionState.value.isBackingUp = false;
@@ -176,6 +184,7 @@ async function triggerBackupAll() {
 async function triggerCleanupAll() {
   actionState.value.isCleaningUp = true;
   actionState.value.message = null;
+  actionState.value.severity = null;
   
   try {
     const result = await backupApiClient.triggerCleanupAll();
@@ -184,9 +193,12 @@ async function triggerCleanupAll() {
       actionState.value.message = null;
     }, 5000);
   } catch (err) {
-    actionState.value.message = err instanceof Error ? err.message : "Failed to trigger cleanup";
+    const failure = toActionFailure(err, "Failed to trigger cleanup");
+    actionState.value.message = failure.message;
+    actionState.value.severity = failure.severity;
     setTimeout(() => {
       actionState.value.message = null;
+      actionState.value.severity = null;
     }, 5000);
   } finally {
     actionState.value.isCleaningUp = false;
@@ -200,6 +212,7 @@ async function triggerBackup(host: string) {
   
   individualActionState.value[host].isBackingUp = true;
   actionState.value.message = null;
+  actionState.value.severity = null;
   
   try {
     const result = await backupApiClient.triggerBackup(host);
@@ -208,9 +221,12 @@ async function triggerBackup(host: string) {
       actionState.value.message = null;
     }, 5000);
   } catch (err) {
-    actionState.value.message = err instanceof Error ? err.message : `Failed to trigger backup for ${host}`;
+    const failure = toActionFailure(err, `Failed to trigger backup for ${host}`);
+    actionState.value.message = failure.message;
+    actionState.value.severity = failure.severity;
     setTimeout(() => {
       actionState.value.message = null;
+      actionState.value.severity = null;
     }, 5000);
   } finally {
     individualActionState.value[host].isBackingUp = false;
@@ -224,6 +240,7 @@ async function triggerCleanup(host: string) {
   
   individualActionState.value[host].isCleaningUp = true;
   actionState.value.message = null;
+  actionState.value.severity = null;
   
   try {
     const result = await backupApiClient.triggerCleanup(host);
@@ -232,9 +249,12 @@ async function triggerCleanup(host: string) {
       actionState.value.message = null;
     }, 5000);
   } catch (err) {
-    actionState.value.message = err instanceof Error ? err.message : `Failed to trigger cleanup for ${host}`;
+    const failure = toActionFailure(err, `Failed to trigger cleanup for ${host}`);
+    actionState.value.message = failure.message;
+    actionState.value.severity = failure.severity;
     setTimeout(() => {
       actionState.value.message = null;
+      actionState.value.severity = null;
     }, 5000);
   } finally {
     individualActionState.value[host].isCleaningUp = false;
@@ -252,7 +272,10 @@ defineExpose({
 <template>
   <div class="status-overview">
     
-    <div v-if="actionState.message" class="action-message">
+    <div
+      v-if="actionState.message"
+      :class="['action-message', actionState.severity ? `status-${actionState.severity}` : '']"
+    >
       {{ actionState.message }}
     </div>
     
@@ -342,6 +365,18 @@ defineExpose({
   color: var(--text-secondary);
   font-size: var(--font-size-sm);
   line-height: var(--line-height-normal);
+}
+
+.action-message.status-warning {
+  background-color: var(--status-warning-bg);
+  color: var(--status-warning);
+  border: 1px solid var(--status-warning-border);
+}
+
+.action-message.status-error {
+  background-color: var(--status-error-bg);
+  color: var(--status-error);
+  border: 1px solid var(--status-error-border);
 }
 
 .loading, .error, .empty {

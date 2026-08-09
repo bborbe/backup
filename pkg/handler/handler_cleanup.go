@@ -6,14 +6,19 @@ package handler
 
 import (
 	"context"
+	"errors"
 	"net/http"
 
-	"github.com/bborbe/errors"
+	bberrors "github.com/bborbe/errors"
 	libhttp "github.com/bborbe/http"
 	"github.com/gorilla/mux"
 
 	"github.com/bborbe/backup/pkg"
 )
+
+// ErrorCodeCleanupAlreadyRunning is the stable, machine-readable error code returned when a
+// cleanup trigger is refused because a cleanup for the same host is already in flight.
+const ErrorCodeCleanupAlreadyRunning = "CLEANUP_ALREADY_RUNNING"
 
 func NewCleanupHandler(
 	targetFinder pkg.TargetFinder,
@@ -27,7 +32,14 @@ func NewCleanupHandler(
 				return err
 			}
 			if err := cleanupExectuor.Clean(ctx, target.Spec.Host); err != nil {
-				return errors.Wrapf(ctx, err, "cleanup %s failed", target.Name)
+				if errors.Is(err, pkg.CleanupAlreadyRunningError) {
+					return libhttp.WrapWithCode(
+						bberrors.Errorf(ctx, "cleanup for %s is already running", target.Spec.Host),
+						ErrorCodeCleanupAlreadyRunning,
+						http.StatusConflict,
+					)
+				}
+				return bberrors.Wrapf(ctx, err, "cleanup %s failed", target.Name)
 			}
 			libhttp.WriteAndGlog(resp, "cleanup %s completed", target.Name)
 			return nil
