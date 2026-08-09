@@ -126,3 +126,17 @@ Rationale: the API prompt establishes the wire contract — the two frozen error
 ## Do-Nothing Option
 
 If nothing changes, operators keep seeing "Request failed with status code 500" whenever they trigger a backup or cleanup that is already running. The cost is real but bounded: every such event looks identical to a genuine service failure, so the operator either investigates a non-incident or — worse — learns to ignore 500s from this service and misses a real one. Any monitoring that counts server errors on these endpoints inflates its error rate on entirely healthy behavior. The workaround available today is for the operator to check the dashboard's per-host status before triggering, which is exactly the manual step the trigger button exists to avoid. This is not acceptable as a permanent state, and the fix is small and self-contained.
+
+## Verification Result
+
+**Verified:** 2026-08-09T09:41:06Z (HEAD f65b9c2)
+**Binary:** /Users/bborbe/Documents/workspaces/go/bin/dark-factory (v0.192.9)
+**Scenario:** none declared; all 6 ACs proven by container-executable verification re-run fresh in this worktree
+**Evidence:**
+- `make test` exit 0; `go test -count=1 -v ./pkg/handler/` → "Ran 32 of 32 Specs" PASS (uncached), covering 409 status, `application/json` Content-Type, `"code":"BACKUP_ALREADY_RUNNING"` / `"CLEANUP_ALREADY_RUNNING"`, and message containing `host1.example.com` + `already running` for both direct and wrapped sentinels
+- Envelope nesting confirmed at source: `http@v1.26.16/http_json-error-handler.go:56` builds `ErrorResponse{Error: ErrorDetails{...}}` → `{"error":{"code":…,"message":…}}`; `pkg/factory/factory.go:206,224` wire both per-host handlers through `libhttp.NewJSONErrorHandler`
+- `make -C frontend test` exit 0; `vitest --run --reporter=verbose` → 55/55 passed, all 5 `BackupStatusOverviewComponent.test.ts` specs listed as executed (409 warning for backup + cleanup, 500 error severity, text/plain fallback `toBe("Request failed with status code 500")`, success neutral)
+- `grep -rn 'BACKUP_ALREADY_RUNNING\|CLEANUP_ALREADY_RUNNING' pkg/` → 14 lines; `grep -n 'status-warning\|warning' frontend/src/components/BackupStatusOverviewComponent.vue` → 17 lines incl. `.action-message.status-warning { … var(--status-warning-bg) }`
+- Live-UI claim confirmed: `router.ts` has the sole route `/` → `DashboardPage.vue`, which mounts `<BackupStatusOverviewComponent>` at line 177
+- `make precommit` exit 0 ("ready to commit")
+**Verdict:** PASS
