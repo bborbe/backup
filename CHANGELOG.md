@@ -10,8 +10,8 @@ Please choose versions by [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 
-- fix(build): point the frontend npm registry at `verdaccio.prod.nuke.benjamin-borbe.de` — the previous `verdaccio.quant.benjamin-borbe.de` host was decommissioned when verdaccio migrated to the nuke clusters, breaking every image build with a 404 on `npm install -g npm@11.8.0`
-- feat(build): make the npm registry overridable via the `NPM_REGISTRY` Docker build arg / Makefile variable, so a build can target the dev verdaccio or public npm without editing the Dockerfile
+- fix: point the frontend npm registry at `verdaccio.prod.nuke.benjamin-borbe.de` — the previous `verdaccio.quant.benjamin-borbe.de` host was decommissioned when verdaccio migrated to the nuke clusters, breaking every image build with a 404 on `npm install -g npm@11.8.0`
+- chore: make the npm registry overridable via the `NPM_REGISTRY` Docker build arg / Makefile variable, so a build can target the dev verdaccio or public npm without editing the Dockerfile
 
 ## v3.9.26
 
