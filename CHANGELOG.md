@@ -11,6 +11,7 @@ Please choose versions by [Semantic Versioning](http://semver.org/).
 ## Unreleased
 
 - fix: per-host backup and cleanup trigger endpoints now answer an already-running trigger with HTTP 409 and a structured JSON error body carrying `BACKUP_ALREADY_RUNNING` / `CLEANUP_ALREADY_RUNNING`
+- fix(frontend): dashboard now shows the server-supplied reason for a failed per-host backup or cleanup trigger, rendering an already-running conflict as a warning instead of an error
 
 ## v3.9.25
 
