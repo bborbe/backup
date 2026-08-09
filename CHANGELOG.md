@@ -8,6 +8,10 @@ Please choose versions by [Semantic Versioning](http://semver.org/).
 * MINOR version when you add functionality in a backwards-compatible manner, and
 * PATCH version when you make backwards-compatible bug fixes.
 
+## Unreleased
+
+- fix: per-host backup and cleanup trigger endpoints now answer an already-running trigger with HTTP 409 and a structured JSON error body carrying `BACKUP_ALREADY_RUNNING` / `CLEANUP_ALREADY_RUNNING`
+
 ## v3.9.25
 
 - security(frontend): bump undici to 7.29.0 (GHSA-4cwx-7wf7-3272 High, GHSA-v3r7-h72x-cjcm, GHSA-m8rv-5g2x-5cg5, GHSA-jr45-8vmc-qm54, GHSA-8xcm-r25x-g524 Moderate)

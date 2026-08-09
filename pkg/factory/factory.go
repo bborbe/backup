@@ -203,7 +203,7 @@ func CreateBackupHandler(
 	namespace k8s.Namespace,
 	backupExectuor pkg.BackupExectuor,
 ) http.Handler {
-	return libhttp.NewErrorHandler(
+	return libhttp.NewJSONErrorHandler(
 		handler.NewBackupHandler(
 			CreateTargetFinder(
 				backupClientset,
@@ -221,7 +221,7 @@ func CreateCleanupHandler(
 	namespace k8s.Namespace,
 	backupCleaner pkg.BackupCleaner,
 ) http.Handler {
-	return libhttp.NewErrorHandler(
+	return libhttp.NewJSONErrorHandler(
 		handler.NewCleanupHandler(
 			CreateTargetFinder(
 				backupClientset,
