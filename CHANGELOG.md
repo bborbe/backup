@@ -8,6 +8,11 @@ Please choose versions by [Semantic Versioning](http://semver.org/).
 * MINOR version when you add functionality in a backwards-compatible manner, and
 * PATCH version when you make backwards-compatible bug fixes.
 
+## Unreleased
+
+- fix: point the frontend npm registry at `verdaccio.prod.nuke.benjamin-borbe.de` — the previous `verdaccio.quant.benjamin-borbe.de` host was decommissioned when verdaccio migrated to the nuke clusters, breaking every image build with a 404 on `npm install -g npm@11.8.0`
+- chore: make the npm registry overridable via the `NPM_REGISTRY` Docker build arg / Makefile variable, so a build can target the dev verdaccio or public npm without editing the Dockerfile
+
 ## v3.9.26
 
 - fix: per-host backup and cleanup trigger endpoints now answer an already-running trigger with HTTP 409 and a structured JSON error body carrying `BACKUP_ALREADY_RUNNING` / `CLEANUP_ALREADY_RUNNING`

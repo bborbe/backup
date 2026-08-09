@@ -5,10 +5,10 @@ RUN CGO_ENABLED=0 GOOS=linux go build -trimpath -mod=vendor -ldflags "-s" -a -in
 CMD ["/bin/bash"]
 
 FROM node:lts-alpine AS build-node
+ARG NPM_REGISTRY=https://verdaccio.prod.nuke.benjamin-borbe.de
 COPY frontend /frontend
 WORKDIR /frontend
-# RUN npm set registry https://registry.npmmirror.com
-RUN npm set registry https://verdaccio.quant.benjamin-borbe.de
+RUN npm set registry ${NPM_REGISTRY}
 RUN npm install -g npm@11.8.0 --verbose
 RUN	npm install --verbose --include=optional
 RUN npm run lint:analyse
