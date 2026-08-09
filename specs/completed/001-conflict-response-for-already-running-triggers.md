@@ -1,7 +1,8 @@
 ---
-status: verifying
+status: completed
 approved: "2026-08-09T08:57:23Z"
 verifying: "2026-08-09T09:18:32Z"
+completed: "2026-08-09T09:46:19Z"
 branch: dark-factory/conflict-response-for-already-running-triggers
 ---
 
