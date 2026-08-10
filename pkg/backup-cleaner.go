@@ -59,6 +59,11 @@ func (b *backupCleaner) Clean(ctx context.Context, backupHost v1.BackupHost) err
 		return dates[i].Time().After(dates[j].Time())
 	})
 	for i, date := range dates {
+		select {
+		case <-ctx.Done():
+			return errors.Wrap(ctx, ctx.Err(), "context cancelled")
+		default:
+		}
 		if i < b.backupKeepAmount {
 			glog.V(2).Infof("keep backup %s/%s", backupHost, date)
 			continue

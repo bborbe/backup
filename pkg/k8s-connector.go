@@ -8,6 +8,7 @@ import (
 	"context"
 	"time"
 
+	"github.com/bborbe/collection"
 	"github.com/bborbe/errors"
 	"github.com/bborbe/k8s"
 	libk8s "github.com/bborbe/k8s"
@@ -149,10 +150,6 @@ func (k *k8sConnector) createCrd(ctx context.Context) error {
 	return nil
 }
 
-func boolPointer(value bool) *bool {
-	return &value
-}
-
 func createSpec() v1.CustomResourceDefinitionSpec {
 	return v1.CustomResourceDefinitionSpec{
 		Group: "backup.benjamin-borbe.de",
@@ -170,7 +167,7 @@ func createSpec() v1.CustomResourceDefinitionSpec {
 				Storage: true,
 				Schema: &v1.CustomResourceValidation{
 					OpenAPIV3Schema: &v1.JSONSchemaProps{
-						XPreserveUnknownFields: boolPointer(true),
+						XPreserveUnknownFields: collection.Ptr(true),
 					},
 				},
 			},
