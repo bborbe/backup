@@ -8,7 +8,7 @@ Please choose versions by [Semantic Versioning](http://semver.org/).
 * MINOR version when you add functionality in a backwards-compatible manner, and
 * PATCH version when you make backwards-compatible bug fixes.
 
-## Unreleased
+## v3.10.0
 
 - fix: stop backup-cleaner and status-handler loops promptly when context is cancelled instead of running to completion
 - feat: register `/gc` admin endpoint for triggering garbage collection on demand
