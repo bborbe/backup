@@ -163,6 +163,7 @@ func (a *application) createHttpServer(
 		router := mux.NewRouter()
 		router.Path("/healthz").Handler(libhttp.NewPrintHandler("OK"))
 		router.Path("/readiness").Handler(libhttp.NewPrintHandler("OK"))
+		router.Path("/gc").Handler(libhttp.NewGarbageCollectorHandler())
 		router.Path("/metrics").Handler(promhttp.Handler())
 		router.Path("/setloglevel/{level}").
 			Handler(log.NewSetLoglevelHandler(ctx, log.NewLogLevelSetter(2, 5*time.Minute)))

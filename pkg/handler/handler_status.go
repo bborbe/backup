@@ -30,6 +30,11 @@ func NewStatusHandler(
 			}
 			result := map[v1.BackupHost]string{}
 			for _, target := range targets {
+				select {
+				case <-ctx.Done():
+					return nil, errors.Wrap(ctx, ctx.Err(), "context cancelled")
+				default:
+				}
 				dates, err := backupFinder.List(ctx, target.Spec.Host)
 				if err != nil {
 					return nil, errors.Wrapf(ctx, err, "get dates failed")

@@ -8,6 +8,12 @@ Please choose versions by [Semantic Versioning](http://semver.org/).
 * MINOR version when you add functionality in a backwards-compatible manner, and
 * PATCH version when you make backwards-compatible bug fixes.
 
+## Unreleased
+
+- fix: stop backup-cleaner and status-handler loops promptly when context is cancelled instead of running to completion
+- feat: register `/gc` admin endpoint for triggering garbage collection on demand
+- refactor: replace local `boolPointer` helper with `collection.Ptr` from `github.com/bborbe/collection`
+
 ## v3.9.27
 
 - fix: point the frontend npm registry at `verdaccio.prod.nuke.benjamin-borbe.de` — the previous `verdaccio.quant.benjamin-borbe.de` host was decommissioned when verdaccio migrated to the nuke clusters, breaking every image build with a 404 on `npm install -g npm@11.8.0`

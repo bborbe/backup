@@ -186,6 +186,32 @@ var _ = Describe("BackupCleaner", func() {
 			})
 		})
 
+		Context("with cancelled context", func() {
+			var cancelledErr error
+
+			JustBeforeEach(func() {
+				cancelledCtx, cancel := context.WithCancel(context.Background())
+				cancel()
+				cancelledErr = backupCleaner.Clean(cancelledCtx, backupHost)
+			})
+
+			BeforeEach(func() {
+				// Provide enough dates to exceed backupKeepAmount (3), forcing the loop to execute
+				// so the cancellation check is reached
+				mockBackupFinder.ListReturns([]libtime.Date{
+					libtimetest.ParseDate(fixedTime.AddDate(0, 0, -1).Format(time.DateOnly)),
+					libtimetest.ParseDate(fixedTime.AddDate(0, 0, -2).Format(time.DateOnly)),
+					libtimetest.ParseDate(fixedTime.AddDate(0, 0, -3).Format(time.DateOnly)),
+					libtimetest.ParseDate(fixedTime.AddDate(0, 0, -4).Format(time.DateOnly)),
+				}, nil)
+			})
+
+			It("returns error", func() {
+				Expect(cancelledErr).NotTo(BeNil())
+				Expect(cancelledErr.Error()).To(ContainSubstring("context cancelled"))
+			})
+		})
+
 		Context("date sorting behavior", func() {
 			BeforeEach(func() {
 				// Create dates in random order to test sorting

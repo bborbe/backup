@@ -1,8 +1,12 @@
 ---
-status: approved
-summary: Add ctx.Done() guards to the two filesystem loops, register the /gc admin endpoint, and replace the boolPointer helper with collection.Ptr
+status: completed
+summary: Added cancellation guards to backup-cleaner and status-handler loops, registered /gc admin endpoint, and replaced boolPointer with collection.Ptr
+execution_id: repo-exec-010-repo-review-cancellation-gc-ptr
+dark-factory-version: v0.193.0
 created: "2026-08-10T09:31:24Z"
 queued: "2026-08-10T09:31:24Z"
+started: "2026-08-10T09:31:51Z"
+completed: "2026-08-10T09:37:10Z"
 ---
 
 <summary>
