@@ -40,6 +40,10 @@ func NewStatusHandler(
 					return nil, errors.Wrapf(ctx, err, "get dates failed")
 				}
 				var latestBackup *libtime.Date
+				// No ctx.Done() guard here by design: this loop only compares
+				// in-memory timestamps, does no I/O, and is bounded by one host's
+				// dates. Cancellation is observed by the enclosing target loop,
+				// which performs a filesystem read per iteration.
 				for _, backupTime := range dates {
 					if latestBackup == nil || backupTime.Time().After(latestBackup.Time()) {
 						latestBackup = backupTime.Ptr()
