@@ -8,6 +8,13 @@ Please choose versions by [Semantic Versioning](http://semver.org/).
 * MINOR version when you add functionality in a backwards-compatible manner, and
 * PATCH version when you make backwards-compatible bug fixes.
 
+## Unreleased
+
+- chore: bump go directive and Dockerfile build stage from `1.26.5` to `1.26.6` — clears 5 stdlib advisories flagged by `osv-scanner`, all fixed in 1.26.6
+- chore: drop `.osv-scanner.toml` entirely — all four suppressions (`GHSA-pxq6-2prw-chj9`, `GHSA-x744-4wpc-v9h2`, `GO-2026-4923`, `GHSA-6jwv-w5xf-7j27`) were reported unused, so the file only served to fail the scanner's stale-ignore check. Suppressions are re-added if the advisories resurface
+- fix: skip the `BackupFinder List` read-permission-denied spec when running as root instead of failing. The existing guard keyed the skip on `os.Chmod` returning an error, but chmod succeeds as root — so the skip never fired, while root still read the `0000` directory and `List` returned no error, failing the assertion. Now guarded on `os.Geteuid() == 0`. Surfaced by the containerized Go-update agent, which runs as root; CI runs non-root and was unaffected
+- deps: bump `golang.org/x/mod` `v0.37.0` → `v0.40.0` — clears GO-2026-6179 (transparency-log tile verification bypass in `sumdb/tlog`) and GO-2026-6180 (unrelated unauthenticated hashes accepted in `sumdb` Lookup), both flagged by `make vulncheck`. Pulled `golang.org/x/net` `v0.57.0` → `v0.58.0`, `x/text` `v0.40.0` → `v0.41.0` and `x/tools` `v0.47.0` → `v0.49.0` with it. `make precommit` was red on master before this change
+
 ## v3.10.0
 
 - fix: stop backup-cleaner and status-handler loops promptly when context is cancelled instead of running to completion

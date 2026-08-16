@@ -372,15 +372,22 @@ var _ = Describe("BackupFinder", func() {
 
 			Context("with read permission denied", func() {
 				BeforeEach(func() {
+					// Root bypasses file permission checks entirely, so a 0000
+					// directory stays readable and List returns no error. Detect
+					// that up front: chmod itself SUCCEEDS as root, so keying the
+					// skip on its error never fires and the spec fails instead.
+					if os.Geteuid() == 0 {
+						Skip(
+							"running as root: permission checks are bypassed, cannot exercise the read-denied path",
+						)
+					}
+
 					hostDir := filepath.Join(tempDir, string(backupHost))
 					err := os.MkdirAll(hostDir, 0755)
 					Expect(err).To(BeNil())
 
-					// Remove read permissions (if running as non-root)
 					err = os.Chmod(hostDir, 0000)
-					if err != nil {
-						Skip("Cannot change permissions - likely running as root")
-					}
+					Expect(err).To(BeNil())
 				})
 
 				AfterEach(func() {
