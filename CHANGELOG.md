@@ -8,7 +8,7 @@ Please choose versions by [Semantic Versioning](http://semver.org/).
 * MINOR version when you add functionality in a backwards-compatible manner, and
 * PATCH version when you make backwards-compatible bug fixes.
 
-## Unreleased
+## v3.10.1
 
 - chore: bump go directive and Dockerfile build stage from `1.26.5` to `1.26.6` — clears 5 stdlib advisories flagged by `osv-scanner`, all fixed in 1.26.6
 - chore: drop `.osv-scanner.toml` entirely — all four suppressions (`GHSA-pxq6-2prw-chj9`, `GHSA-x744-4wpc-v9h2`, `GO-2026-4923`, `GHSA-6jwv-w5xf-7j27`) were reported unused, so the file only served to fail the scanner's stale-ignore check. Suppressions are re-added if the advisories resurface
