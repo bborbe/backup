@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, defineExpose, computed } from "vue";
+import { ref, onMounted, computed } from "vue";
 // @ts-ignore
 import backupApiClient from "../lib/BackupApiClient.ts";
 // @ts-ignore
