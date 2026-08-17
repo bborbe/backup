@@ -8,7 +8,7 @@ Please choose versions by [Semantic Versioning](http://semver.org/).
 * MINOR version when you add functionality in a backwards-compatible manner, and
 * PATCH version when you make backwards-compatible bug fixes.
 
-## Unreleased
+## v3.10.2
 
 - deps: update frontend npm dependencies to latest minor/patch (vue, vite, vitest, eslint, axios, and others); drop redundant `defineExpose` macro import that conflicts with the vue-tsc compiler macro
 
