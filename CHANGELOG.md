@@ -8,6 +8,10 @@ Please choose versions by [Semantic Versioning](http://semver.org/).
 * MINOR version when you add functionality in a backwards-compatible manner, and
 * PATCH version when you make backwards-compatible bug fixes.
 
+## Unreleased
+
+- deps: update frontend npm dependencies to latest minor/patch (vue, vite, vitest, eslint, axios, and others); drop redundant `defineExpose` macro import that conflicts with the vue-tsc compiler macro
+
 ## v3.10.1
 
 - chore: bump go directive and Dockerfile build stage from `1.26.5` to `1.26.6` — clears 5 stdlib advisories flagged by `osv-scanner`, all fixed in 1.26.6
