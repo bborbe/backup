@@ -12,6 +12,10 @@ Please choose versions by [Semantic Versioning](http://semver.org/).
 
 - fix: skip frontend-precommit when npm is not installed, so make precommit succeeds in Node-less CI/automation containers
 
+## v3.10.3
+
+- chore: update dependencies
+
 ## v3.10.2
 
 - deps: update frontend npm dependencies to latest minor/patch (vue, vite, vitest, eslint, axios, and others); drop redundant `defineExpose` macro import that conflicts with the vue-tsc compiler macro
