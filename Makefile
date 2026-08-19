@@ -119,7 +119,11 @@ addlicense:
 	go run github.com/google/addlicense@$(ADDLICENSE_VERSION) -c "Benjamin Borbe" -y $$(date +'%Y') -l bsd $$(find . -name "*.go" -not -path './vendor/*')
 
 frontend-precommit:
-	$(MAKE) -C frontend precommit
+	@if command -v npm >/dev/null 2>&1; then \
+		$(MAKE) -C frontend precommit; \
+	else \
+		echo "frontend-precommit: skipped (npm not found in PATH)"; \
+	fi
 
 .PHONY: build
 build:
