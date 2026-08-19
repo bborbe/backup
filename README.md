@@ -363,7 +363,7 @@ done
 ### Building
 
 ```bash
-# Run tests and linting
+# Run tests and linting (frontend lint/build/test runs automatically when npm is installed, skipped otherwise)
 make precommit
 
 # Build Docker image
