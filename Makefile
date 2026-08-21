@@ -21,9 +21,10 @@ ensure:
 
 .PHONY: format
 format:
-	find . -type f -name '*.go' -not -path './vendor/*' -exec gofmt -w "{}" +
 	go run github.com/incu6us/goimports-reviser/v3@$(GOIMPORTS_REVISER_VERSION) -project-name github.com/bborbe/backup -format -excludes vendor ./...
 	find . -type d -name vendor -prune -o -type f -name '*.go' -print0 | xargs -0 -P 8 -n 50 go run github.com/segmentio/golines@$(GOLINES_VERSION) --max-len=100 -w
+	# golines last, then gofmt last so its wrapping is normalized and the gofmt lint check passes
+	find . -type f -name '*.go' -not -path './vendor/*' -exec gofmt -w "{}" +
 
 .PHONY: generate
 generate:

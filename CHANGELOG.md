@@ -8,6 +8,11 @@ Please choose versions by [Semantic Versioning](http://semver.org/).
 * MINOR version when you add functionality in a backwards-compatible manner, and
 * PATCH version when you make backwards-compatible bug fixes.
 
+## Unreleased
+
+- chore: Run `gofmt -w` last in the `format` target so golines' wrapping is normalized before the gofmt lint check
+- chore: Bump `golangci-lint` to v2.13.1 and `errcheck` to v1.20.0 (fixes staticcheck `buildir` panic and missing `context` types on Go 1.27)
+
 ## v3.10.5
 
 - chore: update Go to 1.27.0 and update dependencies
