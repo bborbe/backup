@@ -8,6 +8,10 @@ Please choose versions by [Semantic Versioning](http://semver.org/).
 * MINOR version when you add functionality in a backwards-compatible manner, and
 * PATCH version when you make backwards-compatible bug fixes.
 
+## Unreleased
+
+- chore: update frontend npm dependencies (minor/patch)
+
 ## v3.10.6
 
 - chore: Run `gofmt -w` last in the `format` target so golines' wrapping is normalized before the gofmt lint check
