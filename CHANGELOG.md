@@ -11,6 +11,7 @@ Please choose versions by [Semantic Versioning](http://semver.org/).
 ## Unreleased
 
 - fix: bump follow-redirects to 1.16.1 in root package-lock.json (CVE-2026-111755, CVE-2026-111756)
+- fix: bump vite to 7.3.7 in frontend (GHSA-698v-4r3x-3vcv)
 
 ## v3.10.11
 
