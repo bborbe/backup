@@ -8,7 +8,7 @@ Please choose versions by [Semantic Versioning](http://semver.org/).
 * MINOR version when you add functionality in a backwards-compatible manner, and
 * PATCH version when you make backwards-compatible bug fixes.
 
-## Unreleased
+## v3.10.12
 
 - fix: bump follow-redirects to 1.16.1 in root package-lock.json (CVE-2026-111755, CVE-2026-111756)
 - fix: bump vite to 7.3.7 in frontend (GHSA-698v-4r3x-3vcv)
