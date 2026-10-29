@@ -7,12 +7,12 @@ require (
 	github.com/bborbe/cron v1.9.6
 	github.com/bborbe/errors v1.6.5
 	github.com/bborbe/http v1.26.32
-	github.com/bborbe/k8s v1.14.25
+	github.com/bborbe/k8s v1.14.26
 	github.com/bborbe/log v1.7.5
 	github.com/bborbe/run v1.11.7
 	github.com/bborbe/sentry v1.10.6
 	github.com/bborbe/service v1.11.2
-	github.com/bborbe/time v1.27.20
+	github.com/bborbe/time v1.27.21
 	github.com/bborbe/validation v1.5.6
 	github.com/getsentry/sentry-go v0.50.0
 	github.com/golang/glog v1.2.5
@@ -29,7 +29,7 @@ require (
 require (
 	github.com/Masterminds/semver/v3 v3.5.0 // indirect
 	github.com/bborbe/argument/v2 v2.13.8 // indirect
-	github.com/bborbe/kv v1.21.21 // indirect
+	github.com/bborbe/kv v1.21.23 // indirect
 	github.com/bborbe/math v1.4.16 // indirect
 	github.com/bborbe/parse v1.12.4 // indirect
 	github.com/beorn7/perks v1.0.1 // indirect
