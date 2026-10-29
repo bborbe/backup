@@ -9,7 +9,7 @@ require (
 	github.com/bborbe/http v1.26.32
 	github.com/bborbe/k8s v1.14.25
 	github.com/bborbe/log v1.7.5
-	github.com/bborbe/run v1.11.6
+	github.com/bborbe/run v1.11.7
 	github.com/bborbe/sentry v1.10.6
 	github.com/bborbe/service v1.11.2
 	github.com/bborbe/time v1.27.20
@@ -61,7 +61,7 @@ require (
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/modern-go/reflect2 v1.0.3-0.20250322232337-35a7c28c31ee // indirect
 	github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822 // indirect
-	github.com/pandatix/go-abnf v0.5.2 // indirect
+	github.com/pandatix/go-abnf v0.5.3 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2 // indirect
 	github.com/prometheus/client_model v0.6.3 // indirect
