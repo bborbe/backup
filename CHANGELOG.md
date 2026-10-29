@@ -8,7 +8,7 @@ Please choose versions by [Semantic Versioning](http://semver.org/).
 * MINOR version when you add functionality in a backwards-compatible manner, and
 * PATCH version when you make backwards-compatible bug fixes.
 
-## Unreleased
+## v3.10.17
 
 - chore: update github.com/bborbe/http to v1.26.32, github.com/bborbe/service to v1.11.2, github.com/bborbe/time to v1.27.19, k8s.io/apiextensions-apiserver to v0.37.2, k8s.io/apimachinery to v0.37.2, k8s.io/client-go to v0.37.2
 
