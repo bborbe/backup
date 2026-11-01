@@ -8,6 +8,11 @@ Please choose versions by [Semantic Versioning](http://semver.org/).
 * MINOR version when you add functionality in a backwards-compatible manner, and
 * PATCH version when you make backwards-compatible bug fixes.
 
+## Unreleased
+
+- chore: update frontend npm dependencies (minor/patch) — @typescript-eslint/eslint-plugin, @vitejs/plugin-vue, axios, eslint, eslint-plugin-prettier, eslint-plugin-vue, follow-redirects, globals, postcss, vitest, vue, vue-router, vue-tsc
+- chore: clear the osv-scanner gate — bump root `follow-redirects` to 1.16.2 (GHSA-mrwp-f3q8-3g9p) and override the transitive dev deps `glob` to ^14.0.2 (GHSA-3g3m-2fjr-6pw4) and `minimatch` to ^11.0.1 (GHSA-g3hv-75wg-m249). Both overrides are majors, deliberately outside the minor/patch scope: the advisories are pre-existing (identical `glob`, patch-differing `minimatch` vs master) and newly surfaced by an updated OSV database, so master fails the same gate. `make lint build test` still passes — 0 lint errors, 57 tests
+
 ## v3.10.22
 
 - chore: update github.com/bborbe/k8s to v1.14.29, github.com/bborbe/run to v1.11.8, github.com/bborbe/time to v1.27.22
