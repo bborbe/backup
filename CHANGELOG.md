@@ -8,6 +8,10 @@ Please choose versions by [Semantic Versioning](http://semver.org/).
 * MINOR version when you add functionality in a backwards-compatible manner, and
 * PATCH version when you make backwards-compatible bug fixes.
 
+## Unreleased
+
+- chore: update frontend npm dependencies (minor/patch) — @typescript-eslint/eslint-plugin, @vitejs/plugin-vue, axios, eslint, eslint-plugin-prettier, eslint-plugin-vue, follow-redirects, globals, postcss, vitest, vue, vue-router, vue-tsc. 17 moderate advisories remain, fixable only via `npm audit fix --force` (which pulls majors) — deferred
+
 ## v3.10.22
 
 - chore: update github.com/bborbe/k8s to v1.14.29, github.com/bborbe/run to v1.11.8, github.com/bborbe/time to v1.27.22
