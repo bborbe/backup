@@ -8,7 +8,7 @@ Please choose versions by [Semantic Versioning](http://semver.org/).
 * MINOR version when you add functionality in a backwards-compatible manner, and
 * PATCH version when you make backwards-compatible bug fixes.
 
-## Unreleased
+## v3.11.1
 
 - fix: the cluster build arm guards `apply` as well as `upload` and `clean`. `make buca BUILD_TARGET=<cluster>` pushed `docker.io/bborbe/backup:<VERSION>` and then applied `k8s/backup-deploy.yaml`, which renders the image from the exported `BRANCH` — a different tag from the one just built, so the deploy would have pulled an image this run never produced
 - chore: update github.com/bborbe/collection to v1.21.6, github.com/bborbe/cron to v1.9.8, github.com/bborbe/errors to v1.6.6, github.com/bborbe/k8s to v1.14.31, github.com/bborbe/log to v1.7.6, github.com/bborbe/run to v1.11.10, github.com/bborbe/sentry to v1.10.7, github.com/bborbe/time to v1.27.25, github.com/bborbe/validation to v1.5.8, github.com/onsi/ginkgo/v2 to v2.34.0
