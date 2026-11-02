@@ -197,6 +197,7 @@ else
 endif
 
 .PHONY: apply
+ifeq ($(BUILD_TARGET),local)
 apply:
 	@for i in $(DIRS); do \
 		cd $$i; \
@@ -204,6 +205,15 @@ apply:
 		make apply; \
 		cd ..; \
 	done
+else
+# A cluster build pushes $(REGISTRY)/$(IMAGE):$(VERSION), but k8s/backup-deploy.yaml
+# renders the image from the exported BRANCH. Applying it here would deploy an image
+# this run never built, so `make buca BUILD_TARGET=<cluster>` stops after the push.
+apply:
+	@echo "apply: skipped — BUILD_TARGET=$(BUILD_TARGET); the cluster Job pushed $(REGISTRY)/$(IMAGE):$(VERSION)."
+	@echo "  k8s/backup-deploy.yaml renders \$$(REGISTRY)/\$$(IMAGE):\$$(BRANCH), which is not the image this run built."
+	@echo "  Deploy deliberately once the cluster build has been verified."
+endif
 
 .PHONY: buca
 buca: build upload clean apply
