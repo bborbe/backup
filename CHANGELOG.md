@@ -8,6 +8,65 @@ Please choose versions by [Semantic Versioning](http://semver.org/).
 * MINOR version when you add functionality in a backwards-compatible manner, and
 * PATCH version when you make backwards-compatible bug fixes.
 
+## v3.11.3
+
+- chore: restate the do-not-merge contract in the gate workflow
+
+## v3.11.2
+
+- fix: keep the rootless BuildKit build container startable. `allowPrivilegeEscalation: false` and `capabilities.drop: ["ALL"]` on that container stop `rootlesskit` from installing its uid/gid map (`newuidmap: operation not permitted`), so every cluster build died at startup; both are removed and the reason is recorded in `hack/build-job.yaml`. Also hardened the clone path: the token is scoped to its origin host, deleted on the error path as well as the success path, and refused over a non-https URL; `REF` can no longer be read as a git option; and `__CONTEXT__` is listed in the template's token table
+
+## v3.11.1
+
+- fix: the cluster build arm guards `apply` as well as `upload` and `clean`. `make buca BUILD_TARGET=<cluster>` pushed `docker.io/bborbe/backup:<VERSION>` and then applied `k8s/backup-deploy.yaml`, which renders the image from the exported `BRANCH` — a different tag from the one just built, so the deploy would have pulled an image this run never produced
+- chore: update github.com/bborbe/collection to v1.21.6, github.com/bborbe/cron to v1.9.8, github.com/bborbe/errors to v1.6.6, github.com/bborbe/k8s to v1.14.31, github.com/bborbe/log to v1.7.6, github.com/bborbe/run to v1.11.10, github.com/bborbe/sentry to v1.10.7, github.com/bborbe/time to v1.27.25, github.com/bborbe/validation to v1.5.8, github.com/onsi/ginkgo/v2 to v2.34.0
+
+## v3.11.0
+
+- feat: build the image on a Kubernetes cluster with `make build BUILD_TARGET=<cluster> REF=<sha> VERSION=<tag>`, keeping the default local arm unchanged. `hack/build-cluster.sh`, `hack/cluster-alias.sh` and `hack/build-job.yaml` are vendored from `bborbe/agent-task-executor`
+- fix: the Dockerfile builds in module mode instead of `-mod=vendor`. `vendor/` is gitignored, so a bare clone — which is what the cluster Job builds — has none and a vendor-mode build fails there. With no explicit flag Go still uses `vendor/` locally, so the local arm is unchanged
+
+## v3.10.23
+
+- chore: update frontend npm dependencies (minor/patch) — @typescript-eslint/eslint-plugin, @vitejs/plugin-vue, axios, eslint, eslint-plugin-prettier, eslint-plugin-vue, follow-redirects, globals, postcss, vitest, vue, vue-router, vue-tsc
+- chore: clear the osv-scanner gate — bump root `follow-redirects` to 1.16.2 (GHSA-mrwp-f3q8-3g9p) and override the transitive dev deps `glob` to ^14.0.2 (GHSA-3g3m-2fjr-6pw4) and `minimatch` to ^11.0.1 (GHSA-g3hv-75wg-m249). Both overrides are majors, deliberately outside the minor/patch scope: the advisories are pre-existing (identical `glob`, patch-differing `minimatch` vs master) and newly surfaced by an updated OSV database, so master fails the same gate. `make lint build test` still passes — 0 lint errors, 57 tests
+
+## v3.10.22
+
+- chore: update github.com/bborbe/k8s to v1.14.29, github.com/bborbe/run to v1.11.8, github.com/bborbe/time to v1.27.22
+
+## v3.10.21
+
+- chore: update github.com/bborbe/k8s to v1.14.27
+
+## v3.10.20
+
+- chore: update github.com/bborbe/k8s to v1.14.26, github.com/bborbe/time to v1.27.21
+
+## v3.10.19
+
+- chore: update github.com/bborbe/run to v1.11.7
+
+## v3.10.18
+
+- chore: update github.com/bborbe/k8s to v1.14.25, github.com/bborbe/run to v1.11.6, github.com/bborbe/time to v1.27.20
+
+## v3.10.17
+
+- chore: update github.com/bborbe/http to v1.26.32, github.com/bborbe/service to v1.11.2, github.com/bborbe/time to v1.27.19, k8s.io/apiextensions-apiserver to v0.37.2, k8s.io/apimachinery to v0.37.2, k8s.io/client-go to v0.37.2
+
+## v3.10.16
+
+- chore: update github.com/bborbe/errors to v1.6.5, github.com/bborbe/run to v1.11.5
+
+## v3.10.15
+
+- chore: update github.com/bborbe/collection to v1.21.4, github.com/bborbe/run to v1.11.3
+
+## v3.10.14
+
+- chore: update github.com/bborbe/collection to v1.21.3, github.com/bborbe/cron to v1.9.6, github.com/bborbe/errors to v1.6.4, github.com/bborbe/http to v1.26.31, github.com/bborbe/k8s to v1.14.24, github.com/bborbe/log to v1.7.5, github.com/bborbe/sentry to v1.10.6, github.com/bborbe/service to v1.11.1, github.com/bborbe/time to v1.27.18, github.com/bborbe/validation to v1.5.6
+
 ## v3.10.13
 
 - chore: update Go to 1.27.3 and github.com/bborbe/cron to v1.9.4, github.com/bborbe/k8s to v1.14.23, github.com/bborbe/sentry to v1.10.5, github.com/bborbe/service to v1.11.0, github.com/bborbe/time to v1.27.17, github.com/bborbe/validation to v1.5.5
