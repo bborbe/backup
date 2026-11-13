@@ -8,7 +8,7 @@ Please choose versions by [Semantic Versioning](http://semver.org/).
 * MINOR version when you add functionality in a backwards-compatible manner, and
 * PATCH version when you make backwards-compatible bug fixes.
 
-## Unreleased
+## v3.12.1
 
 - chore: update Go to 1.27.4 and github.com/bborbe/collection to v1.21.7, github.com/bborbe/cron to v1.9.11, github.com/bborbe/errors to v1.6.7, github.com/bborbe/http to v1.26.34, github.com/bborbe/k8s to v1.15.1, github.com/bborbe/log to v1.7.9, github.com/bborbe/run to v1.11.13, github.com/bborbe/sentry to v1.10.9, github.com/bborbe/service to v1.11.4, github.com/bborbe/time to v1.27.28, github.com/bborbe/validation to v1.5.10
 
